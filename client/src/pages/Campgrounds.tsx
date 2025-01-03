@@ -16,7 +16,6 @@ const Campgrounds = () => {
                 });
         }
         fetchCamps();
-        console.log(camps);
     }, [])
     return (
         <div>
