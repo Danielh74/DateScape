@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    const fetchItems = () => {
+      axios.get('http://localhost:8080/api/campgrounds').then(res => {
+        console.log(res);
+      })
+    };
+    fetchItems();
+  }, [])
 
   return (
     <>
@@ -22,7 +32,6 @@ function App() {
           count is {count}
         </button>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
       <p className="read-the-docs">
