@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -18,7 +22,6 @@ db.once("open", () => {
 })
 const app = express();
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const sessionConfig = {

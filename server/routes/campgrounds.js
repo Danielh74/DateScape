@@ -12,7 +12,11 @@ router.route('/')
 
 router.route('/:id')
     .get(getCampById)
-    .put(isLoggedIn, isCampAuthor, upload.array('image'), validateCampground, editCampground)
+    // .put(isLoggedIn, isCampAuthor, upload.array('image'), validateCampground, editCampground)
+    .put(upload.array('images'), (req, res) => {
+        console.log(req.body);
+        console.log(req.files);
+    })
     .delete(isLoggedIn, isCampAuthor, deleteCampground)
 
 module.exports = router;

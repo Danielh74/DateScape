@@ -3,13 +3,13 @@ import { useLocation, useParams } from "react-router-dom"
 import { campgroundsService } from "../services/campgroundService";
 import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
+import axios from "axios";
 
 type CampForm = {
     title: string,
     location: string,
     price: number,
     description: string,
-    images: File[],
     deleteImages?: string[]
 }
 
@@ -17,13 +17,13 @@ const CampgroundForm = () => {
     const { id } = useParams();
     const location = useLocation();
     const [campground, setCampground] = useState<Campground>(location.state.campground);
+    const [files, setFiles] = useState<File[]>([]);
     const { register, handleSubmit } = useForm({
         defaultValues: {
             title: campground.title,
             location: campground.location,
             price: campground.price,
             description: campground.description,
-            images: campground.images,
             deleteImages: []
         }
     });
@@ -38,9 +38,31 @@ const CampgroundForm = () => {
     }, [campground, id]);
 
     const onSubmit = (data: CampForm) => {
-        console.log(data);
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append('images', file);
+        });
 
-    }
+        for (const [key, value] of Object.entries(data)) {
+            if (Array.isArray(value)) {
+                value.forEach(val => {
+                    formData.append(key, val);
+                });
+            } else {
+                formData.append(key, value.toString());
+            }
+        }
+
+        axios.put(`http://localhost:8080/api/campgrounds/${id}`, formData)
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFiles(Array.from(e.target.files));
+        }
+    };
 
     return (
         <div className="row">
@@ -81,13 +103,13 @@ const CampgroundForm = () => {
                     </div>
                     <div className="mb-2">
                         <label className="form-label" htmlFor="image">Add images</label>
-                        <input className="form-control" type="file" {...register('images')} multiple id="image" />
+                        <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
                     </div>
                     <div>
                         {campground.images.map((img, i) =>
                             <span key={img._id}>
                                 <img src={img.url} alt="" />
-                                <input type="checkbox" {...register(`deleteImages`)} value={img.name} id={`img-${i}`}></input>
+                                <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
                                 <label htmlFor={`img-${i}`}>Delete?</label>
                             </span>
                         )}
