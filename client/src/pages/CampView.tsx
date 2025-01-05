@@ -1,8 +1,9 @@
 import axios from "axios";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Campground } from "../models/Campground";
 import { reviewSrevice } from "../services/reviewService";
+import { campgroundsService } from "../services/campgroundService";
 
 interface ReviewProp {
     rating: number;
@@ -12,15 +13,19 @@ interface ReviewProp {
 const CampView = () => {
     const { id } = useParams();
     const [campground, setCampground] = useState<Campground>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCamp = () => {
-            axios.get(`http://localhost:8080/api/campgrounds/${id}`)
-                .then(res => setCampground(res.data.campground))
-                .catch(e => console.log(e));
+            if (id) {
+                campgroundsService.getCampground(id)
+                    .then(res => setCampground(res.data.campground))
+                    .catch(e => console.log(e));
+            }
+            //Make a component that pop up when the id is undefined
         }
         fetchCamp();
-    }, [id])
+    }, [id]);
 
     const handleCreateReview = (e: BaseSyntheticEvent) => {
         e.preventDefault();
@@ -44,7 +49,11 @@ const CampView = () => {
     const handleDeleteReview = (reviewId: string) => {
         reviewSrevice.deleteReview(id, reviewId)
             .then(res => console.log(res))
-            .catch(e => console.log(e))
+            .catch(e => console.log(e)) //Make something happpen when an error accure
+    };
+
+    const handleEditCamp = () => {
+        navigate(`edit`, { state: { campground } });
     }
 
     return (
@@ -96,7 +105,7 @@ const CampView = () => {
                     </ul>
                     {/* <% if (currentUser && currentUser._id.equals(campground.author._id)) { %> */}
                     <div className="card-body">
-                        <a href="/campgrounds/<%=campground._id%>/edit" className="btn btn-info">Edit</a>
+                        <button onClick={handleEditCamp} className="btn btn-info">Edit</button>
                         <form className="d-inline">
                             <button className="btn btn-danger">Delete</button>
                         </form>

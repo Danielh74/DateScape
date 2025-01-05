@@ -7,7 +7,7 @@ const Campgrounds = () => {
     const [camps, setCamps] = useState<CampgroundList[]>([]);
     const location = useLocation();
     useEffect(() => {
-        campgroundsService.getCampgrounds(location.state)
+        campgroundsService.getAllCampgrounds(location.state)
             .then(res => {
                 console.log(res.data)
                 setCamps(res.data.campgrounds);
