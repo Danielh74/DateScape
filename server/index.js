@@ -39,6 +39,11 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(cors({ origin: ['http://localhost:5173'] }));
 
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    next();
+})
+
 app.use('/', authRouter)
 app.use('/api/campgrounds', campgroundsRouter);
 app.use('/api/campgrounds/:id/reviews', reviewsRouter);
