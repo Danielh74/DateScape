@@ -9,7 +9,7 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
     campground.reviews.push(review);
     await review.save();
     await campground.save();
-    res.status(201).send({ campground })
+    res.status(201).send({ campground });
 })
 
 module.exports.deleteReview = handleAsyncError(async (req, res) => {

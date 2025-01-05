@@ -5,11 +5,10 @@ import Campgrounds from "../pages/Campgrounds";
 import CampView from "../pages/CampView";
 
 export const router = createBrowserRouter([
+    { path: "/", element: <Home /> },
     {
-        path: "/",
         element: <App />,
         children: [
-            { path: "/", element: <Home /> },
             { path: "/campgrounds", element: <Campgrounds /> },
             { path: "/campground/:id", element: <CampView /> },
             // { path: "/register", element: <RegisterPage /> },

@@ -18,6 +18,9 @@ db.once("open", () => {
 })
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const sessionConfig = {
     secret: "thisisnotagoodsecret",
     resave: false,

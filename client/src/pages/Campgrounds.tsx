@@ -1,23 +1,22 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { CampgroundList } from "../models/Campground";
+import { useLocation } from "react-router-dom";
+import { campgroundsService } from "../services/campgroundService";
 
 const Campgrounds = () => {
     const [camps, setCamps] = useState<CampgroundList[]>([]);
+    const location = useLocation();
     useEffect(() => {
-        const fetchCamps = async () => {
-            await axios.get('http://localhost:8080/api/campgrounds')
-                .then(res => {
-                    console.log(res.data)
-                    setCamps(res.data.campgrounds);
+        campgroundsService.getCampgrounds(location.state)
+            .then(res => {
+                console.log(res.data)
+                setCamps(res.data.campgrounds);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }, [location])
 
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        }
-        fetchCamps();
-    }, [])
     return (
         <div>
             <div id="map" className="mb-3 rounded"></div>

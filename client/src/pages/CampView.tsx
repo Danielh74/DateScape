@@ -2,6 +2,12 @@ import axios from "axios";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { Campground } from "../models/Campground";
+import { reviewSrevice } from "../services/reviewService";
+
+interface ReviewProp {
+    rating: number;
+    body: string;
+}
 
 const CampView = () => {
     const { id } = useParams();
@@ -10,23 +16,35 @@ const CampView = () => {
     useEffect(() => {
         const fetchCamp = () => {
             axios.get(`http://localhost:8080/api/campgrounds/${id}`)
-                .then(res => setCampground(res.data.campground));
+                .then(res => setCampground(res.data.campground))
+                .catch(e => console.log(e));
         }
         fetchCamp();
     }, [id])
 
-    const showData = (e: BaseSyntheticEvent) => {
+    const handleCreateReview = (e: BaseSyntheticEvent) => {
         e.preventDefault();
 
         const form = e.target;
-
         if (form.checkValidity()) {
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            console.log('Form submitted successfully:', data);
+            const review: ReviewProp = {
+                rating: parseInt(formData.get('rating') as string, 10),
+                body: formData.get('body') as string
+            }
+            reviewSrevice.createReview(id, review)
+                .then(res => {
+                    setCampground(res.data.campground);
+                })
         } else {
             form.classList.add('was-validated');
         }
+    };
+
+    const handleDeleteReview = (reviewId: string) => {
+        reviewSrevice.deleteReview(id, reviewId)
+            .then(res => console.log(res))
+            .catch(e => console.log(e))
     }
 
     return (
@@ -79,7 +97,7 @@ const CampView = () => {
                     {/* <% if (currentUser && currentUser._id.equals(campground.author._id)) { %> */}
                     <div className="card-body">
                         <a href="/campgrounds/<%=campground._id%>/edit" className="btn btn-info">Edit</a>
-                        <form className="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="post">
+                        <form className="d-inline">
                             <button className="btn btn-danger">Delete</button>
                         </form>
                     </div>
@@ -89,7 +107,7 @@ const CampView = () => {
             <div className="col-3">
                 {/* <% if (currentUser) { %> */}
                 <h2>Leave a Review</h2>
-                <form className="needs-validation mb-2" onSubmit={(e) => { showData(e) }} noValidate>
+                <form className="needs-validation mb-2" onSubmit={(e) => { handleCreateReview(e) }} noValidate>
                     <div>
                         <fieldset className="starability-basic">
                             <input type="radio" id="first-rate1" name="rating" value="1" />
@@ -126,9 +144,7 @@ const CampView = () => {
                                 {review.author.username}
                             </p>
                             {/* (currentUser && currentUser._id.equals(review.author._id))  */}
-                            <form>
-                                <button className="btn btn-sm btn-danger">Delete</button>
-                            </form>
+                            <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
 
                         </div>
                     </div>

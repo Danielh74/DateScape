@@ -4,7 +4,7 @@ const { createReview, deleteReview } = require('../controllers/reviews');
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', isLoggedIn, validateReview, createReview);
+router.post('/', createReview);
 
 router.delete('/:reviewId', isLoggedIn, isReviewAuthor, deleteReview)
 
