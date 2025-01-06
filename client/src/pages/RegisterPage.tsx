@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { authService } from "../services/authService";
+import { registerUser } from "../services/authService";
 
 type RegisterForm = {
     username: string,
@@ -17,8 +17,8 @@ const RegisterPage = () => {
         }
     });
 
-    const onSubmit = (data: RegisterForm) => {
-        authService.register(data).then(res => {
+    const onSubmit = (registerData: RegisterForm) => {
+        registerUser(registerData).then(res => {
             console.log(res.status)
         }).catch(e => {
             console.log(e)

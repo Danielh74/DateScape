@@ -3,11 +3,9 @@ const { campgroundSchema, reviewSchema } = require('./schemas');
 const Campground = require('./models/campground');
 const Review = require('./models/review');
 
-module.exports.isLoggedIn = (req, res, next) => {
-    if (!req.body.user) {
-        return res.status(401).send('You must be signed in');
-    }
-    next();
+module.exports.isAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) return next();
+    res.status(401).send('Not authorized');
 };
 
 module.exports.storeOriginalPath = (req, res, next) => {
@@ -18,9 +16,8 @@ module.exports.storeOriginalPath = (req, res, next) => {
 };
 
 module.exports.validateCampground = (req, res, next) => {
-    if (req.body.campground && req.body.user) {
+    if (req.body.campground) {
         req.body.campground = JSON.parse(req.body.campground);
-        req.body.user = JSON.parse(req.body.user);
     }
     const { error } = campgroundSchema.validate(req.body);
     if (error) {
@@ -34,10 +31,7 @@ module.exports.validateCampground = (req, res, next) => {
 module.exports.isCampAuthor = async (req, res, next) => {
     const { id } = req.params;
     const currentCamp = await Campground.findById(id);
-    if (req.body.user) {
-        req.body.user = JSON.parse(req.body.user);
-    }
-    if (!currentCamp.author.equals(req.body.user._id)) {
+    if (!currentCamp.author.equals(req.user._id)) {
         return res.status(403).send({ error: 'You do not have permission to do that' });
     }
     next();

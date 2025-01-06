@@ -2,17 +2,15 @@ const User = require('../models/user');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
-    res.status(200).send({ currentUser: req.user });
+    res.send(req.user);
 })
 
 module.exports.logoutUser = (req, res, next) => {
-    req.logout(function (err) {
-        if (err) {
-            return next(err);
-        }
-        res.status(200).end();
+    req.logout(err => {
+        if (err) return res.status(500).send(err.message);
+        res.send('Logged out');
     });
-}
+};
 
 module.exports.registerUser = handleAsyncError(async (req, res, next) => {
     try {

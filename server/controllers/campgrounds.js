@@ -16,12 +16,12 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
     const newCampground = new Campground(req.body.campground);
-    console.log('before GeoData: ' + newCampground)
     const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
     Object.assign(newCampground, {
         ...newCampground,
         geometry: geoData.features[0].geometry,
-        images: req.files.map(img => ({ url: img.path, name: img.filename }))
+        images: req.files.map(img => ({ url: img.path, name: img.filename })),
+        author: req.user._id
     });
     await newCampground.save();
     res.send({ newCampground, message: 'Campground was created' });
@@ -71,6 +71,11 @@ module.exports.editCampground = handleAsyncError(async (req, res) => {
 
 module.exports.deleteCampground = handleAsyncError(async (req, res) => {
     const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.status(200).end();
-})
+    const campground = await Campground.findByIdAndDelete(id);
+
+    if (!campground) {
+        return res.status(404).send('Campground not found');
+    }
+
+    res.status(200).send('Campground deleted successfully');
+});

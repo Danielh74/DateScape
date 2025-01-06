@@ -1,8 +1,8 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { Campground } from "../models/Campground";
-import { reviewSrevice } from "../services/reviewService";
-import { campgroundsService } from "../services/campgroundService";
+import { createReview, deleteReview } from "../services/reviewService";
+import { getCampground, deleteCampground } from "../services/campgroundService";
 import useAuth from "../hooks/useAuth";
 
 interface ReviewProp {
@@ -19,7 +19,7 @@ const CampView = () => {
     useEffect(() => {
         const fetchCamp = () => {
             if (id) {
-                campgroundsService.getCampground(id)
+                getCampground(id)
                     .then(res => setCampground(res.data.campground))
                     .catch(e => console.log(e));
             }
@@ -38,19 +38,27 @@ const CampView = () => {
                 rating: parseInt(formData.get('rating') as string, 10),
                 body: formData.get('body') as string
             }
-            reviewSrevice.createReview(id, review)
-                .then(res => {
-                    setCampground(res.data.campground);
-                })
+            if (id) {
+                createReview(id, review)
+                    .then(res => {
+                        setCampground(res.data.campground);
+                    })
+            } else {
+                console.error("Campground ID is undefined");
+            }
         } else {
             form.classList.add('was-validated');
         }
     };
 
     const handleDeleteReview = (reviewId: string) => {
-        reviewSrevice.deleteReview(id, reviewId)
-            .then(res => console.log(res))
-            .catch(e => console.log(e)) //Make something happpen when an error accure
+        if (id) {
+            deleteReview(id, reviewId)
+                .then(res => console.log(res))
+                .catch(e => console.log(e)) //Make something happpen when an error accure
+        } else {
+            console.error("Campground ID is undefined");
+        }
     };
 
     const handleEditCamp = () => {
@@ -59,7 +67,7 @@ const CampView = () => {
 
     const handleDeleteCamp = () => {
         if (id && currentUser) {
-            campgroundsService.deleteCampground(id, currentUser).then(() => {
+            deleteCampground(id).then(() => {
                 navigate('/campgrounds');
             })
         }

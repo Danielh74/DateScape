@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { authService } from "../services/authService";
+import { loginUser } from "../services/authService";
 import useAuth from "../hooks/useAuth";
 import { User } from "../models/User";
 import { useNavigate } from "react-router-dom";
@@ -19,10 +19,10 @@ const LoginPage = () => {
         }
     });
 
-    const onSubmit = (data: LoginForm) => {
-        authService.login(data)
+    const onSubmit = (loginData: LoginForm) => {
+        loginUser(loginData)
             .then(res => {
-                const userData = res.data.currentUser;
+                const userData = res.data;
                 const user: User = {
                     _id: userData._id,
                     username: userData.username,
@@ -30,6 +30,8 @@ const LoginPage = () => {
                 };
                 handleLogin(user);
                 navigate('/campgrounds');
+            }).catch(e => {
+                console.log(e)
             });
     }
 

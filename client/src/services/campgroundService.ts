@@ -1,19 +1,12 @@
 import axios from "axios";
-import { User } from "../models/User";
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
+const api = axios.create({
+    baseURL: 'http://localhost:8080/api',
+    withCredentials: true, // Send cookies
+});
 
-const getAllCampgrounds = (campName: string | null) =>
-    axios.get(`${baseUrl}${campName ? `?campName=${campName}` : ''}`, {
-        withCredentials: true
-    });
-
-const getCampground = (id: string) =>
-    axios.get(`http://localhost:8080/api/campgrounds/${id}`);
-
-const deleteCampground = (id: string) =>
-    axios.delete(`http://localhost:8080/api/campgrounds/${id}`);
-
-
-
-export const campgroundsService = { getAllCampgrounds, getCampground, deleteCampground };
+export const getAllCampgrounds = (campName: string | null) => api.get(`/campgrounds${campName ? `?campName=${campName}` : ''}`);
+export const getCampground = (id: string) => api.get(`/campgrounds/${id}`);
+export const postCampground = (campData: FormData) => api.post('/campgrounds', campData);
+export const updateCampground = (id: string) => api.put(`/campgrounds/${id}`,);
+export const deleteCampground = (id: string) => api.delete(`/campgrounds/${id}`);

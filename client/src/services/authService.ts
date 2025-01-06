@@ -1,5 +1,4 @@
 import axios from "axios";
-const baseUrl = "http://localhost:8080/api";
 
 type registerProps = {
     username: string,
@@ -12,17 +11,11 @@ type loginProps = {
     password: string
 }
 
-const register = (data: registerProps) =>
-    axios.post(`${baseUrl}/register`, data, {
-        withCredentials: true
-    });
+const api = axios.create({
+    baseURL: 'http://localhost:8080/api',
+    withCredentials: true, // Send cookies
+});
 
-const login = (data: loginProps) =>
-    axios.post(`${baseUrl}/login`, data, {
-        withCredentials: true
-    });
-
-const logout = () =>
-    axios.get(`${baseUrl}/logout`, { withCredentials: true });
-
-export const authService = { register, login, logout };
+export const registerUser = (registerData: registerProps) => api.post('/register', registerData);
+export const loginUser = (loginData: loginProps) => api.post('/login', loginData);
+export const logoutUser = () => api.get('/logout');

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from 'react-hook-form'
-import axios from "axios";
-import useAuth from "../hooks/useAuth";
+import { postCampground } from '../services/campgroundService'
 
 type CampForm = {
     title: string,
@@ -12,7 +11,6 @@ type CampForm = {
 
 const CampgroundNewForm = () => {
     const [files, setFiles] = useState<File[]>([]);
-    const { currentUser } = useAuth();
     const { register, handleSubmit } = useForm({
         defaultValues: {
             title: "",
@@ -24,23 +22,20 @@ const CampgroundNewForm = () => {
 
     const onSubmit = (data: CampForm) => {
         const formData = new FormData();
-        files.forEach(file => {
-            formData.append('images', file);
-        });
 
         const campgroundData = {
             title: data.title,
             location: data.location,
             price: data.price,
-            description: data.description,
-            author: currentUser?._id
+            description: data.description
         };
         formData.append('campground', JSON.stringify(campgroundData));
 
-        const user = currentUser;
-        formData.append('user', JSON.stringify(user));
+        files.forEach(file => {
+            formData.append('images', file);
+        });
 
-        axios.post("http://localhost:8080/api/campgrounds", formData, { withCredentials: true })
+        postCampground(formData)
             .then(res => console.log(res))
             .catch(err => console.error(err));
     };

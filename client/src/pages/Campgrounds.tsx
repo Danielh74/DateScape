@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import { CampgroundList } from "../models/Campground";
 import { useLocation } from "react-router-dom";
-import { campgroundsService } from "../services/campgroundService";
+import { getAllCampgrounds } from "../services/campgroundService";
 
 const Campgrounds = () => {
     const [camps, setCamps] = useState<CampgroundList[]>([]);
     const location = useLocation();
     useEffect(() => {
-        campgroundsService.getAllCampgrounds(location.state)
+        getAllCampgrounds(location.state)
             .then(res => {
                 setCamps(res.data.campgrounds);
             })

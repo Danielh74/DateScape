@@ -9,7 +9,7 @@ const campgroundsRouter = require('./routes/campgrounds');
 const reviewsRouter = require('./routes/reviews');
 const authRouter = require('./routes/auth');
 const passport = require('passport');
-const localStrategy = require('passport-local');
+const localStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
@@ -20,28 +20,13 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 })
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(cors({
-    origin: ['http://localhost:5173'],
-    credentials: true,
-}));
-
-const sessionConfig = {
-    secret: "thisisnotagoodsecret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        httpOnly: true,
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
-}
-app.use(session(sessionConfig));
-
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 

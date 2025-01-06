@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom"
-import { campgroundsService } from "../services/campgroundService";
+import { getCampground } from "../services/campgroundService";
 import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
@@ -32,7 +32,7 @@ const CampgroundEditForm = () => {
 
     useEffect(() => {
         if (campground === null && id !== undefined) {
-            campgroundsService.getCampground(id)
+            getCampground(id)
                 .then(res => {
                     setCampground(res.data.campground);
                 })
