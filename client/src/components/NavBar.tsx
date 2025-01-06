@@ -1,8 +1,9 @@
 import { BaseSyntheticEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const NavBar = () => {
-    const currentUser = true;
+    const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
@@ -24,9 +25,9 @@ const NavBar = () => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
-                        <a className="nav-link" href="/">Home</a>
-                        <a className="nav-link" href="/campgrounds">campgrounds</a>
-                        <a className="nav-link" href="/campgrounds/new">New Campground</a>
+                        <NavLink className="nav-link" to="/">Home</NavLink>
+                        <NavLink className="nav-link" to="/campgrounds">campgrounds</NavLink>
+                        <NavLink className="nav-link" to="/campground/new">New Campground</NavLink>
                     </div>
                     <form className="d-flex ms-auto" onSubmit={handleSubmit} role="search">
                         <input className="form-control me-2" name="campName" type="search" placeholder="Search" aria-label="Search" />
@@ -34,11 +35,11 @@ const NavBar = () => {
                     </form>
                     <div className="navbar-nav ms-auto">
                         {currentUser ?
-                            <a className="nav-link" href="/logout">Logout</a>
+                            <button className="nav-link" onClick={handleLogout}>Logout</button>
                             :
                             <>
-                                <a className="nav-link" href="/login">Login</a>
-                                <a className="nav-link" href="/register">Sign up</a>
+                                <NavLink className="nav-link" to="/login">Login</NavLink>
+                                <NavLink className="nav-link" to="/register">Sign up</NavLink>
                             </>
                         }
                     </div>

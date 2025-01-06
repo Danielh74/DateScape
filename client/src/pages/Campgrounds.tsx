@@ -9,7 +9,6 @@ const Campgrounds = () => {
     useEffect(() => {
         campgroundsService.getAllCampgrounds(location.state)
             .then(res => {
-                console.log(res.data)
                 setCamps(res.data.campgrounds);
             })
             .catch(e => {

@@ -3,7 +3,9 @@ import axios from "axios";
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const getAllCampgrounds = (campName: string | null) =>
-    axios.get(`${baseUrl}${campName ? `?campName=${campName}` : ''}`);
+    axios.get(`${baseUrl}${campName ? `?campName=${campName}` : ''}`, {
+        withCredentials: true
+    });
 
 const getCampground = (id: string) =>
     axios.get(`http://localhost:8080/api/campgrounds/${id}`);

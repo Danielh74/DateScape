@@ -8,7 +8,9 @@ router.route('/register')
     .post(registerUser);
 
 router.route('/login')
-    .post(storeOriginalPath, passport.authenticate('local'), loginUser);
+    .post(storeOriginalPath, passport.authenticate('local', {
+        session: true,
+    }), loginUser);
 
 router.get('/logout', logoutUser)
 

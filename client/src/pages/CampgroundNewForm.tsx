@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom"
-import { campgroundsService } from "../services/campgroundService";
-import { Campground } from "../models/Campground";
+import { useState } from "react";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 
@@ -10,32 +7,20 @@ type CampForm = {
     location: string,
     price: number,
     description: string,
-    deleteImages?: string[]
 }
 
-const CampgroundForm = () => {
-    const { id } = useParams();
-    const location = useLocation();
-    const [campground, setCampground] = useState<Campground>(location.state.campground);
+const CampgroundNewForm = () => {
     const [files, setFiles] = useState<File[]>([]);
     const { register, handleSubmit } = useForm({
         defaultValues: {
-            title: campground.title,
-            location: campground.location,
-            price: campground.price,
-            description: campground.description,
+            title: "",
+            location: "",
+            price: 0.01,
+            description: "",
+            author: null,
             deleteImages: []
         }
     });
-
-    useEffect(() => {
-        if (campground === null && id !== undefined) {
-            campgroundsService.getCampground(id)
-                .then(res => {
-                    setCampground(res.data.campground);
-                })
-        }
-    }, [campground, id]);
 
     const onSubmit = (data: CampForm) => {
         const formData = new FormData();
@@ -44,16 +29,10 @@ const CampgroundForm = () => {
         });
 
         for (const [key, value] of Object.entries(data)) {
-            if (Array.isArray(value)) {
-                value.forEach(val => {
-                    formData.append(key, val);
-                });
-            } else {
-                formData.append(key, value.toString());
-            }
+            formData.append(key, value.toString());
         }
 
-        axios.put(`http://localhost:8080/api/campgrounds/${id}`, formData)
+        axios.post("http://localhost:8080/api/campgrounds", formData)
             .then(res => console.log(res))
             .catch(err => console.error(err));
     };
@@ -66,7 +45,7 @@ const CampgroundForm = () => {
 
     return (
         <div className="row">
-            <h1 className="text-center">Edit Campground</h1>
+            <h1 className="text-center">New Campground</h1>
             <div className="col-md-6 offset-md-3">
                 <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" encType="multipart/form-data">
                     <div className="mb-2">
@@ -105,23 +84,13 @@ const CampgroundForm = () => {
                         <label className="form-label" htmlFor="image">Add images</label>
                         <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
                     </div>
-                    <div>
-                        {campground.images.map((img, i) =>
-                            <span key={img._id}>
-                                <img src={img.url} alt="" />
-                                <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
-                                <label htmlFor={`img-${i}`}>Delete?</label>
-                            </span>
-                        )}
-                    </div>
                     <div className="my-2">
-                        <button className="btn btn-success">Apply Changes</button>
+                        <button className="btn btn-success">Create Campground</button>
                     </div>
                 </form>
-                <a href={`/campground/${campground.id}`}>Back To Campground</a>
             </div>
         </div>
     )
 }
 
-export default CampgroundForm
+export default CampgroundNewForm

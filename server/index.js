@@ -22,6 +22,7 @@ db.once("open", () => {
 })
 const app = express();
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const sessionConfig = {
@@ -39,18 +40,17 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+}));
+
 passport.use(new localStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(cors({ origin: ['http://localhost:5173'] }));
 
-app.use((req, res, next) => {
-    res.locals.currentUser = req.user;
-    next();
-})
-
-app.use('/', authRouter)
+app.use('/api', authRouter)
 app.use('/api/campgrounds', campgroundsRouter);
 app.use('/api/campgrounds/:id/reviews', reviewsRouter);
 

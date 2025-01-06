@@ -9,7 +9,7 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
             ? { title: { $regex: req.query.campName, $options: 'i' } }
             : {}
     );
-    res.send({ campgrounds, currentUser: res.locals.currentUser });
+    res.send({ campgrounds });
 })
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
