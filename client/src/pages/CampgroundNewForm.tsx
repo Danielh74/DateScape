@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from 'react-hook-form'
 import { postCampground } from '../services/campgroundService'
+import { useNavigate } from "react-router-dom";
 
 type CampForm = {
     title: string,
@@ -10,6 +11,7 @@ type CampForm = {
 }
 
 const CampgroundNewForm = () => {
+    const navigate = useNavigate();
     const [files, setFiles] = useState<File[]>([]);
     const { register, handleSubmit } = useForm({
         defaultValues: {
@@ -36,7 +38,10 @@ const CampgroundNewForm = () => {
         });
 
         postCampground(formData)
-            .then(res => console.log(res))
+            .then(res => {
+                console.log(res);
+                navigate('/campgrounds');
+            })
             .catch(err => console.error(err));
     };
 
