@@ -4,10 +4,8 @@ const Campground = require('./models/campground');
 const Review = require('./models/review');
 
 module.exports.isLoggedIn = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        req.session.returnTo = req.originalUrl;
-        req.flash('error', 'You must be signed in');
-        return res.redirect('/login');
+    if (!req.body.user) {
+        return res.status(401).send('You must be signed in');
     }
     next();
 };
@@ -20,10 +18,10 @@ module.exports.storeOriginalPath = (req, res, next) => {
 };
 
 module.exports.validateCampground = (req, res, next) => {
-    if (req.body.campground) {
+    if (req.body.campground && req.body.user) {
         req.body.campground = JSON.parse(req.body.campground);
+        req.body.user = JSON.parse(req.body.user);
     }
-    console.log(req.body)
     const { error } = campgroundSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(m => m.message).join(',');
@@ -35,7 +33,6 @@ module.exports.validateCampground = (req, res, next) => {
 
 module.exports.isCampAuthor = async (req, res, next) => {
     const { id } = req.params;
-    console.log(req.body)
     const currentCamp = await Campground.findById(id);
     if (req.body.user) {
         req.body.user = JSON.parse(req.body.user);

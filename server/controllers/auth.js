@@ -21,12 +21,13 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
         const registeredUser = await User.register(user, password);
         req.login(registeredUser, err => {
             if (err) {
+                console.log(err)
                 return next(err);
             }
             res.status(200).end();
         });
     } catch (e) {
-        res.send(e);
+        res.status(400).send({ error: e.message });
     }
 })
 

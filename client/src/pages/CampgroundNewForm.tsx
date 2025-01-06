@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 type CampForm = {
     title: string,
@@ -11,14 +12,13 @@ type CampForm = {
 
 const CampgroundNewForm = () => {
     const [files, setFiles] = useState<File[]>([]);
+    const { currentUser } = useAuth();
     const { register, handleSubmit } = useForm({
         defaultValues: {
             title: "",
             location: "",
             price: 0.01,
-            description: "",
-            author: null,
-            deleteImages: []
+            description: ""
         }
     });
 
@@ -28,11 +28,19 @@ const CampgroundNewForm = () => {
             formData.append('images', file);
         });
 
-        for (const [key, value] of Object.entries(data)) {
-            formData.append(key, value.toString());
-        }
+        const campgroundData = {
+            title: data.title,
+            location: data.location,
+            price: data.price,
+            description: data.description,
+            author: currentUser?._id
+        };
+        formData.append('campground', JSON.stringify(campgroundData));
 
-        axios.post("http://localhost:8080/api/campgrounds", formData)
+        const user = currentUser;
+        formData.append('user', JSON.stringify(user));
+
+        axios.post("http://localhost:8080/api/campgrounds", formData, { withCredentials: true })
             .then(res => console.log(res))
             .catch(err => console.error(err));
     };
@@ -66,7 +74,7 @@ const CampgroundNewForm = () => {
                         <label htmlFor="price">Price</label>
                         <div className="input-group">
                             <span className="input-group-text">$</span>
-                            <input type="number" className="form-control" placeholder="0.00" id="price" {...register("price", { required: true, min: 0.01 })} />
+                            <input type="number" className="form-control" id="price" {...register("price", { required: true, min: 0.01 })} />
                             <div className="invalid-feedback">
                                 Price is required.
                             </div>

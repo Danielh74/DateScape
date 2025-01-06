@@ -18,7 +18,11 @@ const RegisterPage = () => {
     });
 
     const onSubmit = (data: RegisterForm) => {
-        authService.register(data);
+        authService.register(data).then(res => {
+            console.log(res.status)
+        }).catch(e => {
+            console.log(e)
+        });
     }
 
     return (

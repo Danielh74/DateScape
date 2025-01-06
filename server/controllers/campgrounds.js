@@ -3,23 +3,25 @@ const handleAsyncError = require('../utils/handleAsyncError');
 const { cloudinary } = require('../cloudinary');
 const maptilerClient = require('@maptiler/client');
 
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+
 module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
     const campgrounds = await Campground.find(
         req.query.campName
             ? { title: { $regex: req.query.campName, $options: 'i' } }
             : {}
     );
-    res.send({ campgrounds });
+    res.send({ campgrounds, user: req.user });
 })
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
     const newCampground = new Campground(req.body.campground);
+    console.log('before GeoData: ' + newCampground)
     const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
     Object.assign(newCampground, {
         ...newCampground,
         geometry: geoData.features[0].geometry,
-        images: req.files.map(img => ({ url: img.path, name: img.filename })),
-        author: req.user._id
+        images: req.files.map(img => ({ url: img.path, name: img.filename }))
     });
     await newCampground.save();
     res.send({ newCampground, message: 'Campground was created' });

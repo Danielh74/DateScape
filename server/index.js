@@ -25,6 +25,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors({
+    origin: ['http://localhost:5173'],
+    credentials: true,
+}));
+
 const sessionConfig = {
     secret: "thisisnotagoodsecret",
     resave: false,
@@ -39,11 +44,6 @@ app.use(session(sessionConfig));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(cors({
-    origin: ['http://localhost:5173'],
-    credentials: true,
-}));
 
 passport.use(new localStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());

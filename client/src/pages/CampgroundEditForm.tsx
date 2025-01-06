@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { campgroundsService } from "../services/campgroundService";
 import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 type CampForm = {
     title: string,
@@ -18,6 +19,7 @@ const CampgroundEditForm = () => {
     const location = useLocation();
     const [campground, setCampground] = useState<Campground>(location.state.campground);
     const [files, setFiles] = useState<File[]>([]);
+    const { currentUser } = useAuth();
     const { register, handleSubmit } = useForm({
         defaultValues: {
             title: campground.title || "",
@@ -53,10 +55,8 @@ const CampgroundEditForm = () => {
 
         data.deleteImages.forEach(img => formData.append('deleteImages', img));
 
-        const sessionData = sessionStorage.getItem('currentUser')
-        const user = sessionData && JSON.parse(sessionData);
-
-        formData.append('user', JSON.stringify(user))
+        const user = currentUser;
+        formData.append('user', JSON.stringify(user));
 
         axios.put(`http://localhost:8080/api/campgrounds/${id}`, formData)
             .then(res => console.log(res))

@@ -8,7 +8,7 @@ const upload = multer({ storage });
 
 router.route('/')
     .get(getCampgrounds)
-    .post(isLoggedIn, upload.array('images'), validateCampground, createCampground);
+    .post(upload.array('images'), isLoggedIn, validateCampground, createCampground);
 
 router.route('/:id')
     .get(getCampById)

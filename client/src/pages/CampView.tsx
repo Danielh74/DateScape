@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Campground } from "../models/Campground";
 import { reviewSrevice } from "../services/reviewService";
 import { campgroundsService } from "../services/campgroundService";
+import useAuth from "../hooks/useAuth";
 
 interface ReviewProp {
     rating: number;
@@ -13,6 +14,7 @@ const CampView = () => {
     const { id } = useParams();
     const [campground, setCampground] = useState<Campground>();
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
 
     useEffect(() => {
         const fetchCamp = () => {
@@ -53,6 +55,15 @@ const CampView = () => {
 
     const handleEditCamp = () => {
         navigate(`edit`, { state: { campground } });
+    }
+
+    const handleDeleteCamp = () => {
+        if (id && currentUser) {
+            campgroundsService.deleteCampground(id, currentUser).then(() => {
+                navigate('/campgrounds');
+            })
+        }
+
     }
 
     return (
@@ -102,43 +113,47 @@ const CampView = () => {
                             Submitted by {campground.author.username}
                         </li>
                     </ul>
-                    {/* <% if (currentUser && currentUser._id.equals(campground.author._id)) { %> */}
-                    <div className="card-body">
-                        <button onClick={handleEditCamp} className="btn btn-info">Edit</button>
-                        <form className="d-inline">
-                            <button className="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
+                    {currentUser && currentUser._id === campground.author._id &&
+                        <div className="card-body">
+                            <button onClick={handleEditCamp} className="btn btn-info">Edit</button>
+                            <form className="d-inline">
+                                <button className="btn btn-danger" onClick={handleDeleteCamp}>Delete</button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
 
             <div className="col-3">
-                {/* <% if (currentUser) { %> */}
-                <h2>Leave a Review</h2>
-                <form className="needs-validation mb-2" onSubmit={(e) => { handleCreateReview(e) }} noValidate>
-                    <div>
-                        <fieldset className="starability-basic">
-                            <input type="radio" id="first-rate1" name="rating" value="1" />
-                            <label htmlFor="first-rate1" title="Terrible">1 star</label>
-                            <input type="radio" id="first-rate2" name="rating" value="2" />
-                            <label htmlFor="first-rate2" title="Not good">2 stars</label>
-                            <input type="radio" id="first-rate3" name="rating" value="3" />
-                            <label htmlFor="first-rate3" title="Average">3 stars</label>
-                            <input type="radio" id="first-rate4" name="rating" value="4" />
-                            <label htmlFor="first-rate4" title="Very good">4 stars</label>
-                            <input type="radio" id="first-rate5" name="rating" value="5" defaultChecked />
-                            <label htmlFor="first-rate5" title="Amazing">5 stars</label>
-                        </fieldset>
-                    </div>
-                    <div className="mb-2">
-                        <label className="form-label" htmlFor="body">Review</label>
-                        <textarea className="form-control" name="body" id="body" required></textarea>
-                        <div className="invalid-feedback">
-                            Can't send empty.
-                        </div>
-                    </div>
-                    <button className="btn btn-success">Submit</button>
-                </form>
+                {currentUser &&
+                    <>
+                        <h2>Leave a Review</h2>
+                        <form className="needs-validation mb-2" onSubmit={(e) => { handleCreateReview(e) }} noValidate>
+                            <div>
+                                <fieldset className="starability-basic">
+                                    <input type="radio" id="first-rate1" name="rating" value="1" />
+                                    <label htmlFor="first-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="first-rate2" name="rating" value="2" />
+                                    <label htmlFor="first-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="first-rate3" name="rating" value="3" />
+                                    <label htmlFor="first-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="first-rate4" name="rating" value="4" />
+                                    <label htmlFor="first-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="first-rate5" name="rating" value="5" defaultChecked />
+                                    <label htmlFor="first-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+                            </div>
+                            <div className="mb-2">
+                                <label className="form-label" htmlFor="body">Review</label>
+                                <textarea className="form-control" name="body" id="body" required></textarea>
+                                <div className="invalid-feedback">
+                                    Can't send empty.
+                                </div>
+                            </div>
+                            <button className="btn btn-success">Submit</button>
+                        </form>
+                    </>
+                }
                 {campground.reviews.map(review =>
                     <div key={review._id} className="card mb-2">
                         <div className="card-body">
@@ -151,9 +166,9 @@ const CampView = () => {
                             <p className="card-text text-body-secondary">
                                 {review.author.username}
                             </p>
-                            {/* (currentUser && currentUser._id.equals(review.author._id))  */}
-                            <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
-
+                            {(currentUser && (currentUser._id === review.author._id)) &&
+                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                            }
                         </div>
                     </div>
                 )
