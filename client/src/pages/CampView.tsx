@@ -68,9 +68,9 @@ const CampView = () => {
 
     const handleDeleteCamp = () => {
         if (id) {
-            deleteCampground(id).then(() => {
-                navigate(`/campgrounds`);
-            })
+            deleteCampground(id).then((res) => {
+                console.log(res)
+            }).catch(e => console.log(e))
         }
 
     }

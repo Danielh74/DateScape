@@ -6,6 +6,7 @@ const maptilerClient = require('@maptiler/client');
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
+    console.log(req.user)
     const campgrounds = await Campground.find(
         req.query.campName
             ? { title: { $regex: req.query.campName, $options: 'i' } }
