@@ -12,7 +12,7 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
             ? { title: { $regex: req.query.campName, $options: 'i' } }
             : {}
     );
-    res.send({ campgrounds, user: req.user });
+    res.send({ campgrounds, user: req.user, auth: res.auth });
 });
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
@@ -26,7 +26,7 @@ module.exports.createCampground = handleAsyncError(async (req, res) => {
     });
     await newCampground.save();
     res.send({ newCampground, message: 'Campground was created' });
-})
+});
 
 module.exports.getCampById = handleAsyncError(async (req, res) => {
     const { id } = req.params;

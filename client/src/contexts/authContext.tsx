@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from '../models/User'
+import { checkAuth, logoutUser } from "../services/authService";
 type AuthContextProps = {
     currentUser: User | null,
     handleLogin: (userData: User) => void,
@@ -21,24 +22,27 @@ function AuthProvider({ children }: Props) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const sessionData = sessionStorage.getItem('currentUser');
-        if (sessionData) {
-            setCurrentUser(JSON.parse(sessionData))
-        } else {
+        checkAuth().then(res => {
+            console.log(res)
+            setCurrentUser(res.data.user)
+        }).catch(err => {
+            console.log(err);
             setCurrentUser(null)
-        }
+        })
     }, []);
 
     const handleLogin = (userData: User) => {
-        sessionStorage.setItem('currentUser', JSON.stringify(userData));
+        sessionStorage.setItem('loggedIn', 'true');
         setCurrentUser(userData);
     };
 
     const handleLogout = () => {
-        if (sessionStorage.getItem('currentUser')) {
-            sessionStorage.removeItem('currentUser');
-            setCurrentUser(null)
-        }
+        logoutUser().then(() => {
+            setCurrentUser(null);
+            sessionStorage.removeItem('loggedIn');
+        }).catch(err => {
+            console.log(err);
+        });
     };
 
     return <AuthContext.Provider value={{ currentUser, handleLogin, handleLogout }}>{children}</AuthContext.Provider>

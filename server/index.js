@@ -13,6 +13,7 @@ const localStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
+const { validateAuthenticated } = require('./middleware');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
 const db = mongoose.connection;
@@ -42,7 +43,6 @@ app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 
 app.use('/api', authRouter)
 app.use('/api/campgrounds', campgroundsRouter);

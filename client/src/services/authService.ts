@@ -18,5 +18,5 @@ const api = axios.create({
 
 export const registerUser = (registerData: registerProps) => api.post('/register', registerData);
 export const loginUser = (loginData: loginProps) => api.post('/login', loginData);
-export const allowedToAccess = () => api.get(`/check`);
+export const checkAuth = () => api.get(`/check`);
 export const logoutUser = () => api.get('/logout');

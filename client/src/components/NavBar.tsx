@@ -2,7 +2,6 @@ import { BaseSyntheticEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import CampgroundCreateModal from "../modals/CampgroundCreateModal";
-import { allowedToAccess } from "../services/authService";
 
 const NavBar = () => {
     const { currentUser, handleLogout } = useAuth();
@@ -10,15 +9,9 @@ const NavBar = () => {
     const [show, setShow] = useState(false);
 
     const handleShow = () => {
-        allowedToAccess().then(res => {
-            if (res.status === 200) {
-                console.log(res.data)
-                setShow(true);
-            }
-
-        }).catch(err => {
-            console.log('Not auth ' + err)
-        })
+        if (currentUser) {
+            setShow(true);
+        }
     }
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
