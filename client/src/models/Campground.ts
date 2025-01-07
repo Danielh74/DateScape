@@ -9,7 +9,7 @@ export interface CampgroundList {
     location: string,
     geometry: {
         type: string,
-        coordinates: number[]
+        coordinates: [number, number]
     },
     images: CampImage[],
     author: string,
@@ -24,7 +24,7 @@ export interface Campground {
     location: string,
     geometry: {
         type: string,
-        coordinates: number
+        coordinates: [number, number]
     },
     images: CampImage[],
     author: User,

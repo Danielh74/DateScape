@@ -4,7 +4,6 @@ import { Campground } from "../models/Campground";
 import { createReview, deleteReview } from "../services/reviewService";
 import { getCampground, deleteCampground } from "../services/campgroundService";
 import useAuth from "../hooks/useAuth";
-import { Map } from "@maptiler/sdk";
 import CampMap from "../components/CampMap";
 
 interface ReviewProp {
