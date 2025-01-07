@@ -21,7 +21,7 @@ const Campgrounds = () => {
         <div>
             <ClusterMap campgrounds={camps} />
             {camps.map(camp =>
-                <div key={camp.id} className="card mb-3">
+                <div key={camp.id} className="card my-3">
                     <div className="row">
                         <div className="col-12 col-md-4">
                             <img className="img-fluid rounded-start" src={camp.images[0].url}

@@ -1,6 +1,13 @@
 .map-wrap {
     position: relative;
     width: 100%;
+    height: 300px;
+    /* calculate height of the screen minus the heading */
+}
+
+.cluster-map-wrap {
+    position: relative;
+    width: 100%;
     height: 500px;
     /* calculate height of the screen minus the heading */
 }

@@ -77,8 +77,10 @@ const CampView = () => {
 
     return (
         campground ? <div className="row my-3">
-            <CampMap campground={campground} />
-            <div className="col-5">
+            <div className="col-3">
+                <CampMap campground={campground} />
+            </div>
+            <div className="col-6">
                 <div className="card">
                     <div id="campgroundCarousel" className="carousel slide">
                         <div className="carousel-inner">

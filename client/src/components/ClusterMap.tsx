@@ -23,12 +23,26 @@ export default function ClusterMap({ campgrounds }: Props) {
                 center: [-103.59179687498357, 40.66995747013945],
                 zoom: 3
             });
+
             map.current.on('load', function () {
                 map.current?.addSource('campgrounds', {
                     type: 'geojson',
                     data: {
                         type: 'FeatureCollection',
-                        features: []
+                        features: campgrounds.map(camp => ({
+                            type: 'Feature',
+                            properties: {
+                                popUpMarkup: JSON.stringify({
+                                    id: camp.id,
+                                    title: camp.title,
+                                    location: camp.location,
+                                }),
+                            },
+                            geometry: {
+                                type: 'Point',
+                                coordinates: camp.geometry.coordinates,
+                            },
+                        })),
                     },
                     cluster: true,
                     clusterMaxZoom: 14,
@@ -189,12 +203,10 @@ export default function ClusterMap({ campgrounds }: Props) {
                         .setHTML(popUpText)
                         .addTo(map.current as maptilersdk.Map);
                 });
-
-
             });
         }
         console.log(map.current?.getSource('campgrounds'))
-    }, []);
+    }, [campgrounds]);
 
     useEffect(() => {
         // Ensure map is initialized and source exists
@@ -227,8 +239,8 @@ export default function ClusterMap({ campgrounds }: Props) {
 
 
     return (
-        <div className="map-wrap">
-            <div ref={mapContainer} className="map" />
+        <div className="cluster-map-wrap">
+            <div ref={mapContainer} className="map rounded-bottom" />
         </div>
     );
 }
