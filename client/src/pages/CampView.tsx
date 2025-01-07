@@ -69,7 +69,8 @@ const CampView = () => {
     const handleDeleteCamp = () => {
         if (id) {
             deleteCampground(id).then((res) => {
-                console.log(res)
+                console.log(res);
+                navigate('/campgrounds')
             }).catch(e => console.log(e))
         }
 
@@ -127,9 +128,7 @@ const CampView = () => {
                     {currentUser && currentUser._id === campground.author._id &&
                         <div className="card-body">
                             <button onClick={handleEditCamp} className="btn btn-info">Edit</button>
-                            <form className="d-inline">
-                                <button className="btn btn-danger" onClick={handleDeleteCamp}>Delete</button>
-                            </form>
+                            <button className="btn btn-danger" onClick={handleDeleteCamp}>Delete</button>
                         </div>
                     }
                 </div>

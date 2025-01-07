@@ -72,11 +72,11 @@ module.exports.editCampground = handleAsyncError(async (req, res) => {
 
 module.exports.deleteCampground = handleAsyncError(async (req, res) => {
     const { id } = req.params;
-    const campground = await Campground.findByIdAndDelete(id);
-
-    if (!campground) {
-        return res.status(404).send('Campground not found');
+    try {
+        await Campground.findByIdAndDelete(id);
+        res.status(200).send('Campground deleted successfully');
+    } catch (e) {
+        console.log(e)
+        return res.status(404).send('Error:' + e);
     }
-
-    res.status(200).send('Campground deleted successfully');
 });

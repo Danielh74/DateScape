@@ -48,7 +48,7 @@ export default function ClusterMap({ campgrounds }: Props) {
                     clusterMaxZoom: 14,
                     clusterRadius: 50,
                 });
-                console.log(map.current?.getSource('campgrounds'))
+
                 map.current?.addLayer({
                     id: 'clusters',
                     type: 'circle',
@@ -205,7 +205,6 @@ export default function ClusterMap({ campgrounds }: Props) {
                 });
             });
         }
-        console.log(map.current?.getSource('campgrounds'))
     }, [campgrounds]);
 
     useEffect(() => {
