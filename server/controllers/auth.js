@@ -6,7 +6,7 @@ module.exports.loginUser = handleAsyncError(async (req, res) => {
 });
 
 module.exports.checkAuthenticated = (req, res) => {
-    res.status(200).send('User is authenticated');
+    res.status(200).send({ message: 'User is authenticated', user: req.user });
 }
 
 module.exports.logoutUser = (req, res, next) => {

@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { Campground } from "../models/Campground";
 import { createReview, deleteReview } from "../services/reviewService";
@@ -6,6 +6,7 @@ import { getCampground, deleteCampground } from "../services/campgroundService";
 import useAuth from "../hooks/useAuth";
 import CampMap from "../components/CampMap";
 import CampgroundEditModal from "../modals/CampgroundEditModal";
+import { useForm } from "react-hook-form";
 
 interface ReviewProp {
     rating: number;
@@ -17,6 +18,12 @@ const CampView = () => {
     const [campground, setCampground] = useState<Campground>();
     const navigate = useNavigate();
     const { currentUser } = useAuth();
+    const { register, handleSubmit } = useForm({
+        defaultValues: {
+            rating: 5,
+            body: ""
+        }
+    })
 
     useEffect(() => {
         const fetchCamp = () => {
@@ -30,32 +37,19 @@ const CampView = () => {
         fetchCamp();
     }, [navigate, id]);
 
-    const handleCreateReview = (e: BaseSyntheticEvent) => {
-        e.preventDefault();
-
-        const form = e.target;
-        if (form.checkValidity()) {
-            const formData = new FormData(form);
-            const review: ReviewProp = {
-                rating: parseInt(formData.get('rating') as string, 10),
-                body: formData.get('body') as string
-            }
-            if (id) {
-                createReview(id, review)
-                    .then(res => {
-                        setCampground(res.data.campground);
-                    })
-            } else {
-                console.error("Campground ID is undefined");
-            }
-        } else {
-            form.classList.add('was-validated');
-        }
+    const onSubmit = (data: ReviewProp) => {
+        createReview(id, data)
+            .then(res => {
+                setCampground(res.data.campground);
+            })
     };
 
     const handleDeleteReview = (reviewId: string) => {
         deleteReview(id, reviewId)
-            .then(res => console.log(res))
+            .then(res => {
+                console.log(res);
+                setCampground(res.data.campground);
+            })
             .catch(e => console.log(e)) //Make something happpen when an error accure
     };
 
@@ -131,24 +125,24 @@ const CampView = () => {
                 {currentUser &&
                     <>
                         <h2>Leave a Review</h2>
-                        <form className="needs-validation mb-2" onSubmit={(e) => { handleCreateReview(e) }} noValidate>
+                        <form className="needs-validation mb-2" onSubmit={handleSubmit(onSubmit)}>
                             <div>
-                                <fieldset className="starability-basic">
-                                    <input type="radio" id="first-rate1" name="rating" value="1" />
+                                <fieldset className="starability-basic" >
+                                    <input type="radio" id="first-rate1" {...register('rating', { required: true })} value="1" />
                                     <label htmlFor="first-rate1" title="Terrible">1 star</label>
-                                    <input type="radio" id="first-rate2" name="rating" value="2" />
+                                    <input type="radio" id="first-rate2" {...register('rating')} value="2" />
                                     <label htmlFor="first-rate2" title="Not good">2 stars</label>
-                                    <input type="radio" id="first-rate3" name="rating" value="3" />
+                                    <input type="radio" id="first-rate3" {...register('rating')} value="3" />
                                     <label htmlFor="first-rate3" title="Average">3 stars</label>
-                                    <input type="radio" id="first-rate4" name="rating" value="4" />
+                                    <input type="radio" id="first-rate4" {...register('rating')} value="4" />
                                     <label htmlFor="first-rate4" title="Very good">4 stars</label>
-                                    <input type="radio" id="first-rate5" name="rating" value="5" defaultChecked />
+                                    <input type="radio" id="first-rate5" {...register('rating')} value="5" defaultChecked />
                                     <label htmlFor="first-rate5" title="Amazing">5 stars</label>
                                 </fieldset>
                             </div>
                             <div className="mb-2">
                                 <label className="form-label" htmlFor="body">Review</label>
-                                <textarea className="form-control" name="body" id="body" required></textarea>
+                                <textarea className="form-control" {...register('body', { required: true })} id="body"></textarea>
                                 <div className="invalid-feedback">
                                     Can't send empty.
                                 </div>

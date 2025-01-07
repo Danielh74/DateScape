@@ -3,6 +3,7 @@ import axios from "axios";
 interface ReviewProp {
     rating: number,
     body: string
+
 }
 
 const api = axios.create({
