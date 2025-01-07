@@ -13,7 +13,7 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
             : {}
     );
     res.send({ campgrounds, user: req.user });
-})
+});
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
     const newCampground = new Campground(req.body.campground);

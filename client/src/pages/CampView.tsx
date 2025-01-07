@@ -118,7 +118,7 @@ const CampView = () => {
                     </ul>
                     {currentUser && currentUser._id === campground.author._id &&
                         <div className="card-body">
-                            <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#editModal">
                                 Edit
                             </button>
                             <button className="btn btn-danger ms-2" onClick={handleDeleteCamp}>Delete</button>

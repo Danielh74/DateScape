@@ -3,7 +3,11 @@ const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
     res.send(req.user);
-})
+});
+
+module.exports.checkAuthenticated = (req, res) => {
+    res.status(200).send('User is authenticated');
+}
 
 module.exports.logoutUser = (req, res, next) => {
     req.logout(err => {

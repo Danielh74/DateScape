@@ -1,10 +1,25 @@
-import { BaseSyntheticEvent } from "react";
+import { BaseSyntheticEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import CampgroundCreateModal from "../modals/CampgroundCreateModal";
+import { allowedToAccess } from "../services/authService";
 
 const NavBar = () => {
     const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
+    const [show, setShow] = useState(false);
+
+    const handleShow = () => {
+        allowedToAccess().then(res => {
+            if (res.status === 200) {
+                console.log(res.data)
+                setShow(true);
+            }
+
+        }).catch(err => {
+            console.log('Not auth ' + err)
+        })
+    }
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
@@ -27,7 +42,9 @@ const NavBar = () => {
                     <div className="navbar-nav">
                         <NavLink className="nav-link" to="/">Home</NavLink>
                         <NavLink className="nav-link" to="/campgrounds">campgrounds</NavLink>
-                        <NavLink className="nav-link" to="/campground/new">New Campground</NavLink>
+                        <button className="nav-link" onClick={handleShow}>
+                            New Campground
+                        </button>
                     </div>
                     <form className="d-flex ms-auto" onSubmit={handleSubmit} role="search">
                         <input className="form-control me-2" name="campName" type="search" placeholder="Search" aria-label="Search" />
@@ -45,6 +62,9 @@ const NavBar = () => {
                     </div>
                 </div>
             </div>
+            <CampgroundCreateModal
+                show={show}
+                onClose={() => setShow(false)} />
         </nav>
     )
 }
