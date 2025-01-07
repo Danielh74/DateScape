@@ -9,12 +9,23 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
     campground.reviews.push(review);
     await review.save();
     await campground.save();
-    res.status(201).send({ campground });
+    const newCampground = await Campground.findById(req.params.id)
+        .populate({
+            path: 'reviews',
+            populate: { path: 'author' }
+        })
+        .populate('author');
+    res.status(201).send({ campground: newCampground });
 });
 
 module.exports.deleteReview = handleAsyncError(async (req, res) => {
     const { id, reviewId } = req.params; // `id` is the campground ID, `reviewId` is the review ID
     await Review.findByIdAndDelete(reviewId);
-    const updatedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true });
+    const updatedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true })
+        .populate({
+            path: 'reviews',
+            populate: { path: 'author' }
+        })
+        .populate('author');
     res.status(200).send({ message: 'Review deleted successfully', campground: updatedCampground });
 });

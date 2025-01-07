@@ -16,6 +16,7 @@ interface ReviewProp {
 const CampView = () => {
     const { id } = useParams() as { id: string };
     const [campground, setCampground] = useState<Campground>();
+    const [show, setShow] = useState(false);
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { register, handleSubmit } = useForm({
@@ -48,6 +49,7 @@ const CampView = () => {
         deleteReview(id, reviewId)
             .then(res => {
                 console.log(res);
+                console.log(currentUser);
                 setCampground(res.data.campground);
             })
             .catch(e => console.log(e)) //Make something happpen when an error accure
@@ -112,7 +114,7 @@ const CampView = () => {
                     </ul>
                     {currentUser && currentUser._id === campground.author._id &&
                         <div className="card-body">
-                            <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#editModal">
+                            <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
                                 Edit
                             </button>
                             <button className="btn btn-danger ms-2" onClick={handleDeleteCamp}>Delete</button>
@@ -172,7 +174,10 @@ const CampView = () => {
 
                 }
             </div>
-            <CampgroundEditModal campground={campground} />
+            <CampgroundEditModal
+                show={show}
+                onClose={() => setShow(false)}
+                campground={campground} />
         </div >
             :
             <div>

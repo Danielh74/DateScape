@@ -2,6 +2,7 @@ import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 import { useState } from "react";
+import { Modal } from "react-bootstrap";
 
 type CampForm = {
     title: string,
@@ -13,9 +14,11 @@ type CampForm = {
 
 type Props = {
     campground: Campground
+    show: boolean,
+    onClose: () => void
 }
 
-const CampgroundEditModal = ({ campground }: Props) => {
+const CampgroundEditModal = ({ campground, show, onClose }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
     const { register, handleSubmit } = useForm({
         defaultValues: {
@@ -55,73 +58,73 @@ const CampgroundEditModal = ({ campground }: Props) => {
     };
 
     return (
-        <div className="modal fade" id="editModal" tabIndex={-1} aria-labelledby="editModal">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="editModal">Edit Campground</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row">
-                            <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" encType="multipart/form-data">
-                                <div className="mb-2">
-                                    <label className="form-label" htmlFor="title">Title</label>
-                                    <input className="form-control" type="text" {...register("title", { required: true })} id="title" />
-                                    <div className="invalid-feedback">
-                                        Title is required.
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label" htmlFor="location">Location</label>
-                                    <input className="form-control" type="text" {...register("location", { required: true })} id="location" />
-                                    <div className="invalid-feedback">
-                                        Location is required.
-                                    </div>
-                                </div>
-                                <div className=" mb-2">
-                                    <label htmlFor="price">Price</label>
-                                    <div className="input-group">
-                                        <span className="input-group-text">$</span>
-                                        <input type="number" className="form-control" placeholder="0.00" id="price" {...register("price", { required: true, min: 0.01 })} />
-                                        <div className="invalid-feedback">
-                                            Price is required.
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label" htmlFor="description">Description</label>
-                                    <textarea className="form-control" id="description"
-                                        {...register('description', { required: true })}></textarea>
-                                    <div className="invalid-feedback">
-                                        Description is required.
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label" htmlFor="image">Add images</label>
-                                    <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
-                                </div>
-                                <div>
-                                    {campground?.images.map((img, i) =>
-                                        <div className="row" key={img._id}>
-                                            <div className="col">
-                                                <img src={img.url} className="img-thumbnail row" style={{ width: 75 }} alt="" />
-                                                <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
-                                                <label htmlFor={`img-${i}`}>Delete?</label>
-                                            </div>
-
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="row border-top mt-2">
-                                    <button className="btn btn-success col-4 offset-4 mt-2" data-bs-dismiss="modal">Save changes</button>
-                                </div>
-                            </form>
+        <Modal
+            show={show}
+            onHide={onClose}
+            backdrop="static"
+            keyboard={false}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>Edit Campground </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="row">
+                    <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" encType="multipart/form-data">
+                        <div className="mb-2">
+                            <label className="form-label" htmlFor="title">Title</label>
+                            <input className="form-control" type="text" {...register("title", { required: true })} id="title" />
+                            <div className="invalid-feedback">
+                                Title is required.
+                            </div>
                         </div>
-                    </div>
+                        <div className="mb-2">
+                            <label className="form-label" htmlFor="location">Location</label>
+                            <input className="form-control" type="text" {...register("location", { required: true })} id="location" />
+                            <div className="invalid-feedback">
+                                Location is required.
+                            </div>
+                        </div>
+                        <div className=" mb-2">
+                            <label htmlFor="price">Price</label>
+                            <div className="input-group">
+                                <span className="input-group-text">$</span>
+                                <input type="number" className="form-control" placeholder="0.00" id="price" {...register("price", { required: true, min: 0.01 })} />
+                                <div className="invalid-feedback">
+                                    Price is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mb-2">
+                            <label className="form-label" htmlFor="description">Description</label>
+                            <textarea className="form-control" id="description"
+                                {...register('description', { required: true })}></textarea>
+                            <div className="invalid-feedback">
+                                Description is required.
+                            </div>
+                        </div>
+                        <div className="mb-2">
+                            <label className="form-label" htmlFor="image">Add images</label>
+                            <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
+                        </div>
+                        <div>
+                            {campground?.images.map((img, i) =>
+                                <div className="row" key={img._id}>
+                                    <div className="col">
+                                        <img src={img.url} className="img-thumbnail row" style={{ width: 75 }} alt="" />
+                                        <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
+                                        <label htmlFor={`img-${i}`}>Delete?</label>
+                                    </div>
+
+                                </div>
+                            )}
+                        </div>
+                        <div className="row border-top mt-2">
+                            <button className="btn btn-success col-4 offset-4 mt-2" data-bs-dismiss="modal">Save changes</button>
+                        </div>
+                    </form>
                 </div>
-            </div>
-        </div>
+            </Modal.Body>
+        </Modal>
     );
 };
 
