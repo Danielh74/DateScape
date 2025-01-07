@@ -4,6 +4,8 @@ import { Campground } from "../models/Campground";
 import { createReview, deleteReview } from "../services/reviewService";
 import { getCampground, deleteCampground } from "../services/campgroundService";
 import useAuth from "../hooks/useAuth";
+import { Map } from "@maptiler/sdk";
+import CampMap from "../components/CampMap";
 
 interface ReviewProp {
     rating: number;
@@ -76,7 +78,7 @@ const CampView = () => {
 
     return (
         campground ? <div className="row my-3">
-            <div id="map" className="col-4"></div>
+            <CampMap campground={campground} />
             <div className="col-5">
                 <div className="card">
                     <div id="campgroundCarousel" className="carousel slide">
