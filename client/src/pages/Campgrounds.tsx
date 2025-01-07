@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { CampgroundList } from "../models/Campground";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getAllCampgrounds } from "../services/campgroundService";
 import ClusterMap from '../components/ClusterMap';
 
@@ -20,7 +20,7 @@ const Campgrounds = () => {
     return (
         <div>
             <ClusterMap campgrounds={camps} />
-            {camps.map(camp =>
+            {camps.length > 0 && camps.map(camp =>
                 <div key={camp.id} className="card my-3">
                     <div className="row">
                         <div className="col-12 col-md-4">
@@ -38,9 +38,9 @@ const Campgrounds = () => {
                                 <p className="card-text mb-0 col-12">
                                     {camp.description}
                                 </p>
-                                <NavLink className="btn btn-primary col-4 align-self-end" to={`/campground/${camp.id}`}>
+                                <Link className="btn btn-primary col-4 align-self-end" to={`/campground/${camp.id}`}>
                                     View {camp.title}
-                                </NavLink>
+                                </Link>
                             </div>
                         </div>
                     </div>

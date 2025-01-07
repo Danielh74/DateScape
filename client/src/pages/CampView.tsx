@@ -5,6 +5,7 @@ import { createReview, deleteReview } from "../services/reviewService";
 import { getCampground, deleteCampground } from "../services/campgroundService";
 import useAuth from "../hooks/useAuth";
 import CampMap from "../components/CampMap";
+import CampgroundEditModal from "../modals/CampgroundEditModal";
 
 interface ReviewProp {
     rating: number;
@@ -12,22 +13,22 @@ interface ReviewProp {
 }
 
 const CampView = () => {
-    const { id } = useParams();
+    const { id } = useParams() as { id: string };
     const [campground, setCampground] = useState<Campground>();
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
     useEffect(() => {
         const fetchCamp = () => {
-            if (id) {
-                getCampground(id)
-                    .then(res => setCampground(res.data.campground))
-                    .catch(e => console.log(e));
-            }
-            //Make a component that pop up when the id is undefined
+            getCampground(id)
+                .then(res => setCampground(res.data.campground))
+                .catch(err => {
+                    console.log(err.response);
+                    navigate('/campgrounds')
+                });
         }
         fetchCamp();
-    }, [id]);
+    }, [navigate, id]);
 
     const handleCreateReview = (e: BaseSyntheticEvent) => {
         e.preventDefault();
@@ -53,26 +54,16 @@ const CampView = () => {
     };
 
     const handleDeleteReview = (reviewId: string) => {
-        if (id) {
-            deleteReview(id, reviewId)
-                .then(res => console.log(res))
-                .catch(e => console.log(e)) //Make something happpen when an error accure
-        } else {
-            console.error("Campground ID is undefined");
-        }
+        deleteReview(id, reviewId)
+            .then(res => console.log(res))
+            .catch(e => console.log(e)) //Make something happpen when an error accure
     };
 
-    const handleEditCamp = () => {
-        navigate(`edit`, { state: { campground } });
-    }
-
     const handleDeleteCamp = () => {
-        if (id) {
-            deleteCampground(id).then((res) => {
-                console.log(res);
-                navigate('/campgrounds')
-            }).catch(e => console.log(e))
-        }
+        deleteCampground(id).then((res) => {
+            console.log(res);
+            navigate('/campgrounds')
+        }).catch(e => console.log(e))
 
     }
 
@@ -87,7 +78,7 @@ const CampView = () => {
                         <div className="carousel-inner">
                             {campground?.images.map(img =>
                                 <div key={img._id} className="carousel-item active">
-                                    <img src={img.url} className="rounded-top w-100" alt="" />
+                                    <img src={img.url} style={{ height: 300 }} className="rounded-top w-100" alt="" />
                                 </div>
                             )}
                         </div>
@@ -127,8 +118,10 @@ const CampView = () => {
                     </ul>
                     {currentUser && currentUser._id === campground.author._id &&
                         <div className="card-body">
-                            <button onClick={handleEditCamp} className="btn btn-info">Edit</button>
-                            <button className="btn btn-danger" onClick={handleDeleteCamp}>Delete</button>
+                            <button type="button" className="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Edit
+                            </button>
+                            <button className="btn btn-danger ms-2" onClick={handleDeleteCamp}>Delete</button>
                         </div>
                     }
                 </div>
@@ -185,14 +178,12 @@ const CampView = () => {
 
                 }
             </div>
+            <CampgroundEditModal campground={campground} />
         </div >
             :
             <div>
                 No Camp found
             </div>
-
-
-
     )
 }
 

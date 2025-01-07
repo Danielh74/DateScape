@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { getCampground } from "../services/campgroundService";
 import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
+import CampgroundEditModal from "../modals/CampgroundEditModal";
 
 type CampForm = {
     title: string,
@@ -15,29 +16,39 @@ type CampForm = {
 }
 
 const CampgroundEditForm = () => {
-    const { id } = useParams();
-    const location = useLocation();
-    const [campground, setCampground] = useState<Campground>(location.state.campground);
+    const { id } = useParams() as { id: string };
+    const [campground, setCampground] = useState<Campground>();
     const [files, setFiles] = useState<File[]>([]);
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
+    const [formValues, setFormValues] = useState({
+        title: "",
+        location: "",
+        price: 0.01,
+        description: "",
+        deleteImages: []
+    })
     const { register, handleSubmit } = useForm({
-        defaultValues: {
-            title: campground.title || "",
-            location: campground.location || "",
-            price: campground.price || 0.01,
-            description: campground.description || "",
-            deleteImages: []
-        }
+        defaultValues: formValues
     });
 
     useEffect(() => {
-        if (campground === null && id !== undefined) {
-            getCampground(id)
-                .then(res => {
-                    setCampground(res.data.campground);
+        getCampground(id)
+            .then(res => {
+                setCampground(res.data.campground);
+                const camp = res.data.campground;
+                setFormValues({
+                    title: camp.title,
+                    location: "",
+                    price: 0.01,
+                    description: "",
+                    deleteImages: []
                 })
-        }
-    }, [campground, id]);
+            }).catch(err => {
+                console.log(err.response);
+                navigate('/campgrounds')
+            })
+    }, [navigate, id]);
 
     const onSubmit = (data: CampForm) => {
         const formData = new FormData();
@@ -111,7 +122,7 @@ const CampgroundEditForm = () => {
                         <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
                     </div>
                     <div>
-                        {campground.images.map((img, i) =>
+                        {campground?.images.map((img, i) =>
                             <span key={img._id}>
                                 <img src={img.url} alt="" />
                                 <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
@@ -123,8 +134,12 @@ const CampgroundEditForm = () => {
                         <button className="btn btn-success">Apply Changes</button>
                     </div>
                 </form>
-                <a href={`/campground/${campground.id}`}>Back To Campground</a>
+                <a href={`/campground/${campground?.id}`}>Back To Campground</a>
             </div>
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Launch demo modal
+            </button>
+            <CampgroundEditModal campground={campground} />
         </div>
     )
 }
