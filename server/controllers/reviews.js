@@ -19,7 +19,7 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
 });
 
 module.exports.deleteReview = handleAsyncError(async (req, res) => {
-    const { id, reviewId } = req.params; // `id` is the campground ID, `reviewId` is the review ID
+    const { id, reviewId } = req.params;
     await Review.findByIdAndDelete(reviewId);
     const updatedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true })
         .populate({

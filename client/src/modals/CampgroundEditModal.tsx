@@ -20,7 +20,7 @@ type Props = {
 
 const CampgroundEditModal = ({ campground, show, onClose }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit } = useForm<CampForm>({
         defaultValues: {
             title: campground.title,
             location: campground.location,

@@ -5,7 +5,6 @@ import Campgrounds from "../pages/Campgrounds";
 import CampView from "../pages/CampView";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
-import CampgroundEditForm from "../pages/CampgroundEditForm";
 
 export const router = createBrowserRouter([
     { path: "/", element: <Home /> },
@@ -14,7 +13,6 @@ export const router = createBrowserRouter([
         children: [
             { path: "/campgrounds", element: <Campgrounds /> },
             { path: "/campground/:id", element: <CampView /> },
-            { path: "/campground/:id/edit", element: <CampgroundEditForm /> },
             { path: "/login", element: <LoginPage /> },
             { path: "/register", element: <RegisterPage /> },
             // { path: "*", element: <NotFound /> }

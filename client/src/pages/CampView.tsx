@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import CampMap from "../components/CampMap";
 import CampgroundEditModal from "../modals/CampgroundEditModal";
 import { useForm } from "react-hook-form";
+import '../styles/starts.css';
 
 interface ReviewProp {
     rating: number;
@@ -19,7 +20,7 @@ const CampView = () => {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit, reset } = useForm<ReviewProp>({
         defaultValues: {
             rating: 5,
             body: ""
@@ -42,6 +43,7 @@ const CampView = () => {
         createReview(id, data)
             .then(res => {
                 setCampground(res.data.campground);
+                reset();
             })
     };
 
@@ -51,6 +53,7 @@ const CampView = () => {
                 console.log(res);
                 console.log(currentUser);
                 setCampground(res.data.campground);
+                reset();
             })
             .catch(e => console.log(e)) //Make something happpen when an error accure
     };
@@ -129,7 +132,7 @@ const CampView = () => {
                         <h2>Leave a Review</h2>
                         <form className="needs-validation mb-2" onSubmit={handleSubmit(onSubmit)}>
                             <div>
-                                <fieldset className="starability-basic" >
+                                <fieldset className="starability-heart" >
                                     <input type="radio" id="first-rate1" {...register('rating', { required: true })} value="1" />
                                     <label htmlFor="first-rate1" title="Terrible">1 star</label>
                                     <input type="radio" id="first-rate2" {...register('rating')} value="2" />
