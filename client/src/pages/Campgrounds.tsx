@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { CampgroundList } from "../models/Campground";
 import { useLocation } from "react-router-dom";
 import { getAllCampgrounds } from "../services/campgroundService";
+import ClusterMap from '../components/ClusterMap';
 
 const Campgrounds = () => {
     const [camps, setCamps] = useState<CampgroundList[]>([]);
@@ -18,7 +19,7 @@ const Campgrounds = () => {
 
     return (
         <div>
-            <div id="map" className="mb-3 rounded"></div>
+            <ClusterMap campgrounds={camps} />
             {camps.map(camp =>
                 <div key={camp.id} className="card mb-3">
                     <div className="row">
