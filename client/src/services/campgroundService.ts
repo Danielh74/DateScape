@@ -8,5 +8,5 @@ const api = axios.create({
 export const getAllCampgrounds = (campName: string | null) => api.get(`/campgrounds${campName ? `?campName=${campName}` : ''}`);
 export const getCampground = (id: string) => api.get(`/campgrounds/${id}`);
 export const postCampground = (campData: FormData) => api.post('/campgrounds', campData);
-export const updateCampground = (id: string) => api.put(`/campgrounds/${id}`,);
+export const updateCampground = (id: string, campData: FormData) => api.put(`/campgrounds/${id}`, campData);
 export const deleteCampground = (id: string) => api.delete(`/campgrounds/${id}`);

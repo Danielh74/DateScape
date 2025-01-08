@@ -1,8 +1,8 @@
 import { Campground } from "../models/Campground";
 import { useForm } from 'react-hook-form'
-import axios from "axios";
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
+import { updateCampground } from "../services/campgroundService";
 
 type CampForm = {
     title: string,
@@ -15,10 +15,11 @@ type CampForm = {
 type Props = {
     campground: Campground
     show: boolean,
-    onClose: () => void
+    onClose: () => void,
+    onUpdate: (campground: Campground) => void
 }
 
-const CampgroundEditModal = ({ campground, show, onClose }: Props) => {
+const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
     const { register, handleSubmit } = useForm<CampForm>({
         defaultValues: {
@@ -44,11 +45,14 @@ const CampgroundEditModal = ({ campground, show, onClose }: Props) => {
         };
         formData.append('campground', JSON.stringify(campgroundData));
 
-        data.deleteImages.forEach(img => formData.append('deleteImages', img));
+        data.deleteImages.forEach(img => formData.append('deleteImages[]', img));
 
-        axios.put(`http://localhost:8080/api/campgrounds/${campground.id}`, formData)
-            .then(res => console.log(res))
-            .catch(err => console.error(err));
+        updateCampground(campground.id, formData).then(res => {
+            onUpdate(res.data.campground);
+            onClose();
+        }).catch(err => {
+            console.log(err);
+        })
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +115,7 @@ const CampgroundEditModal = ({ campground, show, onClose }: Props) => {
                                 <div className="row" key={img._id}>
                                     <div className="col">
                                         <img src={img.url} className="img-thumbnail row" style={{ width: 75 }} alt="" />
-                                        <input type="checkbox" {...register('deleteImages')} value={img.name} id={`img-${i}`}></input>
+                                        <input type="checkbox" {...register('deleteImages')} value={img.filename} id={`img-${i}`}></input>
                                         <label htmlFor={`img-${i}`}>Delete?</label>
                                     </div>
 

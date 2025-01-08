@@ -4,8 +4,10 @@ const Campground = require('./models/campground');
 const Review = require('./models/review');
 
 module.exports.isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) return next();
-    res.status(401).send('Not authorized');
+    if (!req.isAuthenticated()) {
+        return res.status(401).send('Not authorized');
+    }
+    next();
 };
 
 module.exports.storeOriginalPath = (req, res, next) => {

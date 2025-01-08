@@ -6,7 +6,6 @@ const maptilerClient = require('@maptiler/client');
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
-    console.log(req.user)
     const campgrounds = await Campground.find(
         req.query.campName
             ? { title: { $regex: req.query.campName, $options: 'i' } }
@@ -16,8 +15,13 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
 });
 
 module.exports.createCampground = handleAsyncError(async (req, res) => {
+    const { title, location } = req.body.campground;
+    const isExist = await Campground.exists({ title: title, location: location });
+    if (isExist) {
+        return res.status(400).send("Campground with this name at this location already exists")
+    }
     const newCampground = new Campground(req.body.campground);
-    const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
+    const geoData = await maptilerClient.geocoding.forward(location, { limit: 1 });
     Object.assign(newCampground, {
         ...newCampground,
         geometry: geoData.features[0].geometry,
@@ -44,17 +48,15 @@ module.exports.getCampById = handleAsyncError(async (req, res) => {
 
 module.exports.editCampground = handleAsyncError(async (req, res) => {
     const { id } = req.params;
-    const currentCamp = await Campground.findById(id);
+    const currentCamp = await Campground.findById(id).populate({
+        path: 'reviews',
+        populate: { path: 'author' }
+    })
+        .populate('author');;
     const geoData = await maptilerClient.geocoding.forward(req.body.campground.location, { limit: 1 });
     const formData = req.body.campground;
-    const newImages = req.files.map(img => ({ url: img.path, name: img.name }));
+    const newImages = req.files.map(img => ({ url: img.path, filename: img.filename }));
     if (req.body.deleteImages) {
-        // const campImages = [...currentCamp.images];
-        // const imagesToDelete = req.body.deleteImages;
-        // const updatedCampImages = campImages.filter(image =>
-        //     !imagesToDelete.some(img => img.filename === image.name)
-        // );
-        // currentCamp.images = updatedCampImages;
         for (const filename of req.body.deleteImages) {
             await cloudinary.uploader.destroy(filename);
         }

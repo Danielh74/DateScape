@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
+const { cloudinary } = require('../cloudinary');
 const Schema = mongoose.Schema;
 
 const ImageSchema = new Schema({
     url: String,
-    name: String
+    filename: String
 });
 
 ImageSchema.virtual('thumbnail').get(function () {
@@ -51,7 +52,11 @@ CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
 
 CampgroundSchema.post('findOneAndDelete', async function (campground) {
     if (campground) {
-        await Review.deleteMany({ _id: { $in: campground.reviews } })
+        await Review.deleteMany({ _id: { $in: campground.reviews } });
+
+        for (const img of campground.images) {
+            await cloudinary.uploader.destroy(img.filename);
+        }
     }
 })
 

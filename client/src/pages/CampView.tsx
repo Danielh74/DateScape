@@ -180,7 +180,8 @@ const CampView = () => {
             <CampgroundEditModal
                 show={show}
                 onClose={() => setShow(false)}
-                campground={campground} />
+                campground={campground}
+                onUpdate={(updatedCamp: Campground) => setCampground(updatedCamp)} />
         </div >
             :
             <div>

@@ -34,6 +34,6 @@ export interface Campground {
 interface CampImage {
     _id: string,
     url: string,
-    name: string,
+    filename: string,
     thumbnail: string
 };
