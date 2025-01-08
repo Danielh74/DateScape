@@ -2,7 +2,7 @@ const User = require('../models/user');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
-    res.send(req.user);
+    res.status(200).send(req.user);
 });
 
 module.exports.checkAuthenticated = (req, res) => {
@@ -11,8 +11,10 @@ module.exports.checkAuthenticated = (req, res) => {
 
 module.exports.logoutUser = (req, res, next) => {
     req.logout(err => {
-        if (err) return res.status(500).send(err.message);
-        res.send('Logged out');
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.status(200).send('Logged out');
     });
 };
 
