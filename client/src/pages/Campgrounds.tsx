@@ -3,6 +3,7 @@ import { Campground } from "../models/Campground";
 import { Link, useLocation } from "react-router-dom";
 import { getAllCampgrounds } from "../services/campgroundService";
 import ClusterMap from '../components/ClusterMap';
+import { toast } from 'react-toastify';
 
 const Campgrounds = () => {
     const [camps, setCamps] = useState<Campground[]>([]);
@@ -13,8 +14,8 @@ const Campgrounds = () => {
                 console.log(res)
                 setCamps(res.data.campgrounds);
             })
-            .catch(e => {
-                console.log(e);
+            .catch(err => {
+                toast.error(err.message);
             });
     }, [location])
 
@@ -59,6 +60,7 @@ const Campgrounds = () => {
                 </div>
             ) :
                 <p>No Campgrounds Available...</p>}
+
         </div>
     )
 }

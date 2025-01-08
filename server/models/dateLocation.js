@@ -25,11 +25,11 @@ ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_100');
 })
 
-const CampgroundSchema = new Schema({
+const DateLocationSchema = new Schema({
     title: String,
     price: Number,
     description: String,
-    location: String,
+    address: String,
     geometry: {
         type: {
             type: String,
@@ -52,31 +52,31 @@ const CampgroundSchema = new Schema({
     }]
 }, { ...options, timestamps: true });
 
-CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
+DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
     return {
         id: this._id,
         title: this.title,
-        location: this.location
+        address: this.address
 
     };
 });
 
-CampgroundSchema.virtual('averageRating').get(function () {
+DateLocationSchema.virtual('averageRating').get(function () {
     if (this.reviews.length === 0) return 0
 
     const avg = this.reviews.reduce((acc, review) => acc + review.rating, 0) / this.reviews.length;
     return avg;
 })
 
-CampgroundSchema.post('findOneAndDelete', async function (campground) {
-    if (campground) {
-        await Review.deleteMany({ _id: { $in: campground.reviews } });
+DateLocationSchema.post('findOneAndDelete', async function (location) {
+    if (location) {
+        await Review.deleteMany({ _id: { $in: location.reviews } });
 
-        for (const img of campground.images) {
+        for (const img of location.images) {
             await cloudinary.uploader.destroy(img.filename);
         }
     }
 })
 
-const Campground = mongoose.model('Campground', CampgroundSchema);
-module.exports = Campground;
+const DateLocation = mongoose.model('DateLocation', DateLocationSchema);
+module.exports = DateLocation;

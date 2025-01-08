@@ -8,6 +8,7 @@ import CampMap from "../components/CampMap";
 import CampgroundEditModal from "../modals/CampgroundEditModal";
 import { useForm } from "react-hook-form";
 import '../styles/starts.css';
+import { toast } from 'react-toastify';
 
 interface ReviewProp {
     rating: number;
@@ -33,21 +34,30 @@ const CampView = () => {
             getCampground(id)
                 .then(res => setCampground(res.data.campground))
                 .catch(err => {
-                    console.log(err.response);
-                    navigate('/campgrounds')
+                    if (err.status === 404) {
+                        toast.error(err.response.data);
+                    } else {
+                        toast.error(err.message);
+                    }
+                    navigate('/campgrounds');
                 });
         }
         fetchCamp();
     }, [navigate, id]);
 
-    const onSubmit = (data: ReviewProp) => {
+    const onReviewSubmit = (data: ReviewProp) => {
         setIsLoading(prev => ({ ...prev, review: true }));
         createReview(id, data)
             .then(res => {
                 setCampground(res.data.campground);
                 reset();
+                toast.success(res.data.message);
             }).catch(err => {
-                console.log(err);
+                if (err.status === 404) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.message);
+                }
             }).finally(() => {
                 setIsLoading(prev => ({ ...prev, review: false }));
             });
@@ -58,8 +68,15 @@ const CampView = () => {
         deleteReview(id, reviewId)
             .then(res => {
                 setCampground(res.data.campground);
+                toast.success(res.data.message);
                 reset();
-            }).catch(e => console.log(e)) //Make something happpen when an error accure
+            }).catch(err => {
+                if (err.status === 404) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.message);
+                }
+            })
             .finally(() => {
                 setIsLoading(prev => ({ ...prev, review: false }));
             });
@@ -69,9 +86,15 @@ const CampView = () => {
         setIsLoading(prev => ({ ...prev, camp: true }));
         deleteCampground(id)
             .then((res) => {
-                console.log(res);
+                toast.success(res.data);
                 navigate('/campgrounds')
-            }).catch(e => console.log(e))
+            }).catch(err => {
+                if (err.status === 404) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.message);
+                }
+            })
             .finally(() => {
                 setIsLoading(prev => ({ ...prev, camp: false }));
             });
@@ -151,7 +174,7 @@ const CampView = () => {
                     {currentUser &&
                         <>
                             <h2>Leave a Review</h2>
-                            <form className="needs-validation mb-2" onSubmit={handleSubmit(onSubmit)}>
+                            <form className="needs-validation mb-2" onSubmit={handleSubmit(onReviewSubmit)}>
                                 <div>
                                     <fieldset className="starability-heart" >
                                         <input type="radio" id="first-rate1" {...register('rating', { required: true })} value="1" />

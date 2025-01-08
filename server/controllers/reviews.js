@@ -1,25 +1,25 @@
-const Campground = require('../models/campground');
+const DateLocation = require('../models/dateLocation');
 const Review = require('../models/review');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.createReview = handleAsyncError(async (req, res) => {
     try {
-        const campground = await Campground.findById(req.params.id);
-        if (!campground) {
-            return res.status(404).send('Campground was not found');
+        const location = await DateLocation.findById(req.params.id);
+        if (!location) {
+            return res.status(404).send('Location was not found');
         }
         const review = new Review(req.body.review);
         review.author = req.user._id;
-        campground.reviews.push(review);
+        location.reviews.push(review);
         await review.save();
-        await campground.save();
-        const newCampground = await Campground.findById(req.params.id)
+        await location.save();
+        const newLocation = await DateLocation.findById(req.params.id)
             .populate({
                 path: 'reviews',
                 populate: { path: 'author' }
             })
             .populate('author');
-        res.status(201).send({ campground: newCampground });
+        res.status(201).send({ location: newLocation, message: 'Review created successfully' });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
     }
@@ -33,16 +33,16 @@ module.exports.deleteReview = handleAsyncError(async (req, res) => {
         if (!deletedReview) {
             return res.status(404).send('Review was not found');
         }
-        const updatedCampground = await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true })
+        const updatedLocation = await DateLocation.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }, { new: true })
             .populate({
                 path: 'reviews',
                 populate: { path: 'author' }
             })
             .populate('author');
-        if (!updatedCampground) {
-            return res.status(404).send('Campground was not found');
+        if (!updatedLocation) {
+            return res.status(404).send('Location was not found');
         }
-        res.status(200).send({ message: 'Review deleted successfully', campground: updatedCampground });
+        res.status(200).send({ message: 'Review deleted successfully', location: updatedLocation });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
     }

@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const campgroundsRouter = require('./routes/campgrounds');
+const locationsRouter = require('./routes/locations');
 const reviewsRouter = require('./routes/reviews');
 const authRouter = require('./routes/auth');
 const passport = require('passport');
@@ -13,7 +13,6 @@ const localStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
-const { validateAuthenticated } = require('./middleware');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
 const db = mongoose.connection;
@@ -45,8 +44,8 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use('/api', authRouter)
-app.use('/api/campgrounds', campgroundsRouter);
-app.use('/api/campgrounds/:id/reviews', reviewsRouter);
+app.use('/api/locations', locationsRouter);
+app.use('/api/locations/:id/reviews', reviewsRouter);
 
 app.all('*', (req, res, next) => {
     next(new ExpressError(404, 'Page Not Found'))
