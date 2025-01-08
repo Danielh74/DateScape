@@ -1,18 +1,29 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
 const { cloudinary } = require('../cloudinary');
+const dayjs = require('dayjs');
 const Schema = mongoose.Schema;
+
+const options = {
+    toJSON: {
+        virtuals: true,
+        transform(doc, ret) {
+            ret.createdAt = dayjs(ret.createdAt).format('DD/MM/YYYY');
+            ret.updatedAt = dayjs(ret.updatedAt).format('DD/MM/YYYY');
+            return ret
+        }
+    },
+    timestamps: true
+};
 
 const ImageSchema = new Schema({
     url: String,
     filename: String
-});
+}, { toJSON: { virtuals: true } });
 
 ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 })
-
-const options = { toJSON: { virtuals: true } };
 
 const CampgroundSchema = new Schema({
     title: String,
@@ -39,7 +50,7 @@ const CampgroundSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review'
     }]
-}, options);
+}, { ...options, timestamps: true });
 
 CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
     return {

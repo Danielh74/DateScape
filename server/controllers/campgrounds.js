@@ -12,7 +12,7 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
                 ? { title: { $regex: req.query.campName, $options: 'i' } }
                 : {}
         );
-        res.send({ campgrounds, user: req.user, auth: res.auth });
+        res.send({ campgrounds, user: req.user });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
     }
@@ -30,7 +30,7 @@ module.exports.createCampground = handleAsyncError(async (req, res) => {
         Object.assign(newCampground, {
             ...newCampground,
             geometry: geoData.features[0].geometry,
-            images: req.files.map(img => ({ url: img.path, name: img.filename })),
+            images: req.files.map(img => ({ url: img.path, filename: img.filename })),
             author: req.user._id
         });
         await newCampground.save();
