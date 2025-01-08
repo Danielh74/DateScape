@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { CampgroundList } from "../models/Campground";
+import { Campground } from "../models/Campground";
 import { Link, useLocation } from "react-router-dom";
 import { getAllCampgrounds } from "../services/campgroundService";
 import ClusterMap from '../components/ClusterMap';
 
 const Campgrounds = () => {
-    const [camps, setCamps] = useState<CampgroundList[]>([]);
+    const [camps, setCamps] = useState<Campground[]>([]);
     const location = useLocation();
     useEffect(() => {
         getAllCampgrounds(location.state)
@@ -21,7 +21,7 @@ const Campgrounds = () => {
     return (
         <div>
             <ClusterMap campgrounds={camps} />
-            {camps.length > 0 && camps.map(camp =>
+            {camps.length > 0 ? camps.map(camp =>
                 <div key={camp.id} className="card my-3">
                     <div className="row">
                         <div className="col-12 col-md-4">
@@ -30,17 +30,25 @@ const Campgrounds = () => {
                         </div>
                         <div className="card-body col-md-8">
                             <div className="row h-100">
-                                <h3 className="col-12 mb-0">
-                                    {camp.title}
-                                </h3>
+                                <div className="col-12 mb-0">
+                                    <span className="row">
+                                        <h3 className="col-9">{camp.title}</h3>
+                                        <span className="col d-flex justify-content-md-end">
+                                            <span className="me-1 align-self-center">{`(${camp.reviews.length})`}</span>
+                                            <p className="d-inline starability-result" data-rating={camp.averageRating}>
+                                                Rated: {camp.averageRating} stars
+                                            </p>
+                                        </span>
+                                    </span>
+                                </div>
                                 <span className="col-12 text-secondary">
                                     {camp.location}
                                 </span>
                                 <p className="col-12 card-text mb-0">
                                     {camp.description}
                                 </p>
-                                <div className="col justify-content-center">
-                                    <Link className="col-12 col-sm-6 align-items-center btn btn-danger col-4 align-self-end" to={`/campground/${camp.id}`}>
+                                <div className="col d-flex justify-content-start align-items-end">
+                                    <Link className="btn btn-danger" to={`/campground/${camp.id}`}>
                                         View {camp.title}
                                     </Link>
                                 </div>
@@ -49,7 +57,8 @@ const Campgrounds = () => {
                         </div>
                     </div>
                 </div>
-            )}
+            ) :
+                <p>No Campgrounds Available...</p>}
         </div>
     )
 }

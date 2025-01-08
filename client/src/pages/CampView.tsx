@@ -20,7 +20,7 @@ const CampView = () => {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { register, handleSubmit, reset } = useForm<ReviewProp>({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<ReviewProp>({
         defaultValues: {
             rating: 5,
             body: ""
@@ -50,8 +50,6 @@ const CampView = () => {
     const handleDeleteReview = (reviewId: string) => {
         deleteReview(id, reviewId)
             .then(res => {
-                console.log(res);
-                console.log(currentUser);
                 setCampground(res.data.campground);
                 reset();
             })
@@ -77,8 +75,8 @@ const CampView = () => {
                         <div className="row">
                             <div id="campgroundCarousel" className="carousel slide">
                                 <div className="carousel-inner">
-                                    {campground?.images.map(img =>
-                                        <div key={img._id} className="carousel-item active">
+                                    {campground?.images.map((img, i) =>
+                                        <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
                                             <img src={img.url} style={{ height: 300 }} className="rounded-top object-fit-fill w-100" alt="" />
                                         </div>
                                     )}
@@ -107,18 +105,22 @@ const CampView = () => {
                                 </p>
 
                                 <ul className="list-group list-group-flush">
-                                    <li className="list-group-item text-secondary">
+                                    <li className="list-group-item fw-medium text-secondary">
                                         {campground.location}
                                     </li>
                                     <li className="list-group-item">
                                         ${campground.price}/night
                                     </li>
                                     <li className="list-group-item">
-                                        Submitted by {campground.author.username}
+                                        Submitted by {campground.author.username} <br />
+                                        <small className="text-secondary">{campground.updatedAt}</small>
+                                    </li>
+                                    <li className="list-group-item">
+
                                     </li>
                                 </ul>
                                 {currentUser && currentUser._id === campground.author._id &&
-                                    <div className="card-body">
+                                    <div className="ps-2">
                                         <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
                                             Edit
                                         </button>
@@ -151,35 +153,35 @@ const CampView = () => {
                                 </div>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="body">Review</label>
-                                    <textarea className="form-control" {...register('body', { required: true })} id="body"></textarea>
-                                    <div className="invalid-feedback">
-                                        Can't send empty.
-                                    </div>
+                                    <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
+                                    {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                 </div>
                                 <button className="btn btn-success">Submit</button>
                             </form>
                         </>
                     }
-                    {campground.reviews.map(review =>
-                        <div key={review._id} className="card mb-2">
-                            <div className="card-body">
-                                <p className="starability-result" data-rating={review.rating}>
-                                    Rated: {review.rating} stars
-                                </p>
-                                <p className="card-text">
-                                    {review.body}
-                                </p>
-                                <p className="card-text text-body-secondary">
-                                    {review.author.username}
-                                </p>
-                                {(currentUser && (currentUser._id === review.author._id)) &&
-                                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
-                                }
+                    {campground.reviews?.length > 0 ? (
+                        campground.reviews.map(review => (
+                            <div key={review._id} className="card mb-2">
+                                <div className="card-body">
+                                    <p className="starability-result" data-rating={review.rating}>
+                                        Rated: {review.rating} stars
+                                    </p>
+                                    <p className="card-text">
+                                        {review.body}
+                                    </p>
+                                    <p className="card-text text-body-secondary">
+                                        {review.author.username}
+                                    </p>
+                                    {(currentUser && (currentUser._id === review.author._id)) &&
+                                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    )
-
-                    }
+                        ))
+                    ) : (
+                        <p>No reviews yet. Be the first to leave one!</p>
+                    )}
                 </div>
                 <CampgroundEditModal
                     show={show}

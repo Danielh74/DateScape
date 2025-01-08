@@ -59,6 +59,13 @@ CampgroundSchema.virtual('properties.popUpMarkup').get(function () {
         location: this.location
 
     };
+});
+
+CampgroundSchema.virtual('averageRating').get(function () {
+    if (this.reviews.length === 0) return 0
+
+    const avg = this.reviews.reduce((acc, review) => acc + review.rating, 0) / this.reviews.length;
+    return avg;
 })
 
 CampgroundSchema.post('findOneAndDelete', async function (campground) {

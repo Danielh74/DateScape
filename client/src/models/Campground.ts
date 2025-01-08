@@ -1,21 +1,6 @@
 import { Review } from './Review'
 import { User } from './User'
 
-export interface CampgroundList {
-    id: string
-    title: string,
-    price: number,
-    description: string,
-    location: string,
-    geometry: {
-        type: string,
-        coordinates: [number, number]
-    },
-    images: CampImage[],
-    author: string,
-    reviews: string[]
-};
-
 export interface Campground {
     id: string
     title: string,
@@ -28,7 +13,9 @@ export interface Campground {
     },
     images: CampImage[],
     author: User,
-    reviews: Review[]
+    reviews: Review[],
+    averageRating: number,
+    updatedAt: string
 };
 
 interface CampImage {

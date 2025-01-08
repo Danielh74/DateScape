@@ -11,7 +11,10 @@ module.exports.getCampgrounds = handleAsyncError(async (req, res) => {
             req.query.campName
                 ? { title: { $regex: req.query.campName, $options: 'i' } }
                 : {}
-        );
+        ).populate({
+            path: 'reviews',
+            populate: { path: 'author' }
+        }).populate('author');
         res.send({ campgrounds, user: req.user });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);

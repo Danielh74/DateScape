@@ -21,7 +21,7 @@ type Props = {
 
 const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
-    const { register, handleSubmit } = useForm<CampForm>({
+    const { register, handleSubmit, formState: { errors } } = useForm<CampForm>({
         defaultValues: {
             title: campground.title,
             location: campground.location,
@@ -76,54 +76,42 @@ const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => 
                     <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" encType="multipart/form-data">
                         <div className="mb-2">
                             <label className="form-label" htmlFor="title">Title</label>
-                            <input className="form-control" type="text" {...register("title", { required: true })} id="title" />
-                            <div className="invalid-feedback">
-                                Title is required.
-                            </div>
+                            <input className={`form-control ${errors.title && 'border-danger'}`} type="text" {...register("title", { required: 'Title is required' })} id="title" />
+                            {errors.title && <small className="text-danger"> {errors.title.message} </small>}
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="location">Location</label>
-                            <input className="form-control" type="text" {...register("location", { required: true })} id="location" />
-                            <div className="invalid-feedback">
-                                Location is required.
-                            </div>
+                            <input className={`form-control ${errors.location && 'border-danger'}`} type="text" {...register("location", { required: 'Location is required' })} id="location" />
+                            {errors.location && <small className="text-danger"> {errors.location.message} </small>}
                         </div>
                         <div className=" mb-2">
                             <label htmlFor="price">Price</label>
                             <div className="input-group">
                                 <span className="input-group-text">$</span>
-                                <input type="number" className="form-control" placeholder="0.00" id="price" {...register("price", { required: true, min: 0.01 })} />
-                                <div className="invalid-feedback">
-                                    Price is required.
-                                </div>
+                                <input type="number" className={`form-control ${errors.price && 'border-danger'}`} id="price"
+                                    {...register("price",
+                                        {
+                                            required: 'Price is required',
+                                            min: {
+                                                value: 0,
+                                                message: 'Value cannot be less than zero'
+                                            }
+                                        })} />
+                                {errors.price && <small className="text-danger"> {errors.price.message} </small>}
                             </div>
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="description">Description</label>
-                            <textarea className="form-control" id="description"
-                                {...register('description', { required: true })}></textarea>
-                            <div className="invalid-feedback">
-                                Description is required.
-                            </div>
+                            <textarea className={`form-control ${errors.description && 'border-danger'}`} id="description"
+                                {...register('description', { required: 'Description is required' })}></textarea>
+                            {errors.description && <small className="text-danger"> {errors.description?.message} </small>}
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>
-                            <input className="form-control" type="file" name="images" onChange={handleFileChange} multiple id="image" />
+                            <input className='form-control' type="file" name="images" onChange={handleFileChange} multiple id="image" />
                         </div>
-                        <div>
-                            {campground?.images.map((img, i) =>
-                                <div className="row" key={img._id}>
-                                    <div className="col">
-                                        <img src={img.thumbnail} className="img-thumbnail row" alt="" />
-                                        <input type="checkbox" {...register('deleteImages')} value={img.filename} id={`img-${i}`}></input>
-                                        <label htmlFor={`img-${i}`}>Delete?</label>
-                                    </div>
-
-                                </div>
-                            )}
-                        </div>
-                        <div className="row border-top mt-2">
-                            <button className="btn btn-success col-4 offset-4 mt-2" data-bs-dismiss="modal">Save changes</button>
+                        <div className="row mt-3">
+                            <button className="btn btn-success col-6 offset-3" data-bs-dismiss="modal">Create Campground</button>
                         </div>
                     </form>
                 </div>
