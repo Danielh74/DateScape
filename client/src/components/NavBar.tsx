@@ -1,7 +1,7 @@
 import { BaseSyntheticEvent, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import CampgroundCreateModal from "../modals/CampgroundCreateModal";
+import LocationCreateModal from "../modals/LocationCreateModal";
 import '../styles/navbar.css';
 import { toast } from 'react-toastify';
 
@@ -9,7 +9,7 @@ const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
     const [show, setShow] = useState(false);
-    const [campName, setCampName] = useState('');
+    const [locationName, setLocationName] = useState('');
 
     const handleShow = () => {
         if (currentUser) {
@@ -22,8 +22,8 @@ const Navbar = () => {
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
-        setCampName('');
-        navigate(`/campgrounds${campName ? `?campName=${campName}` : ''}`, { state: campName })
+        setLocationName('');
+        navigate(`/locations${locationName ? `?locationName=${locationName}` : ''}`, { state: locationName })
     };
 
     return (
@@ -37,13 +37,13 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
                         <NavLink className="nav-link text-center fw-medium" id="link" to="/">Home</NavLink>
-                        <NavLink className="nav-link text-center fw-medium" id="link" to="/campgrounds">Locations</NavLink>
+                        <NavLink className="nav-link text-center fw-medium" id="link" to="/locations">Locations</NavLink>
                         <button className="nav-link fw-medium" id="link" onClick={handleShow}>
                             New Location
                         </button>
                     </div>
                     <form className="d-flex ms-auto" onSubmit={handleSubmit} role="search">
-                        <input className="form-control me-2" value={campName} onChange={(e) => setCampName(e.target.value)} name="campName" type="search" placeholder="Search" aria-label="Search" />
+                        <input className="form-control me-2" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
                         <button className="btn btn-outline-dark" type="submit">Search</button>
                     </form>
                     <div className="navbar-nav ms-auto">
@@ -58,7 +58,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-            <CampgroundCreateModal
+            <LocationCreateModal
                 show={show}
                 onClose={() => setShow(false)} />
         </nav>

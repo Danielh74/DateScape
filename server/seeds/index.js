@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const Campground = require('../models/campground');
 const cities = require('./cities')
-const { descriptors, places } = require('./seedHelpers')
+const { descriptors, places } = require('./seedHelpers');
+const DateLocation = require('../models/dateLocation');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
 const db = mongoose.connection;
@@ -13,11 +13,11 @@ db.once("open", () => {
 const randomize = arr => arr[Math.floor(Math.random() * arr.length)];
 
 const seedDB = async () => {
-    await Campground.deleteMany({});
+    await DateLocation.deleteMany({});
     for (let i = 0; i < 50; i++) {
         const randomPlace = Math.ceil(Math.random() * 1000);
-        const camp = new Campground({
-            location: `${cities[randomPlace].city}, ${cities[randomPlace].state}`,
+        const location = new DateLocation({
+            address: `${cities[randomPlace].city}, ${cities[randomPlace].state}`,
             geometry: {
                 type: 'Point',
                 coordinates: [cities[randomPlace].longitude, cities[randomPlace].latitude]
@@ -28,7 +28,7 @@ const seedDB = async () => {
             price: Math.ceil(Math.random() * 50) + 10,
             author: '6771adde9fbb2536fbba426a'
         })
-        await camp.save();
+        await location.save();
     }
 }
 

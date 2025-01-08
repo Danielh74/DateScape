@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { Campground } from "../models/Campground";
+import { DateLocation } from "../models/DateLocation";
 import { createReview, deleteReview } from "../services/reviewService";
-import { getCampground, deleteCampground } from "../services/campgroundService";
+import { getLocation, deleteLocation } from "../services/locationService";
 import useAuth from "../hooks/useAuth";
-import CampMap from "../components/CampMap";
-import CampgroundEditModal from "../modals/CampgroundEditModal";
+import LocationMap from "../components/LocationMap";
+import LocationEditModal from "../modals/LocationEditModal";
 import { useForm } from "react-hook-form";
 import '../styles/starts.css';
 import { toast } from 'react-toastify';
@@ -15,11 +15,11 @@ interface ReviewProp {
     body: string;
 }
 
-const CampView = () => {
+const LocationView = () => {
     const { id } = useParams() as { id: string };
-    const [campground, setCampground] = useState<Campground>();
+    const [location, setLocation] = useState<DateLocation>();
     const [show, setShow] = useState(false);
-    const [isLoading, setIsLoading] = useState({ review: false, camp: false });
+    const [isLoading, setIsLoading] = useState({ review: false, location: false });
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { register, handleSubmit, reset, formState: { errors } } = useForm<ReviewProp>({
@@ -30,26 +30,26 @@ const CampView = () => {
     })
 
     useEffect(() => {
-        const fetchCamp = () => {
-            getCampground(id)
-                .then(res => setCampground(res.data.campground))
+        const fetchLocation = () => {
+            getLocation(id)
+                .then(res => setLocation(res.data.location))
                 .catch(err => {
                     if (err.status === 404) {
                         toast.error(err.response.data);
                     } else {
                         toast.error(err.message);
                     }
-                    navigate('/campgrounds');
+                    navigate('/locations');
                 });
         }
-        fetchCamp();
+        fetchLocation();
     }, [navigate, id]);
 
     const onReviewSubmit = (data: ReviewProp) => {
         setIsLoading(prev => ({ ...prev, review: true }));
         createReview(id, data)
             .then(res => {
-                setCampground(res.data.campground);
+                setLocation(res.data.location);
                 reset();
                 toast.success(res.data.message);
             }).catch(err => {
@@ -67,7 +67,7 @@ const CampView = () => {
         setIsLoading(prev => ({ ...prev, review: true }));
         deleteReview(id, reviewId)
             .then(res => {
-                setCampground(res.data.campground);
+                setLocation(res.data.location);
                 toast.success(res.data.message);
                 reset();
             }).catch(err => {
@@ -82,12 +82,12 @@ const CampView = () => {
             });
     };
 
-    const handleDeleteCamp = () => {
-        setIsLoading(prev => ({ ...prev, camp: true }));
-        deleteCampground(id)
+    const handleDeleteLocation = () => {
+        setIsLoading(prev => ({ ...prev, location: true }));
+        deleteLocation(id)
             .then((res) => {
                 toast.success(res.data);
-                navigate('/campgrounds')
+                navigate('/locations')
             }).catch(err => {
                 if (err.status === 404) {
                     toast.error(err.response.data);
@@ -96,36 +96,36 @@ const CampView = () => {
                 }
             })
             .finally(() => {
-                setIsLoading(prev => ({ ...prev, camp: false }));
+                setIsLoading(prev => ({ ...prev, location: false }));
             });
 
     }
 
     return (
-        campground ?
+        location ?
             <div className="row my-3">
                 <div className="col-12 col-md-3 mb-2">
-                    <CampMap campground={campground} />
+                    <LocationMap location={location} />
                 </div>
                 <div className="col-12 col-md-6">
                     <div className="card">
                         <div className="row">
-                            <div id="campgroundCarousel" className="carousel slide">
+                            <div id="locationCarousel" className="carousel slide">
                                 <div className="carousel-inner">
-                                    {campground?.images.map((img, i) =>
+                                    {location?.images.map((img, i) =>
                                         <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
                                             <img src={img.url} style={{ height: 300 }} className="rounded-top object-fit-fill w-100" alt="" />
                                         </div>
                                     )}
                                 </div>
-                                {campground.images.length > 1 &&
+                                {location.images.length > 1 &&
                                     <>
-                                        <button className="carousel-control-prev" type="button" data-bs-target="#campgroundCarousel"
+                                        <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
                                             data-bs-slide="prev">
                                             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                                             <span className="visually-hidden">Previous</span>
                                         </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target="#campgroundCarousel"
+                                        <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
                                             data-bs-slide="next">
                                             <span className="carousel-control-next-icon" aria-hidden="true"></span>
                                             <span className="visually-hidden">Next</span>
@@ -135,33 +135,33 @@ const CampView = () => {
                             </div>
                             <div className="card-body">
                                 <h3 className="card-title ps-2">
-                                    {campground.title}
+                                    {location.title}
                                 </h3>
                                 <p className="card-text ps-2">
-                                    {campground.description}
+                                    {location.description}
                                 </p>
 
                                 <ul className="list-group list-group-flush">
                                     <li className="list-group-item fw-medium text-secondary">
-                                        {campground.location}
+                                        {location.address}
                                     </li>
                                     <li className="list-group-item">
-                                        ${campground.price}/night
+                                        ${location.price}/night
                                     </li>
                                     <li className="list-group-item">
-                                        Submitted by {campground.author.username} <br />
-                                        <small className="text-secondary">{campground.updatedAt}</small>
+                                        Submitted by {location.author.username} <br />
+                                        <small className="text-secondary">{location.updatedAt}</small>
                                     </li>
                                     <li className="list-group-item">
 
                                     </li>
                                 </ul>
-                                {currentUser && currentUser._id === campground.author._id &&
+                                {currentUser && currentUser._id === location.author._id &&
                                     <div className="ps-2">
                                         <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
                                             Edit
                                         </button>
-                                        <button className="btn btn-danger ms-2" disabled={isLoading.camp} onClick={handleDeleteCamp}>{isLoading.camp ? 'Loading...' : 'Delete'}</button>
+                                        <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
                                     </div>
                                 }
                             </div>
@@ -198,8 +198,8 @@ const CampView = () => {
                             </form>
                         </>
                     }
-                    {campground.reviews?.length > 0 ? (
-                        campground.reviews.map(review => (
+                    {location.reviews?.length > 0 ? (
+                        location.reviews.map(review => (
                             <div key={review._id} className="card mb-2">
                                 <div className="card-body">
                                     <p className="starability-result" data-rating={review.rating}>
@@ -221,17 +221,17 @@ const CampView = () => {
                         <p>No reviews yet. Be the first to leave one!</p>
                     )}
                 </div>
-                <CampgroundEditModal
+                <LocationEditModal
                     show={show}
                     onClose={() => setShow(false)}
-                    campground={campground}
-                    onUpdate={(updatedCamp: Campground) => setCampground(updatedCamp)} />
+                    location={location}
+                    onUpdate={(updatedLocation: DateLocation) => setLocation(updatedLocation)} />
             </div >
             :
             <div>
-                No Camp found
+                No Location found
             </div>
     )
 }
 
-export default CampView
+export default LocationView

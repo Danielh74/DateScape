@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home";
-import Campgrounds from "../pages/Campgrounds";
-import CampView from "../pages/CampView";
+import DateLocations from "../pages/DateLocations";
+import LocationView from "../pages/LocationView";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import NotFound from "../pages/NotFound";
@@ -12,8 +12,8 @@ export const router = createBrowserRouter([
     {
         element: <App />,
         children: [
-            { path: "/campgrounds", element: <Campgrounds /> },
-            { path: "/campground/:id", element: <CampView /> },
+            { path: "/locations", element: <DateLocations /> },
+            { path: "/location/:id", element: <LocationView /> },
             { path: "/login", element: <LoginPage /> },
             { path: "/register", element: <RegisterPage /> },
             { path: "*", element: <NotFound /> }

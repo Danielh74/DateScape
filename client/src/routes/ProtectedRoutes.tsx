@@ -15,5 +15,5 @@ export const AuthRoute = ({ children }: Props) => {
 export const NotAuthRoute = ({ children }: Props) => {
     const { currentUser } = useAuth()
 
-    return !currentUser ? children : <Navigate to="/campgrounds" />;
+    return !currentUser ? children : <Navigate to="/locations" />;
 };

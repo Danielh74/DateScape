@@ -29,7 +29,7 @@ const LoginPage = () => {
                     email: userData.email
                 };
                 handleLogin(user);
-                navigate('/campgrounds');
+                navigate('/locations');
             }).catch(e => {
                 console.log(e)
             });

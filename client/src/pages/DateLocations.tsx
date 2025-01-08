@@ -1,56 +1,56 @@
 import { useEffect, useState } from "react"
-import { Campground } from "../models/Campground";
+import { DateLocation } from "../models/DateLocation";
 import { Link, useLocation } from "react-router-dom";
-import { getAllCampgrounds } from "../services/campgroundService";
+import { getAllLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
 
-const Campgrounds = () => {
-    const [camps, setCamps] = useState<Campground[]>([]);
-    const location = useLocation();
+const DateLocations = () => {
+    const [locations, setLocations] = useState<DateLocation[]>([]);
+    const locationName = useLocation();
     useEffect(() => {
-        getAllCampgrounds(location.state)
+        getAllLocations(locationName.state)
             .then(res => {
                 console.log(res)
-                setCamps(res.data.campgrounds);
+                setLocations(res.data.locations);
             })
             .catch(err => {
                 toast.error(err.message);
             });
-    }, [location])
+    }, [locationName])
 
     return (
         <div>
-            <ClusterMap campgrounds={camps} />
-            {camps.length > 0 ? camps.map(camp =>
-                <div key={camp.id} className="card my-3">
+            <ClusterMap locations={locations} />
+            {locations.length > 0 ? locations.map(location =>
+                <div key={location.id} className="card my-3">
                     <div className="row">
                         <div className="col-12 col-md-4">
-                            <img className="img-fluid rounded-top rounded h-100  w-100" src={camp.images[0].url}
-                                alt="camp image" />
+                            <img className="img-fluid rounded-top rounded h-100  w-100" src={location.images[0].url}
+                                alt="location image" />
                         </div>
                         <div className="card-body col-md-8">
                             <div className="row h-100">
                                 <div className="col-12 mb-0">
                                     <span className="row">
-                                        <h3 className="col-9">{camp.title}</h3>
+                                        <h3 className="col-9">{location.title}</h3>
                                         <span className="col d-flex justify-content-md-end">
-                                            <span className="me-1 align-self-center">{`(${camp.reviews.length})`}</span>
-                                            <p className="d-inline starability-result" data-rating={camp.averageRating}>
-                                                Rated: {camp.averageRating} stars
+                                            <span className="me-1 align-self-center">{`(${location.reviews.length})`}</span>
+                                            <p className="d-inline starability-result" data-rating={location.averageRating}>
+                                                Rated: {location.averageRating} stars
                                             </p>
                                         </span>
                                     </span>
                                 </div>
                                 <span className="col-12 text-secondary">
-                                    {camp.location}
+                                    {location.address}
                                 </span>
                                 <p className="col-12 card-text mb-0">
-                                    {camp.description}
+                                    {location.description}
                                 </p>
                                 <div className="col d-flex justify-content-start align-items-end">
-                                    <Link className="btn btn-danger" to={`/campground/${camp.id}`}>
-                                        View {camp.title}
+                                    <Link className="btn btn-danger" to={`/location/${location.id}`}>
+                                        View {location.title}
                                     </Link>
                                 </div>
 
@@ -59,10 +59,10 @@ const Campgrounds = () => {
                     </div>
                 </div>
             ) :
-                <p>No Campgrounds Available...</p>}
+                <p>No Locations Available...</p>}
 
         </div>
     )
 }
 
-export default Campgrounds
+export default DateLocations

@@ -1,94 +1,79 @@
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form';
-import { postCampground } from '../services/campgroundService';
-import { useNavigate } from 'react-router-dom';
-import Modal from 'react-bootstrap/Modal';
+import { DateLocation } from "../models/DateLocation";
+import { useForm } from 'react-hook-form'
+import { useState } from "react";
+import { Modal } from "react-bootstrap";
+import { updateLocation } from "../services/locationService";
 
-type CampForm = {
+type LocationForm = {
     title: string,
-    location: string,
+    address: string,
     price: number,
     description: string,
+    deleteImages: string[]
 }
 
 type Props = {
+    location: DateLocation
     show: boolean,
-    onClose: () => void
+    onClose: () => void,
+    onUpdate: (location: DateLocation) => void
 }
 
-type FileForm = {
-    files: File[],
-    error: string
-}
-
-const CampgroundCreateModal = ({ show, onClose }: Props) => {
-    const navigate = useNavigate();
-    const [files, setFiles] = useState<FileForm>({ files: [], error: '' });
+const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
+    const [files, setFiles] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<CampForm>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LocationForm>({
         defaultValues: {
-            title: "",
-            location: "",
-            price: 0.00,
-            description: ""
+            title: location.title,
+            address: location.address,
+            price: location.price,
+            description: location.description,
+            deleteImages: []
         }
     });
 
-    const onSubmit = (data: CampForm) => {
+    const onSubmit = (data: LocationForm) => {
         setIsLoading(true);
         const formData = new FormData();
-
-        if (files.files.length === 0) {
-            setFiles(prev => ({ ...prev, error: 'Must choose at least 1 file' }));
-            setIsLoading(false);
-            return;
-        }
-
-        const campgroundData = {
-            title: data.title,
-            location: data.location,
-            price: data.price,
-            description: data.description
-        };
-        formData.append('campground', JSON.stringify(campgroundData));
-
-        files.files.forEach(file => {
+        files.forEach(file => {
             formData.append('images', file);
         });
 
-        postCampground(formData)
-            .then(res => {
-                console.log(res);
-                navigate(`/campground/${res.data.newCampground.id}`);
-                resetForm()
-            })
-            .catch(err => console.error(err)).finally(() => {
-                setIsLoading(false);
-            });
+        const locationData = {
+            title: data.title,
+            address: data.address,
+            price: data.price,
+            description: data.description,
+        };
+        formData.append('location', JSON.stringify(locationData));
+
+        data.deleteImages.forEach(img => formData.append('deleteImages[]', img));
+
+        updateLocation(location.id, formData).then(res => {
+            onUpdate(res.data.location);
+            onClose();
+        }).catch(err => {
+            console.log(err);
+        }).finally(() => {
+            setIsLoading(false);
+        });
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            const images = Array.from(e.target.files)
-            setFiles(prev => ({ ...prev, files: images }));
+            setFiles(Array.from(e.target.files));
         }
-    };
-
-    const resetForm = () => {
-        onClose();
-        reset();
-        setFiles({ files: [], error: '' });
     };
 
     return (
         <Modal
             show={show}
-            onHide={resetForm}
+            onHide={onClose}
             backdrop="static"
             keyboard={false}
         >
             <Modal.Header closeButton>
-                <Modal.Title>Create Campground</Modal.Title>
+                <Modal.Title>Edit Location </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className="row">
@@ -99,9 +84,9 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
                             {errors.title && <small className="text-danger"> {errors.title.message} </small>}
                         </div>
                         <div className="mb-2">
-                            <label className="form-label" htmlFor="location">Location</label>
-                            <input className={`form-control ${errors.location && 'border-danger'}`} type="text" {...register("location", { required: 'Location is required' })} id="location" />
-                            {errors.location && <small className="text-danger"> {errors.location.message} </small>}
+                            <label className="form-label" htmlFor="location">Address</label>
+                            <input className={`form-control ${errors.address && 'border-danger'}`} type="text" {...register("address", { required: 'Location is required' })} id="location" />
+                            {errors.address && <small className="text-danger"> {errors.address.message} </small>}
                         </div>
                         <div className=" mb-2">
                             <label htmlFor="price">Price</label>
@@ -127,17 +112,16 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>
-                            <input className={`form-control ${files.error && 'border-danger'}`} type="file" name="images" onChange={handleFileChange} multiple id="image" />
-                            {files.error && <small className='text-danger'>{files.error}</small>}
+                            <input className='form-control' type="file" name="images" onChange={handleFileChange} multiple id="image" />
                         </div>
                         <div className="row mt-3">
-                            <button className="btn btn-success col-6 offset-3" disabled={isLoading} >{isLoading ? 'Loading...' : 'Create Campground'}</button>
+                            <button className="btn btn-success col-6 offset-3" disabled={isLoading} >{isLoading ? 'Loading...' : 'Edit Location'}</button>
                         </div>
                     </form>
                 </div>
             </Modal.Body>
         </Modal>
-    )
-}
+    );
+};
 
-export default CampgroundCreateModal
+export default LocationEditModal;

@@ -3,13 +3,13 @@ import { useRef, useEffect } from 'react';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import '../styles/map.css';
-import { CampgroundList } from '../models/Campground';
+import { DateLocation } from '../models/DateLocation';
 
 interface Props {
-    campgrounds: CampgroundList[]
+    locations: DateLocation[]
 }
 
-export default function ClusterMap({ campgrounds }: Props) {
+export default function ClusterMap({ locations }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<maptilersdk.Map>();
     maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
@@ -25,22 +25,22 @@ export default function ClusterMap({ campgrounds }: Props) {
             });
 
             map.current.on('load', function () {
-                map.current?.addSource('campgrounds', {
+                map.current?.addSource('locations', {
                     type: 'geojson',
                     data: {
                         type: 'FeatureCollection',
-                        features: campgrounds.map(camp => ({
+                        features: locations.map(location => ({
                             type: 'Feature',
                             properties: {
                                 popUpMarkup: JSON.stringify({
-                                    id: camp.id,
-                                    title: camp.title,
-                                    location: camp.location,
+                                    id: location.id,
+                                    title: location.title,
+                                    address: location.address,
                                 }),
                             },
                             geometry: {
                                 type: 'Point',
-                                coordinates: camp.geometry.coordinates,
+                                coordinates: location.geometry.coordinates,
                             },
                         })),
                     },
@@ -52,7 +52,7 @@ export default function ClusterMap({ campgrounds }: Props) {
                 map.current?.addLayer({
                     id: 'clusters',
                     type: 'circle',
-                    source: 'campgrounds',
+                    source: 'locations',
                     filter: ['has', 'point_count'],
                     paint: {
                         'circle-color': [
@@ -79,7 +79,7 @@ export default function ClusterMap({ campgrounds }: Props) {
                 map.current?.addLayer({
                     id: 'cluster-count',
                     type: 'symbol',
-                    source: 'campgrounds',
+                    source: 'locations',
                     filter: ['has', 'point_count'],
                     layout: {
                         'text-field': '{point_count_abbreviated}',
@@ -91,7 +91,7 @@ export default function ClusterMap({ campgrounds }: Props) {
                 map.current?.addLayer({
                     id: 'unclustered-point',
                     type: 'circle',
-                    source: 'campgrounds',
+                    source: 'locations',
                     filter: ['!', ['has', 'point_count']],
                     paint: {
                         'circle-color': 'orangeRed',
@@ -129,7 +129,7 @@ export default function ClusterMap({ campgrounds }: Props) {
 
                     try {
                         // Cast the source to GeoJSONSource to access getClusterExpansionZoom
-                        const source = map.current?.getSource('campgrounds') as maptilersdk.GeoJSONSource;
+                        const source = map.current?.getSource('locations') as maptilersdk.GeoJSONSource;
 
                         if (!source || typeof source.getClusterExpansionZoom !== 'function') {
                             console.error('Source is not cluster-enabled or method is unavailable');
@@ -177,7 +177,7 @@ export default function ClusterMap({ campgrounds }: Props) {
                         return;
                     }
 
-                    const { id, title, location } = popUpData;
+                    const { id, title, address } = popUpData;
 
                     // Ensure geometry coordinates exist and are valid
                     const coordinates = [...feature.geometry.coordinates]; // Clone coordinates to avoid mutation
@@ -188,8 +188,8 @@ export default function ClusterMap({ campgrounds }: Props) {
 
                     // Construct popup content
                     const popUpText = `
-                    <h5><a href="/campground/${id}">${title}</a></h5>
-                    <span>${location}</span>
+                    <h5><a href="/location/${id}">${title}</a></h5>
+                    <span>${address}</span>
                 `;
 
                     // Adjust for map wrapping
@@ -205,32 +205,32 @@ export default function ClusterMap({ campgrounds }: Props) {
                 });
             });
         }
-    }, [campgrounds]);
+    }, [locations]);
 
     useEffect(() => {
         // Ensure map is initialized and source exists
-        if (map.current && map.current.isStyleLoaded() && map.current.getSource('campgrounds')) {
-            const source = map.current.getSource('campgrounds') as maptilersdk.GeoJSONSource;
+        if (map.current && map.current.isStyleLoaded() && map.current.getSource('locations')) {
+            const source = map.current.getSource('locations') as maptilersdk.GeoJSONSource;
 
             source.setData({
                 type: 'FeatureCollection',
-                features: campgrounds.map(camp => ({
+                features: locations.map(location => ({
                     type: 'Feature',
                     properties: {
                         popUpMarkup: JSON.stringify({
-                            id: camp.id,
-                            title: camp.title,
-                            location: camp.location,
+                            id: location.id,
+                            title: location.title,
+                            address: location.address,
                         }),
                     },
                     geometry: {
                         type: 'Point',
-                        coordinates: camp.geometry.coordinates,
+                        coordinates: location.geometry.coordinates,
                     },
                 })),
             });
         }
-    }, [campgrounds]); // This will trigger only when `campgrounds` changes
+    }, [locations]); // This will trigger only when `locations` changes
 
     useEffect(() => {
         if (map.current) return; // Skip if map is already initialized
