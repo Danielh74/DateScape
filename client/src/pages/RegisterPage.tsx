@@ -1,5 +1,9 @@
 import { useForm } from "react-hook-form"
 import { registerUser } from "../services/authService";
+import { useState } from "react";
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 type RegisterForm = {
     username: string,
@@ -8,8 +12,10 @@ type RegisterForm = {
 }
 
 const RegisterPage = () => {
-
-    const { register, handleSubmit } = useForm({
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const { handleLogin } = useAuth()
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             username: "",
             email: "",
@@ -18,11 +24,22 @@ const RegisterPage = () => {
     });
 
     const onSubmit = (registerData: RegisterForm) => {
-        registerUser(registerData).then(res => {
-            console.log(res.status)
-        }).catch(e => {
-            console.log(e)
-        });
+        setIsLoading(true);
+        registerUser(registerData)
+            .then(res => {
+                console.log(res);
+                toast.success(res.data.message);
+                handleLogin(res.data.user);
+                navigate('/locations');
+            }).catch(err => {
+                if (err.status === 400) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.message);
+                }
+            }).finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (
@@ -35,19 +52,21 @@ const RegisterPage = () => {
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">Username</label>
-                                    <input className="form-control" type="text" {...register('username', { required: true })} id="username" autoFocus
-                                    />
+                                    <input className={`form-control ${errors.username && 'border-danger'}`} type="text" {...register('username', { required: 'Username is required' })} id="username" autoFocus />
+                                    {errors.username && <small className="text-danger"> {errors.username.message}</small>}
                                 </div>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="email">Email</label>
-                                    <input className="form-control" type="email" {...register('email', { required: true })} id="email" />
+                                    <input className={`form-control ${errors.email && 'border-danger'}`} type="email" {...register('email', { required: 'Email is required' })} id="email" />
+                                    {errors.email && <small className="text-danger"> {errors.email.message}</small>}
                                 </div>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="password">Password</label>
-                                    <input className="form-control" type="password" {...register('password', { required: true })} id="password" />
+                                    <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
+                                    {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success">Sign Up</button>
+                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? 'Loading...' : 'Register'}</button>
                                 </div>
 
                             </form>

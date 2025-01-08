@@ -3,6 +3,7 @@ import { loginUser } from "../services/authService";
 import useAuth from "../hooks/useAuth";
 import { User } from "../models/User";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type LoginForm = {
     username: string,
@@ -12,7 +13,8 @@ type LoginForm = {
 const LoginPage = () => {
     const { handleLogin } = useAuth();
     const navigate = useNavigate();
-    const { register, handleSubmit } = useForm({
+    const [isLoading, setIsLoading] = useState(false);
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             username: "",
             password: ""
@@ -20,6 +22,7 @@ const LoginPage = () => {
     });
 
     const onSubmit = (loginData: LoginForm) => {
+        setIsLoading(true);
         loginUser(loginData)
             .then(res => {
                 const userData = res.data;
@@ -32,6 +35,8 @@ const LoginPage = () => {
                 navigate('/locations');
             }).catch(e => {
                 console.log(e)
+            }).finally(() => {
+                setIsLoading(false);
             });
     }
 
@@ -45,21 +50,18 @@ const LoginPage = () => {
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">Username</label>
-                                    <input className="form-control" type="text" {...register('username', { required: true })} id="username" autoFocus
+                                    <input className={`form-control ${errors.password && 'border-danger'}`} type="text" {...register('username', { required: 'Username is required' })} id="username" autoFocus
                                     />
-                                    <div className="invalid-feedback">
-                                        Username is required.
-                                    </div>
+                                    {errors.username && <small className="text-danger"> {errors.username.message}</small>}
+
                                 </div>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="password">Password</label>
-                                    <input className="form-control" type="password" {...register('password', { required: true })} id="password" />
-                                    <div className="invalid-feedback">
-                                        Password is required.
-                                    </div>
+                                    <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
+                                    {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success">Login</button>
+                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? 'Logging in...' : 'Log in'}</button>
                                 </div>
                             </form>
                         </div>

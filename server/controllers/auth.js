@@ -28,10 +28,10 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
                 console.error('Error logging in user:', err);
                 return next(err);
             }
-            res.status(200).send({ message: 'User registered and logged in successfully!' });
+            res.status(200).send({ message: 'Registration successful!', user: req.user });
         });
     } catch (e) {
         console.error('Error during registration:', e);
-        res.status(400).send({ error: e.message });
+        res.status(400).send(e.message);
     }
 })
