@@ -114,7 +114,7 @@ const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => 
                             {campground?.images.map((img, i) =>
                                 <div className="row" key={img._id}>
                                     <div className="col">
-                                        <img src={img.url} className="img-thumbnail row" style={{ width: 75 }} alt="" />
+                                        <img src={img.thumbnail} className="img-thumbnail row" alt="" />
                                         <input type="checkbox" {...register('deleteImages')} value={img.filename} id={`img-${i}`}></input>
                                         <label htmlFor={`img-${i}`}>Delete?</label>
                                     </div>

@@ -19,7 +19,7 @@ type Props = {
 const CampgroundCreateModal = ({ show, onClose }: Props) => {
     const navigate = useNavigate();
     const [files, setFiles] = useState<File[]>([]);
-    const { register, handleSubmit } = useForm<CampForm>({
+    const { register, handleSubmit, reset } = useForm<CampForm>({
         defaultValues: {
             title: "",
             location: "",
@@ -47,6 +47,7 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
             .then(res => {
                 console.log(res);
                 navigate(`/campground/${res.data.newCampground.id}`);
+                reset();
                 onClose();
             })
             .catch(err => console.error(err));
