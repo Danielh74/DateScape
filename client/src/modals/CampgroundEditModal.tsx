@@ -21,6 +21,7 @@ type Props = {
 
 const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm<CampForm>({
         defaultValues: {
             title: campground.title,
@@ -32,6 +33,7 @@ const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => 
     });
 
     const onSubmit = (data: CampForm) => {
+        setIsLoading(true);
         const formData = new FormData();
         files.forEach(file => {
             formData.append('images', file);
@@ -52,7 +54,9 @@ const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => 
             onClose();
         }).catch(err => {
             console.log(err);
-        })
+        }).finally(() => {
+            setIsLoading(false);
+        });
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +115,7 @@ const CampgroundEditModal = ({ campground, show, onClose, onUpdate }: Props) => 
                             <input className='form-control' type="file" name="images" onChange={handleFileChange} multiple id="image" />
                         </div>
                         <div className="row mt-3">
-                            <button className="btn btn-success col-6 offset-3" data-bs-dismiss="modal">Create Campground</button>
+                            <button className="btn btn-success col-6 offset-3" disabled={isLoading} >{isLoading ? 'Loading...' : 'Edit Campground'}</button>
                         </div>
                     </form>
                 </div>

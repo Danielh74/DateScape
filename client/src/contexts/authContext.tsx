@@ -23,23 +23,23 @@ function AuthProvider({ children }: Props) {
 
     useEffect(() => {
         checkAuth().then(res => {
-            console.log(res)
-            setCurrentUser(res.data.user)
+            setCurrentUser(res.data.user);
         }).catch(err => {
-            console.log(err);
-            setCurrentUser(null)
+            if (err.status === 401) {
+                setCurrentUser(null);
+            } else {
+                console.log(err)
+            }
         })
     }, []);
 
     const handleLogin = (userData: User) => {
-        sessionStorage.setItem('loggedIn', 'true');
         setCurrentUser(userData);
     };
 
     const handleLogout = () => {
         logoutUser().then(() => {
             setCurrentUser(null);
-            sessionStorage.removeItem('loggedIn');
         }).catch(err => {
             console.log(err);
         });

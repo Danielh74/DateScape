@@ -4,7 +4,7 @@ import useAuth from "../hooks/useAuth";
 import CampgroundCreateModal from "../modals/CampgroundCreateModal";
 import '../styles/navbar.css'
 
-const NavBar = () => {
+const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
     const [show, setShow] = useState(false);
@@ -63,4 +63,4 @@ const NavBar = () => {
     )
 }
 
-export default NavBar
+export default Navbar

@@ -18,6 +18,7 @@ const CampView = () => {
     const { id } = useParams() as { id: string };
     const [campground, setCampground] = useState<Campground>();
     const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState({ review: false, camp: false });
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { register, handleSubmit, reset, formState: { errors } } = useForm<ReviewProp>({
@@ -40,27 +41,40 @@ const CampView = () => {
     }, [navigate, id]);
 
     const onSubmit = (data: ReviewProp) => {
+        setIsLoading(prev => ({ ...prev, review: true }));
         createReview(id, data)
             .then(res => {
                 setCampground(res.data.campground);
                 reset();
-            })
+            }).catch(err => {
+                console.log(err);
+            }).finally(() => {
+                setIsLoading(prev => ({ ...prev, review: false }));
+            });
     };
 
     const handleDeleteReview = (reviewId: string) => {
+        setIsLoading(prev => ({ ...prev, review: true }));
         deleteReview(id, reviewId)
             .then(res => {
                 setCampground(res.data.campground);
                 reset();
-            })
-            .catch(e => console.log(e)) //Make something happpen when an error accure
+            }).catch(e => console.log(e)) //Make something happpen when an error accure
+            .finally(() => {
+                setIsLoading(prev => ({ ...prev, review: false }));
+            });
     };
 
     const handleDeleteCamp = () => {
-        deleteCampground(id).then((res) => {
-            console.log(res);
-            navigate('/campgrounds')
-        }).catch(e => console.log(e))
+        setIsLoading(prev => ({ ...prev, camp: true }));
+        deleteCampground(id)
+            .then((res) => {
+                console.log(res);
+                navigate('/campgrounds')
+            }).catch(e => console.log(e))
+            .finally(() => {
+                setIsLoading(prev => ({ ...prev, camp: false }));
+            });
 
     }
 
@@ -124,7 +138,7 @@ const CampView = () => {
                                         <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
                                             Edit
                                         </button>
-                                        <button className="btn btn-danger ms-2" onClick={handleDeleteCamp}>Delete</button>
+                                        <button className="btn btn-danger ms-2" disabled={isLoading.camp} onClick={handleDeleteCamp}>{isLoading.camp ? 'Loading...' : 'Delete'}</button>
                                     </div>
                                 }
                             </div>
@@ -132,7 +146,8 @@ const CampView = () => {
                     </div>
                 </div>
 
-                <div className="col-md-3 col-12 mt-md-0 mt-2">
+                <div className="position-relative col-md-3 col-12 mt-md-0 mt-2">
+                    {isLoading.review && <div className="position-absolute bg-secondary w-100 h-100 z-1 align-content-center text-center fs-3 fw-bold bg-opacity-50 rounded">Loading...</div>}
                     {currentUser &&
                         <>
                             <h2>Leave a Review</h2>

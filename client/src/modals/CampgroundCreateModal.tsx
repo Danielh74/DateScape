@@ -24,6 +24,7 @@ type FileForm = {
 const CampgroundCreateModal = ({ show, onClose }: Props) => {
     const navigate = useNavigate();
     const [files, setFiles] = useState<FileForm>({ files: [], error: '' });
+    const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, reset, formState: { errors } } = useForm<CampForm>({
         defaultValues: {
             title: "",
@@ -34,10 +35,12 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
     });
 
     const onSubmit = (data: CampForm) => {
+        setIsLoading(true);
         const formData = new FormData();
 
         if (files.files.length === 0) {
-            setFiles(prev => ({ ...prev, error: 'Must choose at least 1 file' }))
+            setFiles(prev => ({ ...prev, error: 'Must choose at least 1 file' }));
+            setIsLoading(false);
             return;
         }
 
@@ -59,7 +62,9 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
                 navigate(`/campground/${res.data.newCampground.id}`);
                 resetForm()
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err)).finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +131,7 @@ const CampgroundCreateModal = ({ show, onClose }: Props) => {
                             {files.error && <small className='text-danger'>{files.error}</small>}
                         </div>
                         <div className="row mt-3">
-                            <button className="btn btn-success col-6 offset-3" data-bs-dismiss="modal">Create Campground</button>
+                            <button className="btn btn-success col-6 offset-3" disabled={isLoading} >{isLoading ? 'Loading...' : 'Create Campground'}</button>
                         </div>
                     </form>
                 </div>
