@@ -2,7 +2,7 @@ const User = require('../models/user');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
-    res.status(200).send(req.user);
+    res.status(200).send({ user: req.user, message: 'Welcome back!' });
 });
 
 module.exports.checkAuthenticated = (req, res) => {

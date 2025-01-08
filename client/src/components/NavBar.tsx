@@ -48,7 +48,7 @@ const Navbar = () => {
                     </form>
                     <div className="navbar-nav ms-auto">
                         {currentUser ?
-                            <button className="nav-link" id="link" onClick={handleLogout}>Logout</button>
+                            <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
                             :
                             <>
                                 <NavLink className="nav-link text-center fw-medium" id="link" to="/login">Login</NavLink>

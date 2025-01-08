@@ -4,6 +4,7 @@ import useAuth from "../hooks/useAuth";
 import { User } from "../models/User";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from 'react-toastify';
 
 type LoginForm = {
     username: string,
@@ -25,16 +26,21 @@ const LoginPage = () => {
         setIsLoading(true);
         loginUser(loginData)
             .then(res => {
-                const userData = res.data;
+                const userData = res.data.user;
                 const user: User = {
                     _id: userData._id,
                     username: userData.username,
                     email: userData.email
                 };
+                toast.success(res.data.message);
                 handleLogin(user);
                 navigate('/locations');
-            }).catch(e => {
-                console.log(e)
+            }).catch(err => {
+                if (err.status === 400) {
+                    toast.error(err.response.data);
+                } else {
+                    toast.error(err.message);
+                }
             }).finally(() => {
                 setIsLoading(false);
             });
