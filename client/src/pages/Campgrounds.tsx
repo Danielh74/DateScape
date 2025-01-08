@@ -25,7 +25,7 @@ const Campgrounds = () => {
                 <div key={camp.id} className="card my-3">
                     <div className="row">
                         <div className="col-12 col-md-4">
-                            <img className="img-fluid rounded-start" src={camp.images[0].url}
+                            <img className="img-fluid rounded-top rounded h-100  w-100" src={camp.images[0].url}
                                 alt="camp image" />
                         </div>
                         <div className="card-body col-md-8">
@@ -33,15 +33,18 @@ const Campgrounds = () => {
                                 <h3 className="col-12 mb-0">
                                     {camp.title}
                                 </h3>
-                                <span className="text-secondary col-12">
+                                <span className="col-12 text-secondary">
                                     {camp.location}
                                 </span>
-                                <p className="card-text mb-0 col-12">
+                                <p className="col-12 card-text mb-0">
                                     {camp.description}
                                 </p>
-                                <Link className="btn btn-primary col-4 align-self-end" to={`/campground/${camp.id}`}>
-                                    View {camp.title}
-                                </Link>
+                                <div className="col justify-content-center">
+                                    <Link className="col-12 col-sm-6 align-items-center btn btn-danger col-4 align-self-end" to={`/campground/${camp.id}`}>
+                                        View {camp.title}
+                                    </Link>
+                                </div>
+
                             </div>
                         </div>
                     </div>

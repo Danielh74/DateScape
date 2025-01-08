@@ -34,7 +34,7 @@ export default function CampMap({ campground }: Props) {
 
     return (
         <div className="map-wrap">
-            <div ref={mapContainer} className="map" />
+            <div ref={mapContainer} className="map rounded" />
         </div>
     );
 }

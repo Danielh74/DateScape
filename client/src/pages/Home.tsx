@@ -26,7 +26,7 @@ const Home = () => {
                         </div>
                     </header>
                     <main className="col align-self-center text-center">
-                        <h2 className="mb-3">Welcome to DateScape!</h2>
+                        <h2 className="mb-3">Welcome to DateScape! <span>&#10084;</span></h2>
                         <p className="lead">
                             Discover Perfect Date Spots Near You. <br />
                             Looking for a unique spot to impress your date? Whether it’s your first time out or a special
