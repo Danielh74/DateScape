@@ -2,7 +2,8 @@ const DateLocation = require('../models/dateLocation');
 const handleAsyncError = require('../utils/handleAsyncError');
 const { cloudinary } = require('../cloudinary');
 const maptilerClient = require('@maptiler/client');
-const { categories: seedCategories } = require('../seeds/seedHelpers')
+const { categories: seedCategories } = require('../seeds/seedHelpers');
+const User = require('../models/user');
 
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
@@ -120,8 +121,6 @@ module.exports.getLocationById = handleAsyncError(async (req, res) => {
     }
 })
 
-
-
 module.exports.deleteLocation = handleAsyncError(async (req, res) => {
     const { id } = req.params;
     try {
@@ -129,7 +128,25 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
         if (!deletedLocation) {
             return res.status(404).send('Location was not found');
         }
-        res.status(200).send('Location deleted successfully');
+        res.send('Location deleted successfully');
+    } catch (e) {
+        return res.status(500).send('Error:' + e);
+    }
+});
+
+module.exports.getFavorites = handleAsyncError(async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate('favLocations');
+        res.send({ favorites: user.favLocations });
+    } catch (e) {
+        return res.status(500).send('Error:' + e);
+    }
+});
+
+module.exports.getUserLocations = handleAsyncError(async (req, res) => {
+    try {
+        const userLocations = await DateLocation.find({ author: req.user._id });
+        res.send({ locations: userLocations });
     } catch (e) {
         return res.status(500).send('Error:' + e);
     }

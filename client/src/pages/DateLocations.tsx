@@ -4,6 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 import { getLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
+import { updateFavLocation } from "../services/authService";
+
+type updateProp = {
+    locationId: string
+}
 
 const DateLocations = () => {
     const [locations, setLocations] = useState<DateLocation[]>([]);
@@ -30,6 +35,10 @@ const DateLocations = () => {
             setFilteredCategories(prev => prev.filter(val => val !== value));
         }
     };
+
+    const handleUpdateFavLocation = (locationId: updateProp) => {
+        updateFavLocation(locationId).then(res => console.log(res))
+    }
 
     return (
         <>
@@ -73,6 +82,7 @@ const DateLocations = () => {
                                             {location.description}
                                         </p>
                                         <p className="mt-2">Categories: {<span>{location.categories.join(', ')}</span>}</p>
+                                        <button onClick={() => handleUpdateFavLocation({ locationId: location.id })}>fav</button>
                                         <div className="col d-flex justify-content-start align-items-end">
                                             <Link className="btn btn-danger" to={`/location/${location.id}`}>
                                                 View {location.title}

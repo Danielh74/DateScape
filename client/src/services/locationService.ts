@@ -15,9 +15,12 @@ export const getLocations = (locationName: string | null, categories: string | n
     }
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `/locations?${queryString}` : '/locations';
+
     return api.get(url);
 };
 export const getLocation = (id: string) => api.get(`/locations/${id}`);
 export const postLocation = (locationData: FormData) => api.post('/locations', locationData);
 export const updateLocation = (id: string, locationData: FormData) => api.put(`/locations/${id}`, locationData);
 export const deleteLocation = (id: string) => api.delete(`/locations/${id}`);
+export const getFavoriteLocations = () => api.get('/locations/favorites');
+export const getUserLocations = () => api.get('/locations/userlocations');

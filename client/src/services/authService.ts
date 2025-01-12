@@ -11,6 +11,11 @@ type loginProps = {
     password: string
 }
 
+type updateProps = {
+    locationId: string
+}
+
+
 const api = axios.create({
     baseURL: 'http://localhost:8080/api',
     withCredentials: true, // Send cookies
@@ -18,5 +23,7 @@ const api = axios.create({
 
 export const registerUser = (registerData: registerProps) => api.post('/register', registerData);
 export const loginUser = (loginData: loginProps) => api.post('/login', loginData);
-export const checkAuth = () => api.get(`/check`);
 export const logoutUser = () => api.get('/logout');
+
+export const checkAuth = () => api.get(`/check`);
+export const updateFavLocation = (locationId: updateProps) => api.post(`/favorites`, locationId);

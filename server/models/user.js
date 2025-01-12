@@ -7,7 +7,11 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         unique: true
-    }
+    },
+    favLocations: [{
+        type: Schema.Types.ObjectId,
+        ref: 'DateLocation'
+    }]
 });
 UserSchema.plugin(passportLocalMongoose);
 

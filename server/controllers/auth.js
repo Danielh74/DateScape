@@ -32,6 +32,31 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
         });
     } catch (e) {
         console.error('Error during registration:', e);
-        res.status(400).send(e.message);
+        res.status(500).send(e.message);
     }
-})
+});
+
+module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
+    const { locationId } = req.body;
+    console.log(req.body)
+    try {
+        if (!locationId) {
+            return res.status(400).send('Location ID is required');
+        }
+
+        const user = await User.findById(req.user._id);
+        if (user.favLocations.includes(locationId)) {
+            return res.status(400).send('Location is already favorited');
+        }
+        user.favLocations.push(locationId);
+        await user.save();
+
+        const populatedUser = await user.populate('favLocations');
+
+        res.send({ user: populatedUser, message: "Location added to favorites." });
+
+    } catch (e) {
+        console.error('Error during registration:', e);
+        res.status(500).send(e.message);
+    }
+});
