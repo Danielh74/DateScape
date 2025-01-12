@@ -3,12 +3,14 @@ import { useForm } from 'react-hook-form'
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { updateLocation } from "../services/locationService";
+import { toast } from "react-toastify";
 
 type LocationForm = {
     title: string,
     address: string,
     price: number,
     description: string,
+    categories: string[],
     deleteImages: string[]
 }
 
@@ -22,12 +24,14 @@ type Props = {
 const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
     const [files, setFiles] = useState<File[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const { register, handleSubmit, formState: { errors } } = useForm<LocationForm>({
         defaultValues: {
             title: location.title,
             address: location.address,
             price: location.price,
             description: location.description,
+            categories: location.categories,
             deleteImages: []
         }
     });
@@ -44,6 +48,7 @@ const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
             address: data.address,
             price: data.price,
             description: data.description,
+            categories: data.categories
         };
         formData.append('location', JSON.stringify(locationData));
 
@@ -53,7 +58,7 @@ const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
             onUpdate(res.data.location);
             onClose();
         }).catch(err => {
-            console.log(err);
+            toast.error(err.response.data)
         }).finally(() => {
             setIsLoading(false);
         });
@@ -111,8 +116,30 @@ const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
                             {errors.description && <small className="text-danger"> {errors.description?.message} </small>}
                         </div>
                         <div className="mb-2">
+                            <label>Categories</label>
+                            <div>
+                                {categoryList.map((category, index) =>
+                                    <span key={`category-${index}`} className='ms-2'>
+                                        <input className={`form-check-input ${errors.categories && 'border-danger'}`} type="checkbox" defaultChecked={location.categories.some(val => val === category)} value={category} id={category} {...register('categories')} />
+                                        <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
+                                    </span>
+                                )}
+                            </div>
+
+                            {errors.categories && <small className='text-danger'>{errors.categories.message}</small>}
+                        </div>
+                        <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>
                             <input className='form-control' type="file" name="images" onChange={handleFileChange} multiple id="image" />
+                        </div>
+                        <div>
+                            {location.images.map((img, i) =>
+                                <span key={img._id}>
+                                    <img src={img.thumbnail} alt="" />
+                                    <input type="checkbox" {...register('deleteImages')} value={img.filename} id={`img-${i}`}></input>
+                                    <label htmlFor={`img-${i}`}>Delete?</label>
+                                </span>
+                            )}
                         </div>
                         <div className="row mt-3">
                             <button className="btn btn-success col-6 offset-3" disabled={isLoading} >{isLoading ? 'Loading...' : 'Edit Location'}</button>

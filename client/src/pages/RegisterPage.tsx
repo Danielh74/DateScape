@@ -27,7 +27,6 @@ const RegisterPage = () => {
         setIsLoading(true);
         registerUser(registerData)
             .then(res => {
-                console.log(res);
                 toast.success(res.data.message);
                 handleLogin(res.data.user);
                 navigate('/locations');

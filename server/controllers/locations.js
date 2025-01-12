@@ -39,6 +39,11 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
         }
         const newLocation = new DateLocation(req.body.location);
         const geoData = await maptilerClient.geocoding.forward(address, { limit: 1 });
+        if (geoData.features && geoData.features.length > 0) {
+            geometry = geoData.features[0].geometry;
+        } else {
+            return res.status(400).send('Invalid address provided');
+        }
         Object.assign(newLocation, {
             ...newLocation,
             geometry: geoData.features[0].geometry,
@@ -47,6 +52,51 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
         });
         await newLocation.save();
         res.send({ newLocation, message: 'Location was created' });
+    } catch (err) {
+        res.status(500).send('Network Error: ' + err);
+    }
+});
+
+module.exports.editLocation = handleAsyncError(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const currentLocation = await DateLocation.findById(id);
+        if (!currentLocation) {
+            return res.status(404).send('Location was not found');
+        }
+
+        const geoData = await maptilerClient.geocoding.forward(req.body.location.address, { limit: 1 });
+        if (!(geoData.features && geoData.features.length > 0)) {
+            return res.status(400).send('Invalid address provided');
+        }
+
+        const newImages = req.files?.map(img => ({ url: img.path, filename: img.filename }));
+
+        if (req.body.deleteImages) {
+            for (const filename of req.body.deleteImages) {
+                await cloudinary.uploader.destroy(filename);
+            }
+            await currentLocation.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+        }
+
+        const formData = req.body.location;
+
+        Object.assign(currentLocation, {
+            ...formData,
+            images: currentLocation.images,
+            geometry: geoData.features[0].geometry
+        });
+        currentLocation.images.push(...newImages);
+
+        await currentLocation.save();
+
+        const updatedLocation = await DateLocation.findById(id)
+            .populate({
+                path: 'reviews',
+                populate: { path: 'author' }
+            })
+            .populate('author');
+        res.send({ location: updatedLocation });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
     }
@@ -70,39 +120,7 @@ module.exports.getLocationById = handleAsyncError(async (req, res) => {
     }
 })
 
-module.exports.editLocation = handleAsyncError(async (req, res) => {
-    const { id } = req.params;
-    try {
-        const currentLocation = await DateLocation.findById(id)
-            .populate({
-                path: 'reviews',
-                populate: { path: 'author' }
-            })
-            .populate('author');
-        if (!currentLocation) {
-            return res.status(404).send('Location was not found');
-        }
-        const geoData = await maptilerClient.geocoding.forward(req.body.location.address, { limit: 1 });
-        const formData = req.body.location;
-        const newImages = req.files.map(img => ({ url: img.path, filename: img.filename }));
-        if (req.body.deleteImages) {
-            for (const filename of req.body.deleteImages) {
-                await cloudinary.uploader.destroy(filename);
-            }
-            await currentLocation.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
-        }
-        currentLocation.images.push(...newImages);
-        Object.assign(currentLocation, {
-            ...currentLocation,
-            ...formData,
-            geometry: geoData.features[0].geometry
-        });
-        await currentLocation.save();
-        res.send({ location: currentLocation });
-    } catch (err) {
-        res.status(500).send('Network Error: ' + err);
-    }
-});
+
 
 module.exports.deleteLocation = handleAsyncError(async (req, res) => {
     const { id } = req.params;

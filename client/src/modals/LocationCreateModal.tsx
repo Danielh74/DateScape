@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { postLocation } from '../services/locationService';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
+import { toast } from 'react-toastify';
 
 type LocationForm = {
     title: string,
@@ -61,11 +62,11 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
         });
         postLocation(formData)
             .then(res => {
-                console.log(res);
                 navigate(`/location/${res.data.newLocation.id}`);
                 resetForm()
             })
-            .catch(err => console.error(err)).finally(() => {
+            .catch(err => toast.error(err.response.data))
+            .finally(() => {
                 setIsLoading(false);
             });
     };

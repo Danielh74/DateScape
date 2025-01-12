@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { User } from '../models/User'
 import { checkAuth, logoutUser } from "../services/authService";
+import { toast } from "react-toastify";
 type AuthContextProps = {
     currentUser: User | null,
     handleLogin: (userData: User) => void,
@@ -28,7 +29,7 @@ function AuthProvider({ children }: Props) {
             if (err.status === 401) {
                 setCurrentUser(null);
             } else {
-                console.log(err)
+                toast.error(err.message);
             }
         })
     }, []);
@@ -41,7 +42,7 @@ function AuthProvider({ children }: Props) {
         logoutUser().then(() => {
             setCurrentUser(null);
         }).catch(err => {
-            console.log(err);
+            toast.error(err.message);
         });
     };
 

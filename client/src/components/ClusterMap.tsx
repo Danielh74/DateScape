@@ -163,7 +163,6 @@ export default function ClusterMap({ locations }: Props) {
                     }
 
                     if (!feature.properties || !feature.properties.popUpMarkup) {
-                        console.log(feature)
                         console.error('popUpMarkup property is missing in the feature:', feature.properties);
                         return;
                     }

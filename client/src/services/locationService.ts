@@ -6,15 +6,15 @@ const api = axios.create({
 });
 
 export const getLocations = (locationName: string | null, categories: string | null) => {
-    let url = '/locations';
-    if (locationName && categories) {
-        url += `?locationName=${locationName}&categories=${categories}`;
-    } else if (categories) {
-        url += `?categories=${categories}`;
-    } else if (locationName) {
-        url += `?locationName=${locationName}`;
+    const params: Record<string, string> = {};
+    if (locationName) {
+        params.locationName = locationName;
     }
-    console.log(url)
+    if (categories) {
+        params.categories = categories;
+    }
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `/locations?${queryString}` : '/locations';
     return api.get(url);
 };
 export const getLocation = (id: string) => api.get(`/locations/${id}`);

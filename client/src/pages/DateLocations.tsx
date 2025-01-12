@@ -15,7 +15,6 @@ const DateLocations = () => {
     useEffect(() => {
         getLocations(locationName.state, selectedCategories.join(','))
             .then(res => {
-                console.log(res)
                 setLocations(res.data.locations);
             })
             .catch(err => {
