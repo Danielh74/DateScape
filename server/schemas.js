@@ -30,7 +30,8 @@ module.exports.dateLocationSchema = Joi.object({
         title: Joi.string().required("Title is required").min(2).escapeHTML(),
         price: Joi.number().required("Price is required").min(0),
         description: Joi.string().required("Description is required").min(2).escapeHTML(),
-        address: Joi.string().required("Address is required").escapeHTML()
+        address: Joi.string().required("Address is required").escapeHTML(),
+        categories: Joi.array().required("Categories are required")
     }).required("Location is required"),
     deleteImages: Joi.array()
 });

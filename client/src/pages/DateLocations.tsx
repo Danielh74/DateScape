@@ -51,6 +51,7 @@ const DateLocations = () => {
                                             <p className="col-12 card-text mb-0">
                                                 {location.description}
                                             </p>
+                                            <p className="mt-2">Categories: {<span>{location.categories.join(', ')}</span>}</p>
                                             <div className="col d-flex justify-content-start align-items-end">
                                                 <Link className="btn btn-danger" to={`/location/${location.id}`}>
                                                     View {location.title}

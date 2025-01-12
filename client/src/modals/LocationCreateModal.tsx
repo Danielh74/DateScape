@@ -9,6 +9,7 @@ type LocationForm = {
     address: string,
     price: number,
     description: string,
+    categories: string[]
 }
 
 type Props = {
@@ -25,12 +26,14 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
     const navigate = useNavigate();
     const [files, setFiles] = useState<FileForm>({ files: [], error: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const { register, handleSubmit, reset, formState: { errors } } = useForm<LocationForm>({
         defaultValues: {
             title: "",
             address: "",
             price: 0.00,
-            description: ""
+            description: "",
+            categories: []
         }
     });
 
@@ -48,14 +51,14 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
             title: data.title,
             address: data.address,
             price: data.price,
-            description: data.description
+            description: data.description,
+            categories: data.categories
         };
         formData.append('location', JSON.stringify(locationData));
 
         files.files.forEach(file => {
             formData.append('images', file);
         });
-
         postLocation(formData)
             .then(res => {
                 console.log(res);
@@ -123,7 +126,20 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
                             <label className="form-label" htmlFor="description">Description</label>
                             <textarea className={`form-control ${errors.description && 'border-danger'}`} id="description"
                                 {...register('description', { required: 'Description is required' })}></textarea>
-                            {errors.description && <small className="text-danger"> {errors.description?.message} </small>}
+                            {errors.description && <small className="text-danger"> {errors.description.message} </small>}
+                        </div>
+                        <div className="mb-2">
+                            <label>Categories</label>
+                            <div>
+                                {categoryList.map((category, index) =>
+                                    <span key={`category-${index}`} className='ms-2'>
+                                        <input className={`form-check-input ${files.error && 'border-danger'}`} type="checkbox" value={category} id={category} {...register('categories')} />
+                                        <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
+                                    </span>
+                                )}
+                            </div>
+
+                            {errors.categories && <small className='text-danger'>{errors.categories.message}</small>}
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>

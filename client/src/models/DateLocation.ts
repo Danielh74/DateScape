@@ -11,6 +11,7 @@ export interface DateLocation {
         type: string,
         coordinates: [number, number]
     },
+    categories: string[],
     images: LocationImage[],
     author: User,
     reviews: Review[],

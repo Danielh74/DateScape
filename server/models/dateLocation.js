@@ -30,6 +30,11 @@ const DateLocationSchema = new Schema({
     price: Number,
     description: String,
     address: String,
+    categories: {
+        type: [String],
+        enum: ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'],
+        required: true
+    },
     geometry: {
         type: {
             type: String,

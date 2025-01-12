@@ -42,3 +42,12 @@ module.exports.places = [
     'Cliffs',
     'Hollow'
 ]
+
+module.exports.categories = [
+    'Romantic',
+    'Food',
+    'Culture',
+    'Active',
+    'Fun',
+    'Outdoor'
+]

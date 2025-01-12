@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const cities = require('./cities')
-const { descriptors, places } = require('./seedHelpers');
+const { descriptors, places, categories } = require('./seedHelpers');
 const DateLocation = require('../models/dateLocation');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
@@ -26,6 +26,7 @@ const seedDB = async () => {
             images: [{ url: `https://picsum.photos/400?random=${Math.random()}`, filename: 'image' }],
             description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laudantium, tempora consequatur? Repudiandae minus sed voluptatum architecto porro. Aliquid dignissimos animi temporibus dolore inventore nulla sunt in voluptate! Libero, laboriosam blanditiis.',
             price: Math.ceil(Math.random() * 50) + 10,
+            categories: [`${randomize(categories)}`],
             author: '6771adde9fbb2536fbba426a'
         })
         await location.save();
