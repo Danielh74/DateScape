@@ -2,15 +2,24 @@ const DateLocation = require('../models/dateLocation');
 const handleAsyncError = require('../utils/handleAsyncError');
 const { cloudinary } = require('../cloudinary');
 const maptilerClient = require('@maptiler/client');
+const { categories: seedCategories } = require('../seeds/seedHelpers')
 
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
+    const { locationName = '', categories = '' } = req.query;
+    let categoriesArray = [];
+    if (!categories) {
+        categoriesArray = seedCategories;
+    } else {
+        categoriesArray = categories.split(',');
+    }
     try {
         const locations = await DateLocation.find(
-            req.query.locationName
-                ? { title: { $regex: req.query.locationName, $options: 'i' } }
-                : {}
+            {
+                title: { $regex: locationName, $options: 'i' },
+                categories: { $in: categoriesArray },
+            }
         ).populate({
             path: 'reviews',
             populate: { path: 'author' }

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Review = require('./review');
 const { cloudinary } = require('../cloudinary');
 const dayjs = require('dayjs');
+const { categories: seedCategories } = require('../seeds/seedHelpers');
 const Schema = mongoose.Schema;
 
 const options = {
@@ -32,7 +33,7 @@ const DateLocationSchema = new Schema({
     address: String,
     categories: {
         type: [String],
-        enum: ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'],
+        enum: seedCategories,
         required: true
     },
     geometry: {

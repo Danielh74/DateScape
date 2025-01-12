@@ -133,7 +133,7 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
                             <div>
                                 {categoryList.map((category, index) =>
                                     <span key={`category-${index}`} className='ms-2'>
-                                        <input className={`form-check-input ${files.error && 'border-danger'}`} type="checkbox" value={category} id={category} {...register('categories')} />
+                                        <input className={`form-check-input ${errors.categories && 'border-danger'}`} type="checkbox" value={category} id={category} {...register('categories')} />
                                         <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
                                     </span>
                                 )}

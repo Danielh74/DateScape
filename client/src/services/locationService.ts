@@ -5,7 +5,18 @@ const api = axios.create({
     withCredentials: true, // Send cookies
 });
 
-export const getAllLocations = (locationName: string | null) => api.get(`/locations${locationName ? `?locationName=${locationName}` : ''}`);
+export const getLocations = (locationName: string | null, categories: string | null) => {
+    let url = '/locations';
+    if (locationName && categories) {
+        url += `?locationName=${locationName}&categories=${categories}`;
+    } else if (categories) {
+        url += `?categories=${categories}`;
+    } else if (locationName) {
+        url += `?locationName=${locationName}`;
+    }
+    console.log(url)
+    return api.get(url);
+};
 export const getLocation = (id: string) => api.get(`/locations/${id}`);
 export const postLocation = (locationData: FormData) => api.post('/locations', locationData);
 export const updateLocation = (id: string, locationData: FormData) => api.put(`/locations/${id}`, locationData);
