@@ -28,12 +28,12 @@ const DateLocations = () => {
                         locations.map(location =>
                             <div key={location.id} className="card my-3">
                                 <div className="row">
-                                    <div className="col-12 col-md-4">
-                                        <img className="img-fluid rounded-top rounded h-100  w-100" src={location.images[0].url}
+                                    <div className="col-12 col-md-3">
+                                        <img className="img-fluid rounded-top rounded w-100 h-100 object-fit-cover" src={location.images[0].url}
                                             alt="location image" />
                                     </div>
-                                    <div className="card-body col-md-8">
-                                        <div className="row h-100">
+                                    <div className="card-body col-md-9">
+                                        <div className="row">
                                             <div className="col-12 mb-0">
                                                 <span className="row">
                                                     <h3 className="col-9">{location.title}</h3>
@@ -56,7 +56,6 @@ const DateLocations = () => {
                                                     View {location.title}
                                                 </Link>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>

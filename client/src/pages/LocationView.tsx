@@ -114,7 +114,7 @@ const LocationView = () => {
                                 <div className="carousel-inner">
                                     {location?.images.map((img, i) =>
                                         <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
-                                            <img src={img.url} style={{ height: 300 }} className="rounded-top object-fit-fill w-100" alt="" />
+                                            <img src={img.url} className="rounded-top object-fit-cover w-100" alt="camp image" />
                                         </div>
                                     )}
                                 </div>
@@ -218,7 +218,7 @@ const LocationView = () => {
                             </div>
                         ))
                     ) : (
-                        <p>No reviews yet. Be the first to leave one!</p>
+                        <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
                     )}
                 </div>
                 <LocationEditModal

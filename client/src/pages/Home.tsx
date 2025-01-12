@@ -33,7 +33,7 @@ const Home = () => {
                             anniversary, DateScape helps you find the perfect setting for unforgettable moments. <br />
                             From dreamy hideaways to exciting outings — make every date a story worth sharing.
                         </p>
-                        <a className="btn btn-secondary" href="/locations">Find Your Next Date Spot</a>
+                        <Link className="btn btn-secondary fw-medium" to="/locations">Find Your Next Date Spot</Link>
                     </main>
                     <footer className="mt-auto pb-2">&copy; 2024 DateScape</footer>
                 </div>

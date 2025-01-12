@@ -25,12 +25,4 @@
 #nav-link.active {
     color: white;
     border-bottom-color: white;
-
-}
-
-.btn-secondary,
-.btn-secondary:hover {
-    font-weight: 500;
-    color: #000;
-    text-shadow: none;
 }
