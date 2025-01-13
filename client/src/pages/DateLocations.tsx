@@ -35,7 +35,7 @@ const DateLocations = () => {
                     const orderedList = list.sort((a, b) => a.averageRating - b.averageRating).reverse();
                     setLocations(orderedList);
                     setViewAmount(res.data.limit);
-                    setPages({ ...pages, amount: res.data.pages });
+                    setPages(prev => ({ ...prev, amount: res.data.pages }));
                 })
                 .catch(err => {
                     toast.error(err.message);
@@ -48,11 +48,11 @@ const DateLocations = () => {
         const currentPage = sessionStorage.getItem('activePage');
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
-            setPages({ ...pages, active: currentPageNum });
+            setPages(prev => ({ ...prev, active: currentPageNum }));
             setPagination({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
         }
 
-    }, [locationName, selectedCategories, pages, viewAmount])
+    }, [locationName, selectedCategories, viewAmount])
 
     const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
         const { checked, value } = e.target;
@@ -153,6 +153,7 @@ const DateLocations = () => {
                         <button className="btn border-0" disabled={pages.active === 1} onClick={() => handleChangePage('decrement')}>prev</button>
                         {locations.slice(0, pages.amount).map((_, index) =>
                             <button
+                                key={index}
                                 className={`btn col mx-3 p-0 ${pages.active === index + 1 && 'fw-bold'}`}
                                 onClick={() => { handleChangePage('random', index) }}>
                                 {index + 1}
