@@ -31,7 +31,9 @@ const DateLocations = () => {
             setIsLoading(true);
             getLocations(locationName.state, selectedCategories.join(','))
                 .then(res => {
-                    setLocations(res.data.locations);
+                    const list: DateLocation[] = res.data.locations;
+                    const orderedList = list.sort((a, b) => a.averageRating - b.averageRating).reverse();
+                    setLocations(orderedList);
                 })
                 .catch(err => {
                     toast.error(err.message);
@@ -135,7 +137,7 @@ const DateLocations = () => {
                                                 View {location.title}
                                             </Link>
                                             <button className="btn fs-1 p-0" onClick={() => handleUpdateFavLocation({ locationId: location.id })}>
-                                                {currentUser?.favLocations.some(fav => fav === location.id) ? <IoHeartSharp className="text-danger" /> : <IoHeartOutline />}
+                                                {currentUser?.favLocations?.some(fav => fav === location.id) ? <IoHeartSharp className="text-danger" /> : <IoHeartOutline />}
                                             </button>
 
                                         </div>
