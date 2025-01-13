@@ -9,6 +9,7 @@ import LocationEditModal from "../modals/LocationEditModal";
 import { useForm } from "react-hook-form";
 import '../styles/starts.css';
 import { toast } from 'react-toastify';
+import Loader from "../components/Loader";
 
 interface ReviewProp {
     rating: number;
@@ -170,7 +171,7 @@ const LocationView = () => {
                 </div>
 
                 <div className="position-relative col-md-3 col-12 mt-md-0 mt-2">
-                    {isLoading.review && <div className="position-absolute bg-secondary w-100 h-100 z-1 align-content-center text-center fs-3 fw-bold bg-opacity-50 rounded">Loading...</div>}
+                    {isLoading.review && <Loader />}
                     {currentUser &&
                         <>
                             <h2>Leave a Review</h2>

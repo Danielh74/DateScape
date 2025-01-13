@@ -5,6 +5,7 @@ import { getLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
 import { updateFavLocation } from "../services/authService";
+import Loader from "../components/Loader";
 
 type updateProp = {
     locationId: string
@@ -15,15 +16,20 @@ const DateLocations = () => {
     const [showFilter, setShowFilter] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState<string[]>(['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic']);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const locationName = useLocation();
+
     useEffect(() => {
+        setIsLoading(true);
         getLocations(locationName.state, selectedCategories.join(','))
             .then(res => {
                 setLocations(res.data.locations);
             })
             .catch(err => {
                 toast.error(err.message);
+            }).finally(() => {
+                setIsLoading(false);
             });
     }, [locationName, selectedCategories])
 
@@ -41,7 +47,8 @@ const DateLocations = () => {
     }
 
     return (
-        <>
+        <div className="position-relative min-vh-100">
+            {isLoading && <Loader />}
             {locations.length > 0 ?
                 <>
                     <ClusterMap locations={locations} />
@@ -95,8 +102,8 @@ const DateLocations = () => {
                     )}
                 </>
                 :
-                <p>No Locations Available...</p>}
-        </>
+                <p>No Locations To Show...</p>}
+        </div>
     )
 }
 

@@ -3,22 +3,12 @@ import { NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LocationCreateModal from "../modals/LocationCreateModal";
 import '../styles/navbar.css';
-import { toast } from 'react-toastify';
 
 const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
     const [show, setShow] = useState(false);
     const [locationName, setLocationName] = useState('');
-
-    const handleShow = () => {
-        if (currentUser) {
-            setShow(true);
-        } else {
-            toast.error('Must be logged in');
-            navigate('/login')
-        }
-    };
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
         e.preventDefault();
@@ -38,10 +28,14 @@ const Navbar = () => {
                     <div className="navbar-nav">
                         <NavLink className="nav-link text-center fw-medium" id="link" to="/">Home</NavLink>
                         <NavLink className="nav-link text-center fw-medium" id="link" to="/locations">Locations</NavLink>
-                        <button className="nav-link fw-medium" id="link" onClick={handleShow}>
-                            New Location
-                        </button>
-                        <NavLink className="nav-link text-center fw-medium" id="link" to="/favorites">Favorites</NavLink>
+                        {currentUser &&
+                            <>
+                                <button className="nav-link fw-medium" id="link" onClick={() => setShow(true)}>
+                                    New Location
+                                </button>
+                                <NavLink className="nav-link text-center fw-medium" id="link" to="/favorites">Favorites</NavLink>
+                            </>}
+
                     </div>
                     <form className="d-flex ms-auto" onSubmit={handleSubmit} role="search">
                         <input className="form-control me-2" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
@@ -53,7 +47,6 @@ const Navbar = () => {
                                 <NavLink className="nav-link text-center fw-medium" id="link" to="/mylocations">My Locations</NavLink>
                                 <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
                             </>
-
                             :
                             <>
                                 <NavLink className="nav-link text-center fw-medium" id="link" to="/login">Login</NavLink>
