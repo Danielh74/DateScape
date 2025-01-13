@@ -11,7 +11,7 @@ const UserLocations = () => {
     return (
         locations.length > 0 ?
             locations.map(location =>
-                <div key={location.id} className="card my-3">
+                <div key={location.id} className="card my-3 shadow">
                     <div className="row g-0">
                         <div className="col-12 col-md-3">
                             <img className="img-fluid rounded-top rounded w-100 h-100 object-fit-cover" src={location.images[0].url}

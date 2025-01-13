@@ -109,7 +109,7 @@ const LocationView = () => {
                     <LocationMap location={location} />
                 </div>
                 <div className="col-12 col-md-6">
-                    <div className="card">
+                    <div className="card shadow">
                         <div className="row">
                             <div id="locationCarousel" className="carousel slide">
                                 <div className="carousel-inner">

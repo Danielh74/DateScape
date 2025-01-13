@@ -30,7 +30,8 @@ const LoginPage = () => {
                 const user: User = {
                     _id: userData._id,
                     username: userData.username,
-                    email: userData.email
+                    email: userData.email,
+                    favLocations: userData.favLocations
                 };
                 toast.success(res.data.message);
                 handleLogin(user);
