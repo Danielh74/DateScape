@@ -14,15 +14,15 @@ type updateProp = {
 }
 
 const DateLocations = () => {
+    const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
+    const locationName = useLocation();
+    const viewNum = 10;
     const { currentUser, updateUser } = useAuth();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [showFilter, setShowFilter] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState<string[]>(['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic']);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
-    const locationName = useLocation();
-    const viewNum = 10;
     const [activePage, setActivePage] = useState<number>(1);
     const [pagination, setPagination] = useState({ start: 0, end: viewNum });
 
