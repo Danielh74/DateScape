@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 type AuthContextProps = {
     currentUser: User | null,
     handleLogin: (userData: User) => void,
-    handleLogout: () => void
+    handleLogout: () => void,
+    updateUser: (updatedUser: User) => void
 }
 
 type Props = {
@@ -15,7 +16,8 @@ type Props = {
 const initialValues: AuthContextProps = {
     currentUser: null,
     handleLogin: () => { },
-    handleLogout: () => { }
+    handleLogout: () => { },
+    updateUser: () => { }
 }
 const AuthContext = createContext(initialValues)
 
@@ -46,7 +48,11 @@ function AuthProvider({ children }: Props) {
         });
     };
 
-    return <AuthContext.Provider value={{ currentUser, handleLogin, handleLogout }}>{children}</AuthContext.Provider>
+    const updateUser = (updatedUser: User) => {
+        setCurrentUser(updatedUser);
+    };
+
+    return <AuthContext.Provider value={{ currentUser, handleLogin, handleLogout, updateUser }}>{children}</AuthContext.Provider>
 };
 
 export { AuthContext, AuthProvider }
