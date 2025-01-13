@@ -3,7 +3,7 @@ const cities = require('./cities')
 const { descriptors, places, categories } = require('./seedHelpers');
 const DateLocation = require('../models/dateLocation');
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
+mongoose.connect('mongodb://127.0.0.1:27017/DateScape');
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
