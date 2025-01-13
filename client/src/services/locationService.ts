@@ -13,6 +13,7 @@ export const getLocations = (locationName: string | null, categories: string | n
     if (categories) {
         params.categories = categories;
     }
+
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `/locations?${queryString}` : '/locations';
 

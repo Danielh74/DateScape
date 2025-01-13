@@ -14,7 +14,7 @@ const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelpCamp');
+mongoose.connect('mongodb://127.0.0.1:27017/DateScape');
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {

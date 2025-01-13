@@ -16,15 +16,15 @@ type updateProp = {
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const locationName = useLocation();
-    const viewNum = 10;
     const { currentUser, updateUser } = useAuth();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [showFilter, setShowFilter] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState<string[]>(['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic']);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [activePage, setActivePage] = useState<number>(1);
-    const [pagination, setPagination] = useState({ start: 0, end: viewNum });
+    const [viewAmount, setViewAmount] = useState(0);
+    const [pages, setPages] = useState({ active: 1, amount: 0 });
+    const [pagination, setPagination] = useState({ start: 0, end: viewAmount });
 
     useEffect(() => {
         const fetchLocations = () => {
@@ -34,6 +34,8 @@ const DateLocations = () => {
                     const list: DateLocation[] = res.data.locations;
                     const orderedList = list.sort((a, b) => a.averageRating - b.averageRating).reverse();
                     setLocations(orderedList);
+                    setViewAmount(res.data.limit);
+                    setPages({ ...pages, amount: res.data.pages });
                 })
                 .catch(err => {
                     toast.error(err.message);
@@ -46,11 +48,11 @@ const DateLocations = () => {
         const currentPage = sessionStorage.getItem('activePage');
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
-            setActivePage(currentPageNum);
-            setPagination({ start: (currentPageNum - 1) * viewNum, end: currentPageNum * viewNum });
+            setPages({ ...pages, active: currentPageNum });
+            setPagination({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
         }
 
-    }, [locationName, selectedCategories, activePage])
+    }, [locationName, selectedCategories, pages, viewAmount])
 
     const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
         const { checked, value } = e.target;
@@ -74,17 +76,17 @@ const DateLocations = () => {
     };
 
     const handleChangePage = (action: string, index = 0) => {
-        if (action === 'increment') {
-            setPagination(prev => ({ start: prev.start + viewNum, end: prev.end + viewNum }));
-            setActivePage(prev => prev + 1);
-            sessionStorage.setItem('activePage', (activePage + 1).toString());
-        } else if (action === 'decrement') {
-            setPagination(prev => ({ start: prev.start - viewNum, end: prev.end - viewNum }));
-            setActivePage(prev => prev - 1);
-            sessionStorage.setItem('activePage', (activePage - 1).toString());
+        if (action === 'increment' && pages.active < pages.amount) {
+            setPagination(prev => ({ start: prev.start + viewAmount, end: prev.end + viewAmount }));
+            setPages({ ...pages, active: pages.active + 1 });
+            sessionStorage.setItem('activePage', (pages.active + 1).toString());
+        } else if (action === 'decrement' && pages.active > 1) {
+            setPagination(prev => ({ start: prev.start - viewAmount, end: prev.end - viewAmount }));
+            setPages({ ...pages, active: pages.active - 1 });
+            sessionStorage.setItem('activePage', (pages.active - 1).toString());
         } else if (action === 'random') {
-            setPagination({ start: (index) * viewNum, end: (index + 1) * viewNum });
-            setActivePage(index + 1);
+            setPagination({ start: (index) * viewAmount, end: (index + 1) * viewAmount });
+            setPages({ ...pages, active: index + 1 });
             sessionStorage.setItem('activePage', (index + 1).toString())
         }
     };
@@ -148,15 +150,15 @@ const DateLocations = () => {
                     )}
 
                     <p className="text-center">
-                        <button className="btn" onClick={() => handleChangePage('decrement')}>prev</button>
-                        {locations.slice(0, Math.ceil(locations.length / viewNum)).map((_, index) =>
+                        <button className="btn border-0" disabled={pages.active === 1} onClick={() => handleChangePage('decrement')}>prev</button>
+                        {locations.slice(0, pages.amount).map((_, index) =>
                             <button
-                                className={`btn col mx-3 p-0 ${activePage === index + 1 && 'fw-bold'}`}
+                                className={`btn col mx-3 p-0 ${pages.active === index + 1 && 'fw-bold'}`}
                                 onClick={() => { handleChangePage('random', index) }}>
                                 {index + 1}
                             </button>
                         )}
-                        <button className="btn" onClick={() => handleChangePage('increment')}>next</button>
+                        <button className="btn border-0" disabled={pages.active === pages.amount} onClick={() => handleChangePage('increment')}>next</button>
                     </p>
                 </>
                 :

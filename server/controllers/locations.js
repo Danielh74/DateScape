@@ -9,6 +9,7 @@ maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
     const { locationName = '', categories = '' } = req.query;
+    const limit = 10;
     let categoriesArray = [];
     if (!categories) {
         categoriesArray = seedCategories;
@@ -25,7 +26,9 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
             path: 'reviews',
             populate: { path: 'author' }
         }).populate('author');
-        res.send({ locations, user: req.user });
+
+        const total = await DateLocation.countDocuments();
+        res.send({ locations, pages: Math.ceil(total / limit), limit });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
     }
