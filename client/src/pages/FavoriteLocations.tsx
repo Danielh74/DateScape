@@ -11,7 +11,7 @@ const FavoriteLocations = () => {
     const { currentUser } = useAuth();
     const [favorites, setFavorites] = useState<DateLocation[]>([]);
     const [viewAmount, setViewAmount] = useState(0);
-    const [pages, setPages] = useState({ active: 1, amount: 0 });
+    const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +21,7 @@ const FavoriteLocations = () => {
             .then(res => {
                 setFavorites(res.data.favorites);
                 setViewAmount(res.data.limit);
-                setPages(prev => ({ ...prev, amount: res.data.pages }));
+                setPages(res.data.pages);
 
                 const currentPage = sessionStorage.getItem('activePage');
                 if (currentPage) {
@@ -48,7 +48,7 @@ const FavoriteLocations = () => {
                             <LocationCard key={location.id} location={location} />
                         )}
                         <PageSelector
-                            pagesAmount={pages.amount}
+                            pagesAmount={pages}
                             onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
                         />
                     </>

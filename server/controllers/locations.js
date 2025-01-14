@@ -6,10 +6,10 @@ const { categories: seedCategories } = require('../seeds/seedHelpers');
 const User = require('../models/user');
 
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+const limit = 12;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
     const { locationName = '', categories = '' } = req.query;
-    const limit = 12;
     let categoriesArray = [];
     if (!categories) {
         categoriesArray = seedCategories;
@@ -31,14 +31,41 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
     }
 });
 
+module.exports.getUserLocations = handleAsyncError(async (req, res) => {
+    try {
+        const userLocations = await DateLocation.find({ author: req.user._id });
+        const total = userLocations.length;
+        res.send({ locations: userLocations, pages: Math.ceil(total / limit), limit });
+    } catch (e) {
+        return res.status(500).send('Error:' + e);
+    }
+});
+
 module.exports.getFavorites = handleAsyncError(async (req, res) => {
-    const limit = 12;
     try {
         const user = await User.findById(req.user._id).populate('favLocations');
         const total = user.favLocations.length;
         res.send({ favorites: user.favLocations, pages: Math.ceil(total / limit), limit });
     } catch (e) {
         return res.status(500).send('Error:' + e);
+    }
+});
+
+module.exports.getLocationById = handleAsyncError(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const location = await DateLocation.findById(id)
+            .populate({
+                path: 'reviews',
+                populate: { path: 'author' }
+            })
+            .populate('author');
+        if (!location) {
+            return res.status(404).send('Location was not found');
+        }
+        res.send({ location });
+    } catch (err) {
+        res.status(500).send('Network Error: ' + err);
     }
 });
 
@@ -114,24 +141,6 @@ module.exports.editLocation = handleAsyncError(async (req, res) => {
     }
 });
 
-module.exports.getLocationById = handleAsyncError(async (req, res) => {
-    const { id } = req.params;
-    try {
-        const location = await DateLocation.findById(id)
-            .populate({
-                path: 'reviews',
-                populate: { path: 'author' }
-            })
-            .populate('author');
-        if (!location) {
-            return res.status(404).send('Location was not found');
-        }
-        res.send({ location });
-    } catch (err) {
-        res.status(500).send('Network Error: ' + err);
-    }
-})
-
 module.exports.deleteLocation = handleAsyncError(async (req, res) => {
     const { id } = req.params;
     try {
@@ -145,11 +154,3 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
     }
 });
 
-module.exports.getUserLocations = handleAsyncError(async (req, res) => {
-    try {
-        const userLocations = await DateLocation.find({ author: req.user._id });
-        res.send({ locations: userLocations });
-    } catch (e) {
-        return res.status(500).send('Error:' + e);
-    }
-});

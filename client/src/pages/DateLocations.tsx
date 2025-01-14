@@ -17,7 +17,7 @@ const DateLocations = () => {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [viewAmount, setViewAmount] = useState(0);
-    const [pages, setPages] = useState({ active: 1, amount: 0 });
+    const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const DateLocations = () => {
                     const orderedList = list.sort((a, b) => a.averageRating - b.averageRating).reverse();
                     setLocations(orderedList);
                     setViewAmount(res.data.limit);
-                    setPages(prev => ({ ...prev, amount: res.data.pages }));
+                    setPages(res.data.pages);
 
                     const currentPage = sessionStorage.getItem('activePage');
                     if (currentPage) {
@@ -83,7 +83,7 @@ const DateLocations = () => {
                         </div>
 
                         <PageSelector
-                            pagesAmount={pages.amount}
+                            pagesAmount={pages}
                             onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
                         />
                     </>
