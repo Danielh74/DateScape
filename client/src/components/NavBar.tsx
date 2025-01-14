@@ -44,7 +44,7 @@ const Navbar = () => {
                     <div className="navbar-nav ms-auto">
                         {currentUser ?
                             <>
-                                <NavLink className="nav-link text-center fw-medium" id="link" to="/mylocations">My Locations</NavLink>
+                                <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</NavLink>
                                 <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
                             </>
                             :
