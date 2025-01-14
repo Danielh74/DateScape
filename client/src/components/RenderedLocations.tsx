@@ -1,4 +1,3 @@
-import React from 'react'
 import { DateLocation } from '../models/DateLocation'
 import LocationCard from './LocationCard'
 
