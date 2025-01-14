@@ -63,7 +63,7 @@ const LocationCard = ({ location }: Props) => {
                         <Link className="col-6 mx-2 btn btn-danger" to={`/location/${location.id}`}>
                             View Location
                         </Link>
-                        <button className="btn col-2 fs-1 p-0" onClick={handleUpdateFavLocation}>
+                        <button className="btn col-2 fs-1 p-0 border-0" onClick={handleUpdateFavLocation}>
                             {currentUser?.favLocations?.some(fav => fav === location.id) ? <IoHeartSharp className="text-danger" /> : <IoHeartOutline />}
                         </button>
 

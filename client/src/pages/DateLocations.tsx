@@ -1,23 +1,15 @@
 import { ChangeEvent, useEffect, useState } from "react"
 import { DateLocation } from "../models/DateLocation";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
-import { updateFavLocation } from "../services/authService";
 import Loader from "../components/Loader";
-import useAuth from "../hooks/useAuth";
-import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
 import LocationCard from "../components/LocationCard";
-
-type updateProp = {
-    locationId: string
-}
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const locationName = useLocation();
-    const { currentUser, updateUser } = useAuth();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [showFilter, setShowFilter] = useState(false);
     const [filteredCategories, setFilteredCategories] = useState<string[]>(['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic']);
@@ -62,18 +54,6 @@ const DateLocations = () => {
         } else {
             setFilteredCategories(prev => prev.filter(val => val !== value));
         }
-    };
-
-    const handleUpdateFavLocation = (locationId: updateProp) => {
-        setIsLoading(true);
-        updateFavLocation(locationId)
-            .then(res => {
-                updateUser(res.data.user);
-            })
-            .catch(err => toast.error(err.response.data))
-            .finally(() => {
-                setIsLoading(false);
-            });
     };
 
     const handleChangePage = (action: string, index = 0) => {
