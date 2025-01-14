@@ -27,7 +27,7 @@ const seedDB = async () => {
             description: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laudantium, tempora consequatur? Repudiandae minus sed voluptatum architecto porro. Aliquid dignissimos animi temporibus dolore inventore nulla sunt in voluptate! Libero, laboriosam blanditiis.',
             price: Math.ceil(Math.random() * 50) + 10,
             categories: [`${randomize(categories)}`],
-            author: '6771adde9fbb2536fbba426a'
+            author: '678641f454d4f4a32ee7552d'
         })
         await location.save();
     }

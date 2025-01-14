@@ -9,7 +9,7 @@ maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
     const { locationName = '', categories = '' } = req.query;
-    const limit = 10;
+    const limit = 12;
     let categoriesArray = [];
     if (!categories) {
         categoriesArray = seedCategories;

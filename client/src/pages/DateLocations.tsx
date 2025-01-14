@@ -107,38 +107,36 @@ const DateLocations = () => {
                         )}
                         <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
                     </div>}
-                    {locations.slice(listBounds.start, listBounds.end).map(location =>
-                        <div key={location.id} className="card my-3 shadow">
-                            <div className="row g-0">
-                                <div className="col-12 col-md-3">
-                                    <img className="img-fluid rounded-top rounded w-100 h-100 object-fit-cover" src={location.images[0].url}
-                                        alt="location image" />
-                                </div>
-                                <div className="card-body d-flex col-md-9">
-                                    <div className="row">
-                                        <div className="col-12 mb-0">
-                                            <span className="row">
-                                                <h3 className="col-12 col-md-7">{location.title}</h3>
-                                                <span className="col d-flex justify-content-md-end">
-                                                    <span className="me-1 align-self-center">{`(${location.reviews.length})`}</span>
-                                                    <p className="d-inline starability-result" data-rating={location.averageRating}>
-                                                        Rated: {location.averageRating} stars
-                                                    </p>
-                                                </span>
+                    <div className="row ">
+                        {locations.slice(listBounds.start, listBounds.end).map(location =>
+                            <div key={location.id} className="col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
+                                <div className="border rounded shadow">
+                                    <img src={location.images[0].url} className="card-img-top rounded-top" alt="location image" />
+                                    <div className="card-body p-2">
+                                        <p className="card-title d-flex justify-content-between">
+                                            <h5 className="">
+                                                {location.title}
+
+                                            </h5>
+                                            <span className="">
+                                                {location.averageRating} ★
                                             </span>
-                                        </div>
-                                        <span className="col-12 text-muted">
-                                            {location.address}
-                                        </span>
-                                        <p className="col-12 card-text mb-0">
-                                            {location.description}
                                         </p>
-                                        <p className="mt-2">Categories: {<span>{location.categories.join(', ')}</span>}</p>
-                                        <div className="col d-flex justify-content-between align-items-center">
-                                            <Link className="btn btn-danger" to={`/location/${location.id}`}>
-                                                View {location.title}
+                                        <p className="card-text m-0">
+                                            <span className="text-muted d-block">
+                                                {location.address}
+                                            </span>
+                                            <span className="d-inline-block my-2 fw-semibold ">
+                                                ${location.price}
+                                            </span>
+                                            <span className="d-block">Categories: {<span>{location.categories.join(', ')}</span>}</span>
+
+                                        </p>
+                                        <div className="row justify-content-between align-items-end">
+                                            <Link className="col-6 mx-2 btn btn-danger" to={`/location/${location.id}`}>
+                                                View Location
                                             </Link>
-                                            <button className="btn fs-1 p-0" onClick={() => handleUpdateFavLocation({ locationId: location.id })}>
+                                            <button className="btn col-2 fs-1 p-0" onClick={() => handleUpdateFavLocation({ locationId: location.id })}>
                                                 {currentUser?.favLocations?.some(fav => fav === location.id) ? <IoHeartSharp className="text-danger" /> : <IoHeartOutline />}
                                             </button>
 
@@ -146,8 +144,8 @@ const DateLocations = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <p className="text-center">
                         <button className="btn border-0" disabled={pages.active === 1} onClick={() => handleChangePage('decrement')}>prev</button>

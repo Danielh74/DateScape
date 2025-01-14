@@ -105,10 +105,10 @@ const LocationView = () => {
     return (
         location ?
             <div className="row my-3">
-                <div className="col-12 col-md-3 mb-2">
+                <div className="col-12 col-lg-3 mb-2">
                     <LocationMap location={location} />
                 </div>
-                <div className="col-12 col-md-6">
+                <div className="col-12 col-lg-6">
                     <div className="card shadow">
                         <div className="row">
                             <div id="locationCarousel" className="carousel slide">
@@ -170,7 +170,7 @@ const LocationView = () => {
                     </div>
                 </div>
 
-                <div className="position-relative col-md-3 col-12 mt-md-0 mt-2">
+                <div className="position-relative col-lg-3 col-12 mt-2">
                     {isLoading.review && <Loader />}
                     {currentUser &&
                         <>
@@ -195,29 +195,35 @@ const LocationView = () => {
                                     <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
                                     {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                 </div>
-                                <button className="btn btn-success">Submit</button>
+                                <div className="d-flex justify-content-between px-3 align-items-center">
+                                    <button className="btn btn-success">Submit</button>
+                                    {location.reviews.length} reviews
+                                </div>
+
                             </form>
                         </>
                     }
                     {location.reviews?.length > 0 ? (
-                        location.reviews.map(review => (
-                            <div key={review._id} className="card mb-2">
-                                <div className="card-body">
-                                    <p className="starability-result" data-rating={review.rating}>
-                                        Rated: {review.rating} stars
-                                    </p>
-                                    <p className="card-text">
-                                        {review.body}
-                                    </p>
-                                    <p className="card-text text-body-secondary">
-                                        {review.author.username}
-                                    </p>
-                                    {(currentUser && (currentUser._id === review.author._id)) &&
-                                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
-                                    }
+                        <div className="overflow-auto h-50">
+                            {location.reviews.map(review => (
+                                <div key={review._id} className="card mb-2">
+                                    <div className="card-body">
+                                        <p className="starability-result" data-rating={review.rating}>
+                                            Rated: {review.rating} stars
+                                        </p>
+                                        <p className="card-text">
+                                            {review.body}
+                                        </p>
+                                        <p className="card-text text-body-secondary">
+                                            {review.author.username}
+                                        </p>
+                                        {(currentUser && (currentUser._id === review.author._id)) &&
+                                            <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     ) : (
                         <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
                     )}
