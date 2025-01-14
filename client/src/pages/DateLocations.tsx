@@ -24,7 +24,7 @@ const DateLocations = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [viewAmount, setViewAmount] = useState(0);
     const [pages, setPages] = useState({ active: 1, amount: 0 });
-    const [pagination, setPagination] = useState({ start: 0, end: viewAmount });
+    const [listBounds, setListBounds] = useState({ start: 0, end: viewAmount });
 
     useEffect(() => {
         const fetchLocations = () => {
@@ -49,7 +49,7 @@ const DateLocations = () => {
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
             setPages(prev => ({ ...prev, active: currentPageNum }));
-            setPagination({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
+            setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
         }
 
     }, [locationName, selectedCategories, viewAmount])
@@ -77,15 +77,15 @@ const DateLocations = () => {
 
     const handleChangePage = (action: string, index = 0) => {
         if (action === 'increment' && pages.active < pages.amount) {
-            setPagination(prev => ({ start: prev.start + viewAmount, end: prev.end + viewAmount }));
+            setListBounds(prev => ({ start: prev.start + viewAmount, end: prev.end + viewAmount }));
             setPages({ ...pages, active: pages.active + 1 });
             sessionStorage.setItem('activePage', (pages.active + 1).toString());
         } else if (action === 'decrement' && pages.active > 1) {
-            setPagination(prev => ({ start: prev.start - viewAmount, end: prev.end - viewAmount }));
+            setListBounds(prev => ({ start: prev.start - viewAmount, end: prev.end - viewAmount }));
             setPages({ ...pages, active: pages.active - 1 });
             sessionStorage.setItem('activePage', (pages.active - 1).toString());
         } else if (action === 'random') {
-            setPagination({ start: (index) * viewAmount, end: (index + 1) * viewAmount });
+            setListBounds({ start: (index) * viewAmount, end: (index + 1) * viewAmount });
             setPages({ ...pages, active: index + 1 });
             sessionStorage.setItem('activePage', (index + 1).toString())
         }
@@ -107,7 +107,7 @@ const DateLocations = () => {
                         )}
                         <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
                     </div>}
-                    {locations.slice(pagination.start, pagination.end).map(location =>
+                    {locations.slice(listBounds.start, listBounds.end).map(location =>
                         <div key={location.id} className="card my-3 shadow">
                             <div className="row g-0">
                                 <div className="col-12 col-md-3">

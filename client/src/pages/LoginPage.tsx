@@ -15,7 +15,7 @@ const LoginPage = () => {
     const { handleLogin } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors }, setError } = useForm({
         defaultValues: {
             username: "",
             password: ""
@@ -39,6 +39,8 @@ const LoginPage = () => {
             }).catch(err => {
                 if (err.status === 400) {
                     toast.error(err.response.data);
+                } else if (err.status === 401) {
+                    setError('root', { message: "User does not exist" })
                 } else {
                     toast.error(err.message);
                 }
@@ -70,6 +72,7 @@ const LoginPage = () => {
                                 <div className="d-grid">
                                     <button className="btn btn-success" disabled={isLoading}>{isLoading ? 'Logging in...' : 'Log in'}</button>
                                 </div>
+                                {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
                             </form>
                         </div>
                     </div>
