@@ -27,13 +27,13 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
                         <NavLink className="nav-link text-center fw-medium" id="link" to="/">Home</NavLink>
-                        <NavLink className="nav-link text-center fw-medium" id="link" to="/locations">Locations</NavLink>
+                        <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Locations</NavLink>
                         {currentUser &&
                             <>
                                 <button className="nav-link fw-medium" id="link" onClick={() => setShow(true)}>
                                     New Location
                                 </button>
-                                <NavLink className="nav-link text-center fw-medium" id="link" to="/favorites">Favorites</NavLink>
+                                <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/favorites">Favorites</NavLink>
                             </>}
 
                     </div>

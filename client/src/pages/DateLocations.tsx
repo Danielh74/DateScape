@@ -30,21 +30,23 @@ const DateLocations = () => {
                     setLocations(orderedList);
                     setViewAmount(res.data.limit);
                     setPages(prev => ({ ...prev, amount: res.data.pages }));
-                    setListBounds({ start: 0, end: viewAmount });
+
+                    const currentPage = sessionStorage.getItem('activePage');
+                    if (currentPage) {
+                        const currentPageNum = parseInt(currentPage);
+                        setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
+                    } else {
+                        setListBounds({ start: 0, end: res.data.limit });
+                    }
                 })
                 .catch(err => {
                     toast.error(err.message);
                 }).finally(() => {
+
                     setIsLoading(false);
                 });
         }
         fetchLocations();
-
-        const currentPage = sessionStorage.getItem('activePage');
-        if (currentPage) {
-            const currentPageNum = parseInt(currentPage);
-            setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
-        }
 
     }, [locationName, selectedCategories, viewAmount])
 
@@ -59,33 +61,34 @@ const DateLocations = () => {
 
     return (
         <div className="position-relative min-vh-100">
-            {isLoading && <Loader />}
-            {locations.length > 0 ?
-                <>
-                    <ClusterMap locations={locations} />
-                    <button className="btn btn-outline-dark mt-3" onClick={() => setShowFilter(prev => !prev)}>Filter By Category</button>
-                    {showFilter && <div className="mt-3">
-                        {categoryList.map((category, index) =>
-                            <span key={`category-${index}`} className='ms-2'>
-                                <input className={'form-check-input'} type="checkbox" checked={filteredCategories.some(val => val === category)} value={category} onChange={handleCheck} id={category} />
-                                <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
-                            </span>
-                        )}
-                        <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
-                    </div>}
-                    <div className="row ">
-                        {locations.slice(listBounds.start, listBounds.end).map(location =>
-                            <LocationCard key={location.id} location={location} />
-                        )}
-                    </div>
-
-                    <PageSelector
-                        pagesAmount={pages.amount}
-                        onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
-                    />
-                </>
+            {isLoading ? <Loader />
                 :
-                <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>}
+                locations.length > 0 ?
+                    <>
+                        <ClusterMap locations={locations} />
+                        <button className="btn btn-outline-dark mt-3" onClick={() => setShowFilter(prev => !prev)}>Filter By Category</button>
+                        {showFilter && <div className="mt-3">
+                            {categoryList.map((category, index) =>
+                                <span key={`category-${index}`} className='ms-2'>
+                                    <input className={'form-check-input'} type="checkbox" checked={filteredCategories.some(val => val === category)} value={category} onChange={handleCheck} id={category} />
+                                    <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
+                                </span>
+                            )}
+                            <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
+                        </div>}
+                        <div className="row ">
+                            {locations.slice(listBounds.start, listBounds.end).map(location =>
+                                <LocationCard key={location.id} location={location} />
+                            )}
+                        </div>
+
+                        <PageSelector
+                            pagesAmount={pages.amount}
+                            onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
+                        />
+                    </>
+                    :
+                    <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>}
         </div>
     )
 }

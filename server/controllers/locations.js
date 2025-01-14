@@ -22,15 +22,23 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
                 title: { $regex: locationName, $options: 'i' },
                 categories: { $in: categoriesArray },
             }
-        ).populate({
-            path: 'reviews',
-            populate: { path: 'author' }
-        }).populate('author');
+        );
 
         const total = await DateLocation.countDocuments();
         res.send({ locations, pages: Math.ceil(total / limit), limit });
     } catch (err) {
         res.status(500).send('Network Error: ' + err);
+    }
+});
+
+module.exports.getFavorites = handleAsyncError(async (req, res) => {
+    const limit = 12;
+    try {
+        const user = await User.findById(req.user._id).populate('favLocations');
+        const total = user.favLocations.length;
+        res.send({ favorites: user.favLocations, pages: Math.ceil(total / limit), limit });
+    } catch (e) {
+        return res.status(500).send('Error:' + e);
     }
 });
 
@@ -132,15 +140,6 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
             return res.status(404).send('Location was not found');
         }
         res.send('Location deleted successfully');
-    } catch (e) {
-        return res.status(500).send('Error:' + e);
-    }
-});
-
-module.exports.getFavorites = handleAsyncError(async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id).populate('favLocations');
-        res.send({ favorites: user.favLocations });
     } catch (e) {
         return res.status(500).send('Error:' + e);
     }
