@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { getUserLocations } from "../services/locationService"
 import { DateLocation } from "../models/DateLocation"
-import LocationCard from "../components/LocationCard"
 import PageSelector from "../components/PageSelector"
 import { toast } from "react-toastify"
 import Loader from "../components/Loader"
+import RenderedLocations from "../components/RenderedLocations"
 
 const UserLocations = () => {
     const [locations, setLocations] = useState<DateLocation[]>([]);
@@ -39,10 +39,12 @@ const UserLocations = () => {
                 :
                 locations.length > 0 ?
                     <>
-                        {locations.slice(listBounds.start, listBounds.end).map(location =>
-                            <LocationCard location={location} />
-                        )}
-                        < PageSelector
+                        <RenderedLocations
+                            locations={locations}
+                            startIndex={listBounds.start}
+                            endIndex={listBounds.end} />
+
+                        <PageSelector
                             pagesAmount={pages}
                             onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
                         />

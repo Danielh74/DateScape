@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { DateLocation } from "../models/DateLocation";
 import { getFavoriteLocations } from "../services/locationService";
 import { toast } from "react-toastify";
-import LocationCard from "../components/LocationCard";
 import useAuth from "../hooks/useAuth";
 import PageSelector from "../components/PageSelector";
 import Loader from "../components/Loader";
+import RenderedLocations from "../components/RenderedLocations";
 
 const FavoriteLocations = () => {
     const { currentUser } = useAuth();
@@ -44,9 +44,11 @@ const FavoriteLocations = () => {
                 :
                 favorites.length > 0 ?
                     <>
-                        {favorites.slice(listBounds.start, listBounds.end).map(location =>
-                            <LocationCard key={location.id} location={location} />
-                        )}
+                        <RenderedLocations
+                            locations={favorites}
+                            startIndex={listBounds.start}
+                            endIndex={listBounds.end} />
+
                         <PageSelector
                             pagesAmount={pages}
                             onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}

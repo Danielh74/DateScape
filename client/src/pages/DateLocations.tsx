@@ -5,8 +5,8 @@ import { getLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
 import Loader from "../components/Loader";
-import LocationCard from "../components/LocationCard";
 import PageSelector from "../components/PageSelector";
+import RenderedLocations from "../components/RenderedLocations";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
@@ -67,20 +67,21 @@ const DateLocations = () => {
                     <>
                         <ClusterMap locations={locations} />
                         <button className="btn btn-outline-dark mt-3" onClick={() => setShowFilter(prev => !prev)}>Filter By Category</button>
-                        {showFilter && <div className="mt-3">
-                            {categoryList.map((category, index) =>
-                                <span key={`category-${index}`} className='ms-2'>
-                                    <input className={'form-check-input'} type="checkbox" checked={filteredCategories.some(val => val === category)} value={category} onChange={handleCheck} id={category} />
-                                    <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
-                                </span>
-                            )}
-                            <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
-                        </div>}
-                        <div className="row ">
-                            {locations.slice(listBounds.start, listBounds.end).map(location =>
-                                <LocationCard key={location.id} location={location} />
-                            )}
-                        </div>
+                        {showFilter &&
+                            <div className="mt-3">
+                                {categoryList.map((category, index) =>
+                                    <span key={`category-${index}`} className='ms-2'>
+                                        <input className={'form-check-input'} type="checkbox" checked={filteredCategories.some(val => val === category)} value={category} onChange={handleCheck} id={category} />
+                                        <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
+                                    </span>
+                                )}
+                                <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
+                            </div>}
+
+                        <RenderedLocations
+                            locations={locations}
+                            startIndex={listBounds.start}
+                            endIndex={listBounds.end} />
 
                         <PageSelector
                             pagesAmount={pages}
@@ -88,7 +89,8 @@ const DateLocations = () => {
                         />
                     </>
                     :
-                    <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>}
+                    <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>
+            }
         </div>
     )
 }
