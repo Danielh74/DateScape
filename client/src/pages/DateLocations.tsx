@@ -6,6 +6,7 @@ import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
 import Loader from "../components/Loader";
 import LocationCard from "../components/LocationCard";
+import PageSelector from "../components/PageSelector";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
@@ -17,7 +18,7 @@ const DateLocations = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [viewAmount, setViewAmount] = useState(0);
     const [pages, setPages] = useState({ active: 1, amount: 0 });
-    const [listBounds, setListBounds] = useState({ start: 0, end: viewAmount });
+    const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
 
     useEffect(() => {
         const fetchLocations = () => {
@@ -29,6 +30,7 @@ const DateLocations = () => {
                     setLocations(orderedList);
                     setViewAmount(res.data.limit);
                     setPages(prev => ({ ...prev, amount: res.data.pages }));
+                    setListBounds({ start: 0, end: viewAmount });
                 })
                 .catch(err => {
                     toast.error(err.message);
@@ -41,7 +43,6 @@ const DateLocations = () => {
         const currentPage = sessionStorage.getItem('activePage');
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
-            setPages(prev => ({ ...prev, active: currentPageNum }));
             setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
         }
 
@@ -53,22 +54,6 @@ const DateLocations = () => {
             setFilteredCategories([...filteredCategories, value]);
         } else {
             setFilteredCategories(prev => prev.filter(val => val !== value));
-        }
-    };
-
-    const handleChangePage = (action: string, index = 0) => {
-        if (action === 'increment' && pages.active < pages.amount) {
-            setListBounds(prev => ({ start: prev.start + viewAmount, end: prev.end + viewAmount }));
-            setPages({ ...pages, active: pages.active + 1 });
-            sessionStorage.setItem('activePage', (pages.active + 1).toString());
-        } else if (action === 'decrement' && pages.active > 1) {
-            setListBounds(prev => ({ start: prev.start - viewAmount, end: prev.end - viewAmount }));
-            setPages({ ...pages, active: pages.active - 1 });
-            sessionStorage.setItem('activePage', (pages.active - 1).toString());
-        } else if (action === 'random') {
-            setListBounds({ start: (index) * viewAmount, end: (index + 1) * viewAmount });
-            setPages({ ...pages, active: index + 1 });
-            sessionStorage.setItem('activePage', (index + 1).toString())
         }
     };
 
@@ -94,18 +79,10 @@ const DateLocations = () => {
                         )}
                     </div>
 
-                    <p className="text-center">
-                        <button className="btn border-0" disabled={pages.active === 1} onClick={() => handleChangePage('decrement')}>prev</button>
-                        {locations.slice(0, pages.amount).map((_, index) =>
-                            <button
-                                key={index}
-                                className={`btn col mx-3 p-0 ${pages.active === index + 1 && 'fw-bold'}`}
-                                onClick={() => { handleChangePage('random', index) }}>
-                                {index + 1}
-                            </button>
-                        )}
-                        <button className="btn border-0" disabled={pages.active === pages.amount} onClick={() => handleChangePage('increment')}>next</button>
-                    </p>
+                    <PageSelector
+                        pagesAmount={pages.amount}
+                        onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
+                    />
                 </>
                 :
                 <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>}

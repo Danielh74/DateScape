@@ -1,65 +1,51 @@
-import React, { useEffect, useState } from 'react'
-import { DateLocation } from '../models/DateLocation';
+import { useEffect, useState } from 'react'
+
 
 type Props = {
-    viewAmount: number,
-    locations: DateLocation[],
-    onChange: () => void
+    pagesAmount: number,
+    onChange: (activePage: number) => void
 }
 
-const PageSelector = ({ viewAmount, locations, onChange }: Props) => {
-    const [pages, setPages] = useState({ active: 1, amount: 0 });
-    const [listBounds, setListBounds] = useState({ start: 0, end: viewAmount });
+const PageSelector = ({ pagesAmount, onChange }: Props) => {
+    const [activePage, setActivePage] = useState(1);
 
     useEffect(() => {
         const currentPage = sessionStorage.getItem('activePage');
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
-            setPages(prev => ({ ...prev, active: currentPageNum }));
-            setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
+            setActivePage(currentPageNum);
         }
-    }, [viewAmount])
+    }, [])
 
     const handleChangePage = (action: string, index = 0) => {
-        if (action === 'increment' && pages.active < pages.amount) {
-            setListBounds(prev => ({ start: prev.start + viewAmount, end: prev.end + viewAmount }));
-            setPages({ ...pages, active: pages.active + 1 });
-            sessionStorage.setItem('activePage', (pages.active + 1).toString());
-        } else if (action === 'decrement' && pages.active > 1) {
-            setListBounds(prev => ({ start: prev.start - viewAmount, end: prev.end - viewAmount }));
-            setPages({ ...pages, active: pages.active - 1 });
-            sessionStorage.setItem('activePage', (pages.active - 1).toString());
+        let newActivePage = activePage;
+        if (action === 'increment' && activePage < pagesAmount) {
+            newActivePage += 1;
+        } else if (action === 'decrement' && activePage > 1) {
+            newActivePage -= 1;
         } else if (action === 'random') {
-            setListBounds({ start: (index) * viewAmount, end: (index + 1) * viewAmount });
-            setPages({ ...pages, active: index + 1 });
-            sessionStorage.setItem('activePage', (index + 1).toString())
+            newActivePage = index + 1;
+        }
+
+        if (newActivePage !== activePage) {
+            setActivePage(newActivePage);
+            sessionStorage.setItem('activePage', newActivePage.toString());
+            onChange(newActivePage);
         }
     };
 
-    const pageValues = () => {
-        return { listBounds, activePage: pages.active };
-    }
-
     return (
         <p className="text-center">
-            <button className="btn border-0" disabled={pages.active === 1} onClick={() => handleChangePage('decrement')}>prev</button>
-            {/* {Array.from({length:pages.amount}, (_,i)=>
-            <button
-            key={i}
-            className={`btn col mx-3 p-0 ${pages.active === i + 1 && 'fw-bold'}`}
-            onClick={() => { handleChangePage('random', i) }}>
-            {i + 1}
-        </button>
-            )} */}
-            {locations.slice(0, pages.amount).map((_, index) =>
+            <button className="btn border-0" disabled={activePage === 1} onClick={() => handleChangePage('decrement')}>prev</button>
+            {Array.from({ length: pagesAmount }, (_, index) =>
                 <button
                     key={index}
-                    className={`btn col mx-3 p-0 ${pages.active === index + 1 && 'fw-bold'}`}
+                    className={`btn col mx-3 p-0 ${activePage === index + 1 && 'fw-bold'}`}
                     onClick={() => { handleChangePage('random', index) }}>
                     {index + 1}
                 </button>
             )}
-            <button className="btn border-0" disabled={pages.active === pages.amount} onClick={() => handleChangePage('increment')}>next</button>
+            <button className="btn border-0" disabled={activePage === pagesAmount} onClick={() => handleChangePage('increment')}>next</button>
         </p>
     )
 }
