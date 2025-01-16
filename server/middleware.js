@@ -10,13 +10,6 @@ module.exports.isAuthenticated = (req, res, next) => {
     next();
 };
 
-module.exports.storeOriginalPath = (req, res, next) => {
-    if (req.session.returnTo) {
-        res.locals.returnTo = req.session.returnTo;
-    }
-    next();
-};
-
 module.exports.validateLocation = (req, res, next) => {
     if (req.body.location) {
         req.body.location = JSON.parse(req.body.location);
