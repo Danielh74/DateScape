@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-
+import Pagination from '@mui/material/Pagination';
 
 type Props = {
     pagesAmount: number,
@@ -17,36 +17,21 @@ const PageSelector = ({ pagesAmount, onChange }: Props) => {
         }
     }, [])
 
-    const handleChangePage = (action: string, index = 0) => {
-        let newActivePage = activePage;
-        if (action === 'increment' && activePage < pagesAmount) {
-            newActivePage += 1;
-        } else if (action === 'decrement' && activePage > 1) {
-            newActivePage -= 1;
-        } else if (action === 'random') {
-            newActivePage = index + 1;
-        }
-
-        if (newActivePage !== activePage) {
-            setActivePage(newActivePage);
-            sessionStorage.setItem('activePage', newActivePage.toString());
-            onChange(newActivePage);
-        }
+    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+        setActivePage(value);
+        sessionStorage.setItem('activePage', value.toString());
+        onChange(value);
     };
 
     return (
-        <p className="text-center">
-            <button className="btn border-0" disabled={activePage === 1} onClick={() => handleChangePage('decrement')}>prev</button>
-            {Array.from({ length: pagesAmount }, (_, index) =>
-                <button
-                    key={index}
-                    className={`btn col mx-3 p-0 ${activePage === index + 1 && 'fw-bold'}`}
-                    onClick={() => { handleChangePage('random', index) }}>
-                    {index + 1}
-                </button>
-            )}
-            <button className="btn border-0" disabled={activePage === pagesAmount} onClick={() => handleChangePage('increment')}>next</button>
-        </p>
+        <div className="d-flex justify-content-center mb-2">
+            <Pagination
+                count={pagesAmount}
+                page={activePage}
+                showFirstButton
+                showLastButton
+                onChange={handleChangePage} />
+        </div>
     )
 }
 

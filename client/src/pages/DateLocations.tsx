@@ -4,9 +4,9 @@ import { useLocation } from "react-router-dom";
 import { getLocations } from "../services/locationService";
 import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
-import Loader from "../components/Loader";
 import PageSelector from "../components/PageSelector";
 import RenderedLocations from "../components/RenderedLocations";
+import Loader from "../components/Loader";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];

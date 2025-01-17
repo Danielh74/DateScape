@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Loader from './Loader';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoHeartOutline, IoHeartSharp } from 'react-icons/io5';
+import StarIcon from '@mui/icons-material/Star';
 
 type Props = {
     location: DateLocation
@@ -40,15 +41,15 @@ const LocationCard = ({ location }: Props) => {
             <div className="border rounded shadow">
                 <img src={location.images[0].url} className="card-img-top rounded-top" alt="location image" />
                 <div className="card-body p-2">
-                    <p className="card-title d-flex justify-content-between">
+                    <div className="card-title d-flex justify-content-between">
                         <h5 className="">
                             {location.title}
 
                         </h5>
-                        <span className="">
-                            {location.averageRating} ★
+                        <span>
+                            <b className='align-bottom'>{location.averageRating}</b> <span className=' text-warning'><StarIcon /></span>
                         </span>
-                    </p>
+                    </div>
                     <p className="card-text m-0">
                         <span className="text-muted d-block">
                             {location.address}

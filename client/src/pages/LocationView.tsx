@@ -6,10 +6,12 @@ import { getLocation, deleteLocation } from "../services/locationService";
 import useAuth from "../hooks/useAuth";
 import LocationMap from "../components/LocationMap";
 import LocationEditModal from "../modals/LocationEditModal";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import '../styles/starts.css';
 import { toast } from 'react-toastify';
 import Loader from "../components/Loader";
+import StarIcon from '@mui/icons-material/Star';
+import Rating from "@mui/material/Rating";
 
 interface ReviewProp {
     rating: number;
@@ -23,15 +25,16 @@ const LocationView = () => {
     const [isLoading, setIsLoading] = useState({ review: false, location: false });
     const navigate = useNavigate();
     const { currentUser } = useAuth();
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<ReviewProp>({
+    const { register, handleSubmit, reset, control, formState: { errors } } = useForm<ReviewProp>({
         defaultValues: {
-            rating: 5,
+            rating: 2,
             body: ""
         }
     })
 
     useEffect(() => {
         const fetchLocation = () => {
+            setIsLoading(prev => ({ ...prev, location: true }))
             getLocation(id)
                 .then(res => setLocation(res.data.location))
                 .catch(err => {
@@ -41,6 +44,8 @@ const LocationView = () => {
                         toast.error(err.message);
                     }
                     navigate('/locations');
+                }).finally(() => {
+                    setIsLoading(prev => ({ ...prev, location: false }));
                 });
         }
         fetchLocation();
@@ -103,141 +108,149 @@ const LocationView = () => {
     }
 
     return (
-        location ?
-            <div className="row my-3">
-                <div className="col-12 col-lg-3 mb-2">
-                    <LocationMap location={location} />
-                </div>
-                <div className="col-12 col-lg-6">
-                    <div className="card shadow">
-                        <div className="row">
-                            <div id="locationCarousel" className="carousel slide">
-                                <div className="carousel-inner">
-                                    {location?.images.map((img, i) =>
-                                        <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
-                                            <img src={img.url} className="rounded-top object-fit-cover w-100" alt="camp image" />
-                                        </div>
-                                    )}
-                                </div>
-                                {location.images.length > 1 &&
-                                    <>
-                                        <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
-                                            data-bs-slide="prev">
-                                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span className="visually-hidden">Previous</span>
-                                        </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
-                                            data-bs-slide="next">
-                                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span className="visually-hidden">Next</span>
-                                        </button>
-                                    </>
-                                }
-                            </div>
-                            <div className="card-body">
-                                <h3 className="card-title ps-2">
-                                    {location.title}
-                                </h3>
-                                <p className="card-text ps-2">
-                                    {location.description}
-                                </p>
-
-                                <ul className="list-group list-group-flush">
-                                    <li className="list-group-item fw-medium text-secondary">
-                                        {location.address}
-                                    </li>
-                                    <li className="list-group-item">
-                                        ${location.price}/night
-                                    </li>
-                                    <li className="list-group-item">
-                                        Submitted by {location.author.username} <br />
-                                        <small className="text-secondary">{location.updatedAt}</small>
-                                    </li>
-                                    <li className="list-group-item">
-
-                                    </li>
-                                </ul>
-                                {currentUser && currentUser._id === location.author._id &&
-                                    <div className="ps-2">
-                                        <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
-                                            Edit
-                                        </button>
-                                        <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
+        <>
+            {location ?
+                <div className="row my-3">
+                    <div className="col-12 col-lg-3 mb-2">
+                        <LocationMap location={location} />
+                    </div>
+                    <div className="col-12 col-lg-6">
+                        <div className="card shadow">
+                            {isLoading.location && <Loader />}
+                            <div className="row">
+                                <div id="locationCarousel" className="carousel slide">
+                                    <div className="carousel-inner">
+                                        {location?.images.map((img, i) =>
+                                            <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
+                                                <img src={img.url} className="rounded-top object-fit-cover w-100" alt="camp image" />
+                                            </div>
+                                        )}
                                     </div>
-                                }
+                                    {location.images.length > 1 &&
+                                        <>
+                                            <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
+                                                data-bs-slide="prev">
+                                                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span className="visually-hidden">Previous</span>
+                                            </button>
+                                            <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
+                                                data-bs-slide="next">
+                                                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span className="visually-hidden">Next</span>
+                                            </button>
+                                        </>
+                                    }
+                                </div>
+                                <div className="card-body">
+                                    <div className="card-title d-flex justify-content-between">
+                                        <h5 className="">
+                                            {location.title}
+
+                                        </h5>
+                                        <span>
+                                            <b className=" align-bottom">{location.averageRating}</b> <span className="text-warning"><StarIcon /></span>
+                                        </span>
+                                    </div>
+                                    <p className="card-text ps-2">
+                                        {location.description}
+                                    </p>
+
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item fw-medium text-secondary">
+                                            {location.address}
+                                        </li>
+                                        <li className="list-group-item">
+                                            ${location.price}/night
+                                        </li>
+                                        <li className="list-group-item">
+                                            Submitted by {location.author.username} <br />
+                                            <small className="text-secondary">{location.updatedAt}</small>
+                                        </li>
+                                        <li className="list-group-item">
+
+                                        </li>
+                                    </ul>
+                                    {currentUser && currentUser._id === location.author._id &&
+                                        <div className="ps-2">
+                                            <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
+                                                Edit
+                                            </button>
+                                            <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="position-relative col-lg-3 col-12 mt-2">
-                    {isLoading.review && <Loader />}
-                    {currentUser &&
-                        <>
-                            <h2>Leave a Review</h2>
-                            <form className="needs-validation mb-2" onSubmit={handleSubmit(onReviewSubmit)}>
-                                <div>
-                                    <fieldset className="starability-heart" >
-                                        <input type="radio" id="first-rate1" {...register('rating', { required: true })} value="1" />
-                                        <label htmlFor="first-rate1" title="Terrible">1 star</label>
-                                        <input type="radio" id="first-rate2" {...register('rating')} value="2" />
-                                        <label htmlFor="first-rate2" title="Not good">2 stars</label>
-                                        <input type="radio" id="first-rate3" {...register('rating')} value="3" />
-                                        <label htmlFor="first-rate3" title="Average">3 stars</label>
-                                        <input type="radio" id="first-rate4" {...register('rating')} value="4" />
-                                        <label htmlFor="first-rate4" title="Very good">4 stars</label>
-                                        <input type="radio" id="first-rate5" {...register('rating')} value="5" defaultChecked />
-                                        <label htmlFor="first-rate5" title="Amazing">5 stars</label>
-                                    </fieldset>
-                                </div>
-                                <div className="mb-2">
-                                    <label className="form-label" htmlFor="body">Review</label>
-                                    <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
-                                    {errors.body && <small className="text-danger">{errors.body.message}</small>}
-                                </div>
-                                <div className="d-flex justify-content-between px-3 align-items-center">
-                                    <button className="btn btn-success">Submit</button>
-                                    {location.reviews.length} reviews
-                                </div>
+                    <div className="position-relative col-lg-3 col-12 mt-2">
+                        {isLoading.review && <Loader />}
+                        {currentUser &&
+                            <>
+                                <h2>Leave a Review</h2>
+                                <form className="needs-validation mb-2" onSubmit={handleSubmit(onReviewSubmit)}>
+                                    <Controller
+                                        name="rating"
+                                        control={control}
+                                        rules={{ required: 'Rating is required' }}
+                                        render={({ field }) => (
+                                            <Rating
+                                                {...field}
+                                                value={field.value || 0}
+                                                onChange={(_, value) => field.onChange(value)}
+                                                size="large"
+                                            />
+                                        )}
+                                    />
 
-                            </form>
-                        </>
-                    }
-                    {location.reviews?.length > 0 ? (
-                        <div className="overflow-auto h-50">
-                            {location.reviews.map(review => (
-                                <div key={review._id} className="card mb-2">
-                                    <div className="card-body">
-                                        <p className="starability-result" data-rating={review.rating}>
-                                            Rated: {review.rating} stars
-                                        </p>
-                                        <p className="card-text">
-                                            {review.body}
-                                        </p>
-                                        <p className="card-text text-body-secondary">
-                                            {review.author.username}
-                                        </p>
-                                        {(currentUser && (currentUser._id === review.author._id)) &&
-                                            <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
-                                        }
+                                    <div className="mb-2">
+                                        <label className="form-label" htmlFor="body">Review</label>
+                                        <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
+                                        {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
-                    )}
-                </div>
-                <LocationEditModal
-                    show={show}
-                    onClose={() => setShow(false)}
-                    location={location}
-                    onUpdate={(updatedLocation: DateLocation) => setLocation(updatedLocation)} />
-            </div >
-            :
-            <div>
-                No Location found
-            </div>
+                                    <div className="d-flex justify-content-between px-3 align-items-center">
+                                        <button className="btn btn-success">Submit</button>
+                                        {location.reviews.length} reviews
+                                    </div>
+
+                                </form>
+                            </>
+                        }
+                        {location.reviews?.length > 0 ? (
+                            <div className="overflow-auto h-50">
+                                {location.reviews.map(review => (
+                                    <div key={review._id} className="card mb-2">
+                                        <div className="card-body">
+                                            <Rating value={review.rating} readOnly />
+                                            <p className="card-text">
+                                                {review.body}
+                                            </p>
+                                            <p className="card-text text-body-secondary">
+                                                {review.author.username}
+                                            </p>
+                                            {(currentUser && (currentUser._id === review.author._id)) &&
+                                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                                            }
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
+                        )}
+                    </div>
+                    <LocationEditModal
+                        show={show}
+                        onClose={() => setShow(false)}
+                        location={location}
+                        onUpdate={(updatedLocation: DateLocation) => setLocation(updatedLocation)} />
+                </div >
+                :
+                <div>
+                    No Location found
+                </div>}
+        </>
+
     )
 }
 

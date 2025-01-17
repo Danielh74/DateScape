@@ -3,6 +3,7 @@ const Review = require('./review');
 const { cloudinary } = require('../cloudinary');
 const dayjs = require('dayjs');
 const { categories: seedCategories } = require('../seeds/seedHelpers');
+const { dateLocationSchema } = require('../schemas');
 const Schema = mongoose.Schema;
 
 const options = {
@@ -55,7 +56,8 @@ const DateLocationSchema = new Schema({
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: 'Review'
-    }]
+    }],
+    averageRating: Number
 }, { ...options, timestamps: true });
 
 DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
@@ -67,12 +69,47 @@ DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
     };
 });
 
-DateLocationSchema.virtual('averageRating').get(function () {
-    if (this.reviews.length === 0) return 0
+DateLocationSchema.post('find', async function (locations) {
+    if (locations && locations.length > 0) {
+        for (const location of locations) {
+            if (location.reviews.length === 0) {
+                location.averageRating = 0; // Temporary field for average rating
+                continue;
+            }
 
-    const avg = this.reviews.reduce((acc, review) => acc + review.rating, 0) / this.reviews.length;
-    return avg;
-})
+            // Fetch the reviews (assuming reviews are references to another model)
+            const reviewsList = await Promise.all(
+                location.reviews.map((reviewId) => Review.findById(reviewId))
+            );
+
+            const avg =
+                reviewsList.reduce((acc, review) => acc + review.rating, 0) /
+                reviewsList.length;
+
+            location.averageRating = avg; // Temporary storage
+        }
+    }
+});
+
+DateLocationSchema.post('findOne', async function (location) {
+    if (location) {
+        if (location.reviews.length === 0) {
+            location.averageRating = 0; // Temporary field for average rating
+            return;
+        }
+
+        // Fetch the reviews (assuming reviews are references to another model)
+        const reviewsList = await Promise.all(
+            location.reviews.map((reviewId) => Review.findById(reviewId))
+        );
+
+        const avg =
+            reviewsList.reduce((acc, review) => acc + review.rating, 0) /
+            reviewsList.length;
+
+        location.averageRating = avg; // Temporary storage
+    }
+});
 
 DateLocationSchema.post('findOneAndDelete', async function (location) {
     if (location) {
@@ -82,7 +119,7 @@ DateLocationSchema.post('findOneAndDelete', async function (location) {
             await cloudinary.uploader.destroy(img.filename);
         }
     }
-})
+});
 
 const DateLocation = mongoose.model('DateLocation', DateLocationSchema);
 module.exports = DateLocation;
