@@ -9,7 +9,7 @@ import LocationEditModal from "../modals/LocationEditModal";
 import { useForm, Controller } from "react-hook-form";
 import '../styles/starts.css';
 import { toast } from 'react-toastify';
-import Loader from "../components/Loader";
+import { CardLoader, Loader } from "../components/Loaders";
 import StarIcon from '@mui/icons-material/Star';
 import Rating from "@mui/material/Rating";
 
@@ -110,80 +110,82 @@ const LocationView = () => {
     return (
         <>
             {location ?
-                <div className="row my-3">
-                    <div className="col-12 col-lg-3 mb-2">
+                <main className="row my-3">
+                    <section className="col-12 col-lg-3 mb-2">
                         <LocationMap location={location} />
-                    </div>
-                    <div className="col-12 col-lg-6">
-                        <div className="card shadow">
-                            {isLoading.location && <Loader />}
-                            <div className="row">
-                                <div id="locationCarousel" className="carousel slide">
-                                    <div className="carousel-inner">
-                                        {location?.images.map((img, i) =>
-                                            <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
-                                                <img src={img.url} className="rounded-top object-fit-cover w-100" alt="camp image" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    {location.images.length > 1 &&
-                                        <>
-                                            <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
-                                                data-bs-slide="prev">
-                                                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span className="visually-hidden">Previous</span>
-                                            </button>
-                                            <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
-                                                data-bs-slide="next">
-                                                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span className="visually-hidden">Next</span>
-                                            </button>
-                                        </>
-                                    }
-                                </div>
-                                <div className="card-body">
-                                    <div className="card-title d-flex justify-content-between">
-                                        <h5 className="">
-                                            {location.title}
-
-                                        </h5>
-                                        <span>
-                                            <b className=" align-bottom">{location.averageRating}</b> <span className="text-warning"><StarIcon /></span>
-                                        </span>
-                                    </div>
-                                    <p className="card-text ps-2">
-                                        {location.description}
-                                    </p>
-
-                                    <ul className="list-group list-group-flush">
-                                        <li className="list-group-item fw-medium text-secondary">
-                                            {location.address}
-                                        </li>
-                                        <li className="list-group-item">
-                                            ${location.price}/night
-                                        </li>
-                                        <li className="list-group-item">
-                                            Submitted by {location.author.username} <br />
-                                            <small className="text-secondary">{location.updatedAt}</small>
-                                        </li>
-                                        <li className="list-group-item">
-
-                                        </li>
-                                    </ul>
-                                    {currentUser && currentUser._id === location.author._id &&
-                                        <div className="ps-2">
-                                            <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
-                                                Edit
-                                            </button>
-                                            <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
+                    </section>
+                    <article className="col-12 col-lg-6">
+                        {isLoading.location ? <CardLoader />
+                            :
+                            <div className="card shadow">
+                                <div className="row">
+                                    <div id="locationCarousel" className="carousel slide">
+                                        <div className="carousel-inner">
+                                            {location?.images.map((img, i) =>
+                                                <div key={img._id} className={`carousel-item ${i === 0 ? 'active' : ''}`}>
+                                                    <img src={img.url} className="rounded-top object-fit-cover w-100" alt="camp image" />
+                                                </div>
+                                            )}
                                         </div>
-                                    }
+                                        {location.images.length > 1 &&
+                                            <>
+                                                <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
+                                                    data-bs-slide="prev">
+                                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span className="visually-hidden">Previous</span>
+                                                </button>
+                                                <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
+                                                    data-bs-slide="next">
+                                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span className="visually-hidden">Next</span>
+                                                </button>
+                                            </>
+                                        }
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="card-title d-flex justify-content-between">
+                                            <h5 className="">
+                                                {location.title}
+
+                                            </h5>
+                                            <span>
+                                                <b className=" align-bottom">{location.averageRating}</b> <span className="text-warning"><StarIcon /></span>
+                                            </span>
+                                        </div>
+                                        <p className="card-text ps-2">
+                                            {location.description}
+                                        </p>
+
+                                        <ul className="list-group list-group-flush">
+                                            <li className="list-group-item fw-medium text-secondary">
+                                                {location.address}
+                                            </li>
+                                            <li className="list-group-item">
+                                                ${location.price}/night
+                                            </li>
+                                            <li className="list-group-item">
+                                                Submitted by {location.author.username} <br />
+                                                <small className="text-secondary">{location.updatedAt}</small>
+                                            </li>
+                                            <li className="list-group-item">
+
+                                            </li>
+                                        </ul>
+                                        {currentUser && currentUser._id === location.author._id &&
+                                            <div className="ps-2">
+                                                <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
+                                                    Edit
+                                                </button>
+                                                <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        }
+                    </article>
 
-                    <div className="position-relative col-lg-3 col-12 mt-2">
+                    <aside className="position-relative col-lg-3 col-12 mt-2">
                         {isLoading.review && <Loader />}
                         {currentUser &&
                             <>
@@ -219,7 +221,7 @@ const LocationView = () => {
                         {location.reviews?.length > 0 ? (
                             <div className="overflow-auto h-50">
                                 {location.reviews.map(review => (
-                                    <div key={review._id} className="card mb-2">
+                                    <article key={review._id} className="card mb-2">
                                         <div className="card-body">
                                             <Rating value={review.rating} readOnly />
                                             <p className="card-text">
@@ -232,23 +234,23 @@ const LocationView = () => {
                                                 <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
                                             }
                                         </div>
-                                    </div>
+                                    </article>
                                 ))}
                             </div>
                         ) : (
                             <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
                         )}
-                    </div>
+                    </aside>
                     <LocationEditModal
                         show={show}
                         onClose={() => setShow(false)}
                         location={location}
                         onUpdate={(updatedLocation: DateLocation) => setLocation(updatedLocation)} />
-                </div >
+                </main >
                 :
-                <div>
+                <h1>
                     No Location found
-                </div>}
+                </h1>}
         </>
 
     )

@@ -3,7 +3,7 @@ import { getUserLocations } from "../services/locationService"
 import { DateLocation } from "../models/DateLocation"
 import PageSelector from "../components/PageSelector"
 import { toast } from "react-toastify"
-import Loader from "../components/Loader"
+import { CardsLoader } from "../components/Loaders"
 import RenderedLocations from "../components/RenderedLocations"
 
 const UserLocations = () => {
@@ -34,8 +34,8 @@ const UserLocations = () => {
     }, [viewAmount])
 
     return (
-        <div className="position-relative min-vh-100">
-            {isLoading ? <Loader />
+        <main className="position-relative min-vh-100">
+            {isLoading ? <CardsLoader amount={viewAmount} />
                 :
                 locations.length > 0 ?
                     <>
@@ -52,7 +52,7 @@ const UserLocations = () => {
                     :
                     <p className="text-center mt-3 fw-semibold fs-3">You have not posted any locations yet</p>
             }
-        </div>
+        </main>
 
     )
 }

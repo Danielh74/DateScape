@@ -9,11 +9,11 @@ type Props = {
 
 const RenderedLocations = ({ locations, startIndex, endIndex }: Props) => {
     return (
-        <div className="row ">
+        <main className="row ">
             {locations.slice(startIndex, endIndex).map(location =>
                 <LocationCard key={location.id} location={location} />
             )}
-        </div>
+        </main>
     )
 }
 

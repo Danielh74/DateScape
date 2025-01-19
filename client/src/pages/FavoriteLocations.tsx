@@ -4,7 +4,7 @@ import { getFavoriteLocations } from "../services/locationService";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import PageSelector from "../components/PageSelector";
-import Loader from "../components/Loader";
+import { CardsLoader } from "../components/Loaders";
 import RenderedLocations from "../components/RenderedLocations";
 
 const FavoriteLocations = () => {
@@ -39,8 +39,8 @@ const FavoriteLocations = () => {
     }, [viewAmount, currentUser])
 
     return (
-        <div className="position-relative min-vh-100">
-            {isLoading ? <Loader />
+        <main className="position-relative min-vh-100">
+            {isLoading ? <CardsLoader amount={viewAmount} />
                 :
                 favorites.length > 0 ?
                     <>
@@ -55,10 +55,10 @@ const FavoriteLocations = () => {
                         />
                     </>
                     :
-                    <p className="text-center mt-3 fw-semibold fs-3">You have no locations saved as favorites</p>
+                    <h1 className="text-center mt-3">You have no locations saved as favorites</h1>
             }
 
-        </div>
+        </main>
     )
 }
 

@@ -24,14 +24,14 @@ const PageSelector = ({ pagesAmount, onChange }: Props) => {
     };
 
     return (
-        <div className="d-flex justify-content-center mb-2">
+        <footer className="d-flex justify-content-center mb-2">
             <Pagination
                 count={pagesAmount}
                 page={activePage}
                 showFirstButton
                 showLastButton
                 onChange={handleChangePage} />
-        </div>
+        </footer>
     )
 }
 

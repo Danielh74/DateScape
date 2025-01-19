@@ -3,7 +3,7 @@ import { DateLocation } from '../models/DateLocation'
 import { updateFavLocation } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 import { toast } from 'react-toastify';
-import Loader from './Loader';
+import { Loader } from './Loaders';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoHeartOutline, IoHeartSharp } from 'react-icons/io5';
 import StarIcon from '@mui/icons-material/Star';
@@ -36,7 +36,7 @@ const LocationCard = ({ location }: Props) => {
     };
 
     return (
-        <div className="position-relative col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
+        <article className="position-relative col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
             {isLoading && <Loader />}
             <div className="border rounded shadow">
                 <img src={location.images[0].url} className="card-img-top rounded-top" alt="location image" />
@@ -71,7 +71,7 @@ const LocationCard = ({ location }: Props) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
     )
 }
 

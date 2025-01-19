@@ -44,7 +44,7 @@ const RegisterPage = () => {
     return (
         <div className="container justify-content-center align-items-center mt-5">
             <div className="row">
-                <div className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+                <main className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
                     <div className="card shadow ">
                         <div className="card-body ">
                             <h5 className="card-title">Register</h5>
@@ -71,7 +71,7 @@ const RegisterPage = () => {
                             </form>
                         </div>
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     )

@@ -6,7 +6,8 @@ import ClusterMap from '../components/ClusterMap';
 import { toast } from 'react-toastify';
 import PageSelector from "../components/PageSelector";
 import RenderedLocations from "../components/RenderedLocations";
-import Loader from "../components/Loader";
+import { CardsLoader } from "../components/Loaders";
+import Skeleton from "@mui/material/Skeleton";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
@@ -60,8 +61,12 @@ const DateLocations = () => {
     };
 
     return (
-        <div className="position-relative min-vh-100">
-            {isLoading ? <Loader />
+        <main className="position-relative min-vh-100">
+            {isLoading ?
+                <>
+                    <Skeleton variant="rectangular" height={300} sx={{ my: 3 }} />
+                    <CardsLoader amount={viewAmount} />
+                </>
                 :
                 locations.length > 0 ?
                     <>
@@ -89,9 +94,9 @@ const DateLocations = () => {
                         />
                     </>
                     :
-                    <p className="fw-bold fs-2 align-items-center text-center mt-3">No Locations To Show...&#x1F494;</p>
+                    <h1 className="fw-bold align-items-center text-center mt-3">No Locations To Show...&#x1F494;</h1>
             }
-        </div>
+        </main>
     )
 }
 
