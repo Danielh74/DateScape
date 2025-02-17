@@ -3,7 +3,6 @@ const Review = require('./review');
 const { cloudinary } = require('../cloudinary');
 const dayjs = require('dayjs');
 const { categories: seedCategories } = require('../seeds/seedHelpers');
-const { dateLocationSchema } = require('../schemas');
 const Schema = mongoose.Schema;
 
 const options = {
