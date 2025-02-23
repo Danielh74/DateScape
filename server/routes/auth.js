@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { storeOriginalPath } = require('../middleware');
 const { isAuthenticated } = require('../middleware')
 const { loginUser, logoutUser, registerUser, checkAuthenticated, updateFavLocations } = require('../controllers/auth');
 
