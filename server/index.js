@@ -55,9 +55,9 @@ app.use((err, req, res, next) => {
     const { status = 500 } = err;
     if (!err.message)
         err.message = 'Something Went Wrong';
-    res.status(status).send({ error: err });
+    res.status(status).send(err.message);
 });
 
-app.listen(8080, (req, res) => {
+app.listen(8080, () => {
     console.log("Listening on port 8080");
 });

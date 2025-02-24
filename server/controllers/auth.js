@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const ExpressError = require('../utils/ExpressError');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
@@ -20,44 +21,32 @@ module.exports.logoutUser = (req, res, next) => {
 
 module.exports.registerUser = handleAsyncError(async (req, res, next) => {
     const { username, email, password } = req.body;
-    try {
-        const user = new User({ email, username });
-        const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err => {
-            if (err) {
-                console.error('Error logging in user:', err);
-                return next(err);
-            }
-            res.status(200).send({ message: 'Registration successful!', user: req.user });
-        });
-    } catch (e) {
-        console.error('Error during registration:', e);
-        res.status(500).send(e.message);
-    }
+
+    const user = new User({ email, username });
+    const registeredUser = await User.register(user, password);
+    req.login(registeredUser, err => {
+        if (err) {
+            console.error('Error logging in user:', err);
+            return next(err);
+        }
+        res.status(200).send({ message: 'Registration successful!', user: req.user });
+    });
 });
 
 module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
     const { locationId } = req.body;
 
     if (!locationId) {
-        return res.status(400).send('Location ID is required');
+        throw new ExpressError(400, "Location ID is required");
+    }
+    const user = await User.findById(req.user._id);
+
+    if (user.favLocations.includes(locationId)) {
+        await user.updateOne({ $pull: { favLocations: locationId } }, { new: true });
+    } else {
+        await user.updateOne({ $addToSet: { favLocations: locationId } }, { new: true });
     }
 
-    try {
-        const user = await User.findById(req.user._id);
-
-
-        if (user.favLocations.includes(locationId)) {
-            await user.updateOne({ $pull: { favLocations: locationId } }, { new: true });
-        } else {
-            await user.updateOne({ $addToSet: { favLocations: locationId } }, { new: true });
-        }
-
-        const updatedUser = await User.findById(req.user._id);
-        res.send({ user: updatedUser, message: 'Favorites updated successfully' });
-
-    } catch (e) {
-        console.error('Error during registration:', e);
-        res.status(500).send(e.message);
-    }
+    const updatedUser = await User.findById(req.user._id);
+    res.send({ user: updatedUser, message: 'Favorites updated successfully' });
 });
