@@ -33,13 +33,9 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
 });
 
 module.exports.getUserLocations = handleAsyncError(async (req, res) => {
-    try {
-        const userLocations = await DateLocation.find({ author: req.user._id });
-        const total = userLocations.length;
-        res.send({ locations: userLocations, pages: Math.ceil(total / limit), limit });
-    } catch (e) {
-        return res.status(500).send('Error:' + e);
-    }
+    const userLocations = await DateLocation.find({ author: req.user._id });
+    const total = userLocations.length;
+    res.send({ locations: userLocations, pages: Math.ceil(total / limit), limit });
 });
 
 module.exports.getFavorites = handleAsyncError(async (req, res) => {
