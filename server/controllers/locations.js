@@ -17,19 +17,15 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
     } else {
         categoriesArray = categories.split(',');
     }
-    try {
-        const locations = await DateLocation.find(
-            {
-                title: { $regex: locationName, $options: 'i' },
-                categories: { $in: categoriesArray },
-            }
-        );
+    const locations = await DateLocation.find(
+        {
+            title: { $regex: locationName, $options: 'i' },
+            categories: { $in: categoriesArray },
+        }
+    );
 
-        const total = await DateLocation.countDocuments();
-        res.send({ locations, pages: Math.ceil(total / limit), limit });
-    } catch (err) {
-        res.status(500).send('Network Error: ' + err);
-    }
+    const total = await DateLocation.countDocuments();
+    res.send({ locations, pages: Math.ceil(total / limit), limit });
 });
 
 module.exports.getUserLocations = handleAsyncError(async (req, res) => {
