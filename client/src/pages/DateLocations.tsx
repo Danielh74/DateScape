@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { DateLocation } from "../models/DateLocation";
 import { useLocation } from "react-router-dom";
 import { getLocations } from "../services/locationService";
@@ -13,8 +13,6 @@ const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const locationName = useLocation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
-    const [showFilter, setShowFilter] = useState(false);
-    const [filteredCategories, setFilteredCategories] = useState<string[]>(['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic']);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [viewAmount, setViewAmount] = useState(0);
@@ -51,12 +49,17 @@ const DateLocations = () => {
 
     }, [locationName, selectedCategories, viewAmount])
 
-    const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-        const { checked, value } = e.target;
-        if (checked) {
-            setFilteredCategories([...filteredCategories, value]);
+    const handlePickCategory = (category: string) => {
+        let tempCategories = [];
+        if (selectedCategories.some(val => val === category)) {
+            setSelectedCategories(prev => prev.filter(val => val !== category));
         } else {
-            setFilteredCategories(prev => prev.filter(val => val !== value));
+            tempCategories = [...selectedCategories, category];
+            if (tempCategories.length === categoryList.length) {
+                setSelectedCategories([]);
+            } else {
+                setSelectedCategories(tempCategories);
+            }
         }
     };
 
@@ -71,17 +74,16 @@ const DateLocations = () => {
                 locations.length > 0 ?
                     <>
                         <ClusterMap locations={locations} />
-                        <button className="btn btn-outline-dark mt-3" onClick={() => setShowFilter(prev => !prev)}>Filter By Category</button>
-                        {showFilter &&
-                            <div className="mt-3">
-                                {categoryList.map((category, index) =>
-                                    <span key={`category-${index}`} className='ms-2'>
-                                        <input className={'form-check-input'} type="checkbox" checked={filteredCategories.some(val => val === category)} value={category} onChange={handleCheck} id={category} />
-                                        <label className="form-check-label ms-1" htmlFor={category}>{category}</label>
-                                    </span>
-                                )}
-                                <button className="btn btn-secondary btn-sm ms-2" onClick={() => { setSelectedCategories([...filteredCategories]); setShowFilter(false) }}>Set Filter</button>
-                            </div>}
+                        <div className="mt-3 d-flex">
+                            {categoryList.map(category =>
+                                <button
+                                    key={category}
+                                    onClick={() => handlePickCategory(category)}
+                                    className={`btn ${selectedCategories.some(val => val === category) || selectedCategories.length === 0 ? "btn-danger" : "btn-outline-secondary"} me-2 fw-semibold rounded-5`}>
+                                    {category}
+                                </button>
+                            )}
+                        </div>
 
                         <RenderedLocations
                             locations={locations}

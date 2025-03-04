@@ -55,13 +55,13 @@ const LocationCard = ({ location }: Props) => {
                             {location.address}
                         </span>
                         <span className="d-inline-block my-2 fw-semibold ">
-                            ${location.price}
+                            Avg. ${location.price}
                         </span>
                         <span className="d-block">Categories: {<span>{location.categories.join(', ')}</span>}</span>
 
                     </p>
                     <div className="row justify-content-between align-items-end">
-                        <Link className="col-6 mx-2 btn btn-danger" to={`/location/${location.id}`}>
+                        <Link className="col-6 mx-2 btn btn-outline-danger" to={`/location/${location.id}`}>
                             View Location
                         </Link>
                         <button className="btn col-2 fs-1 p-0 border-0" onClick={handleUpdateFavLocation}>

@@ -17,7 +17,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg sticky-top bg-danger bg-body-primary">
+        <nav className="navbar navbar-expand-lg sticky-top bg-danger bg-gradient rounded-bottom-4">
             <div className="container-fluid">
                 <span className="navbar-brand fs-4 fw-medium">DataScape</span>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"

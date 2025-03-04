@@ -161,7 +161,7 @@ const LocationView = () => {
                                                 {location.address}
                                             </li>
                                             <li className="list-group-item">
-                                                ${location.price}/night
+                                                Avg. ${location.price}
                                             </li>
                                             <li className="list-group-item">
                                                 Submitted by {location.author.username} <br />

@@ -24,7 +24,7 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
         }
     );
 
-    const total = await DateLocation.countDocuments();
+    const total = locations.length;
     res.send({ locations, pages: Math.ceil(total / limit), limit });
 });
 

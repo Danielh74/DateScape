@@ -35,7 +35,7 @@ const Home = () => {
                         </p>
                         <Link className="btn btn-secondary fw-medium" to="/locations">Find Your Next Date Spot</Link>
                     </main>
-                    <footer className="mt-auto pb-2">&copy; 2024 DateScape</footer>
+                    <footer className="mt-auto pb-2">&copy; 2025 DateScape</footer>
                 </div>
             </div>
         </div>
