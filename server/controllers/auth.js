@@ -3,19 +3,19 @@ const ExpressError = require('../utils/ExpressError');
 const handleAsyncError = require('../utils/handleAsyncError');
 
 module.exports.loginUser = handleAsyncError(async (req, res) => {
-    res.status(200).send({ user: req.user, message: 'Welcome back!' });
+    res.status(200).json({ user: req.user, message: 'Welcome back!' });
 });
 
 module.exports.checkAuthenticated = (req, res) => {
-    res.status(200).send({ message: 'User is authenticated', user: req.user });
+    res.status(200).json({ message: 'User is authenticated', user: req.user });
 }
 
 module.exports.logoutUser = (req, res, next) => {
     req.logout(err => {
         if (err) {
-            return res.status(500).send(err.message);
+            return res.status(500).json(err.message);
         }
-        res.status(200).send('Logged out');
+        res.status(200).json('Logged out');
     });
 };
 
@@ -29,7 +29,7 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
             console.error('Error logging in user:', err);
             return next(err);
         }
-        res.status(200).send({ message: 'Registration successful!', user: req.user });
+        res.status(200).json({ message: 'Registration successful!', user: req.user });
     });
 });
 
@@ -48,5 +48,5 @@ module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
     }
 
     const updatedUser = await User.findById(req.user._id);
-    res.send({ user: updatedUser, message: 'Favorites updated successfully' });
+    res.json({ user: updatedUser, message: 'Favorites updated successfully' });
 });

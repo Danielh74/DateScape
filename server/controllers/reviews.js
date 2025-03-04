@@ -19,7 +19,7 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
             populate: { path: 'author' }
         })
         .populate('author');
-    res.status(201).send({ location: newLocation, message: 'Review created successfully' });
+    res.status(201).json({ location: newLocation, message: 'Review created successfully' });
 
 });
 
@@ -39,5 +39,5 @@ module.exports.deleteReview = handleAsyncError(async (req, res) => {
     if (!updatedLocation) {
         throw new ExpressError(404, "Location was not found");
     }
-    res.status(200).send({ message: 'Review deleted successfully', location: updatedLocation });
+    res.status(200).json({ message: 'Review deleted successfully', location: updatedLocation });
 });

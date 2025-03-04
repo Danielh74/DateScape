@@ -25,19 +25,19 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
     );
 
     const total = locations.length;
-    res.send({ locations, pages: Math.ceil(total / limit), limit });
+    res.json({ locations, pages: Math.ceil(total / limit), limit });
 });
 
 module.exports.getUserLocations = handleAsyncError(async (req, res) => {
     const userLocations = await DateLocation.find({ author: req.user._id });
     const total = userLocations.length;
-    res.send({ locations: userLocations, pages: Math.ceil(total / limit), limit });
+    res.json({ locations: userLocations, pages: Math.ceil(total / limit), limit });
 });
 
 module.exports.getFavorites = handleAsyncError(async (req, res) => {
     const user = await User.findById(req.user._id).populate('favLocations');
     const total = user.favLocations.length;
-    res.send({ favorites: user.favLocations, pages: Math.ceil(total / limit), limit });
+    res.json({ favorites: user.favLocations, pages: Math.ceil(total / limit), limit });
 });
 
 module.exports.getLocationById = handleAsyncError(async (req, res) => {
@@ -52,7 +52,7 @@ module.exports.getLocationById = handleAsyncError(async (req, res) => {
     if (!location) {
         throw new ExpressError(404, "Location was not found");
     }
-    res.send({ location });
+    res.json({ location });
 });
 
 module.exports.createLocation = handleAsyncError(async (req, res) => {
@@ -77,7 +77,7 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
         author: req.user._id
     });
     await newLocation.save();
-    res.send({ newLocation, message: 'Location was created' });
+    res.json({ newLocation, message: 'Location was created' });
 });
 
 module.exports.editLocation = handleAsyncError(async (req, res) => {
@@ -119,7 +119,7 @@ module.exports.editLocation = handleAsyncError(async (req, res) => {
             populate: { path: 'author' }
         })
         .populate('author');
-    res.send({ location: updatedLocation });
+    res.json({ location: updatedLocation });
 });
 
 module.exports.deleteLocation = handleAsyncError(async (req, res) => {
@@ -128,6 +128,6 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
     if (!deletedLocation) {
         throw new ExpressError(404, "Location was not found");
     }
-    res.send('Location deleted successfully');
+    res.json('Location deleted successfully');
 });
 
