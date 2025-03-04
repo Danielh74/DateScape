@@ -1,14 +1,13 @@
 import { BaseSyntheticEvent, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import LocationCreateModal from "../modals/LocationCreateModal";
 import '../styles/navbar.css';
 import { Avatar } from '@mui/material'
 
 const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
     const navigate = useNavigate()
-    const [show, setShow] = useState(false);
+
     const [locationName, setLocationName] = useState('');
 
     const handleSubmit = (e: BaseSyntheticEvent) => {
@@ -29,14 +28,6 @@ const Navbar = () => {
                     <div className="navbar-nav">
                         <NavLink className="nav-link text-center fw-medium" id="link" to="/">Home</NavLink>
                         <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Locations</NavLink>
-                        {currentUser &&
-                            <>
-                                <button className="nav-link fw-medium" id="link" onClick={() => setShow(true)}>
-                                    New Location
-                                </button>
-                                <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/favorites">Favorites</NavLink>
-                            </>}
-
                     </div>
                     <form className="d-flex ms-auto" onSubmit={handleSubmit} role="search">
                         <input className="form-control me-2" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
@@ -46,19 +37,21 @@ const Navbar = () => {
                         {currentUser ?
                             <>
                                 <div className="btn-group d-none d-lg-inline">
-                                    <span className="d-none d-lg-inline align-self-center fw-medium">Welcome, {currentUser.username}</span>
+                                    <span className="align-self-center fw-medium">Welcome, {currentUser.username}</span>
                                     <button className="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <Avatar>{currentUser.username.charAt(0)}</Avatar>
                                     </button>
                                     <ul className="dropdown-menu dropdown-menu-end">
                                         <li><a className="dropdown-item text-center fw-medium" href="#">Profile</a></li>
                                         <li><Link className="dropdown-item text-center fw-medium" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</Link></li>
+                                        <li><Link className="dropdown-item text-center fw-medium" onClick={() => sessionStorage.setItem('activePage', '1')} to="/favorites">Favorites</Link></li>
                                         <li><button className="dropdown-item text-center fw-medium" onClick={handleLogout}>Logout</button></li>
                                     </ul>
                                 </div>
                                 <div className="d-lg-none navbar-nav">
-                                    <NavLink className="nav-link text-center fw-medium" to="#">Profile</NavLink>
+                                    <NavLink className="nav-link text-center fw-medium" id="link" to="#">Profile</NavLink>
                                     <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</NavLink>
+                                    <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/favorites">Favorites</NavLink>
                                     <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
                                 </div>
                             </>
@@ -71,9 +64,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-            <LocationCreateModal
-                show={show}
-                onClose={() => setShow(false)} />
+
         </nav>
     )
 }

@@ -5,6 +5,7 @@ import PageSelector from "../components/PageSelector"
 import { toast } from "react-toastify"
 import { CardsLoader } from "../components/Loaders"
 import RenderedLocations from "../components/RenderedLocations"
+import LocationCreateModal from "../modals/LocationCreateModal"
 
 const UserLocations = () => {
     const [locations, setLocations] = useState<DateLocation[]>([]);
@@ -12,6 +13,7 @@ const UserLocations = () => {
     const [viewAmount, setViewAmount] = useState(0);
     const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -37,24 +39,32 @@ const UserLocations = () => {
         <main className="position-relative min-vh-100">
             {isLoading ? <CardsLoader amount={viewAmount} />
                 :
-                locations.length > 0 ?
-                    <>
-                        <RenderedLocations
-                            locations={locations}
-                            startIndex={listBounds.start}
-                            endIndex={listBounds.end} />
+                <>
+                    <button className="btn btn-danger rounded-5 fw-medium mt-3" onClick={() => setShow(true)}>
+                        Create New Location
+                    </button>
+                    {locations.length > 0 ?
+                        <>
+                            <RenderedLocations
+                                locations={locations}
+                                startIndex={listBounds.start}
+                                endIndex={listBounds.end} />
 
-                        <PageSelector
-                            pagesAmount={pages}
-                            onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
-                        />
-                    </>
-                    :
-                    <p className="text-center mt-3 fw-semibold fs-3">You have not posted any locations yet</p>
+                            <PageSelector
+                                pagesAmount={pages}
+                                onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
+                            />
+                        </>
+                        :
+                        <p className="text-center mt-3 fw-semibold fs-3">You have not posted any locations yet</p>}
+                </>
             }
-        </main>
 
+            <LocationCreateModal
+                show={show}
+                onClose={() => setShow(false)} />
+        </main>
     )
-}
+};
 
 export default UserLocations
