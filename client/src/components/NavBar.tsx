@@ -1,8 +1,9 @@
 import { BaseSyntheticEvent, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import LocationCreateModal from "../modals/LocationCreateModal";
 import '../styles/navbar.css';
+import { Avatar } from '@mui/material'
 
 const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
@@ -44,8 +45,22 @@ const Navbar = () => {
                     <div className="navbar-nav ms-auto">
                         {currentUser ?
                             <>
-                                <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</NavLink>
-                                <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
+                                <div className="btn-group d-none d-lg-inline">
+                                    <span className="d-none d-lg-inline align-self-center fw-medium">Welcome, {currentUser.username}</span>
+                                    <button className="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <Avatar>{currentUser.username.charAt(0)}</Avatar>
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                        <li><a className="dropdown-item text-center fw-medium" href="#">Profile</a></li>
+                                        <li><Link className="dropdown-item text-center fw-medium" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</Link></li>
+                                        <li><button className="dropdown-item text-center fw-medium" onClick={handleLogout}>Logout</button></li>
+                                    </ul>
+                                </div>
+                                <div className="d-lg-none navbar-nav">
+                                    <NavLink className="nav-link text-center fw-medium" to="#">Profile</NavLink>
+                                    <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</NavLink>
+                                    <button className="nav-link fw-medium" id="link" onClick={handleLogout}>Logout</button>
+                                </div>
                             </>
                             :
                             <>

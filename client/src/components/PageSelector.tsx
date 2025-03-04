@@ -17,7 +17,7 @@ const PageSelector = ({ pagesAmount, onChange }: Props) => {
         }
     }, [])
 
-    const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
+    const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
         setActivePage(value);
         sessionStorage.setItem('activePage', value.toString());
         onChange(value);
