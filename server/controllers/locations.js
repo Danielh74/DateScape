@@ -64,7 +64,6 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
     }
     const newLocation = new DateLocation(req.body.location);
     const geoData = await maptilerClient.geocoding.forward(address, { limit: 1 });
-    console.log(geoData.features);
     if (geoData.features && geoData.features.length > 0) {
         geometry = geoData.features[0].geometry;
     } else {
