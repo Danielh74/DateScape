@@ -25,5 +25,6 @@ export const registerUser = (registerData: registerProps) => api.post('/register
 export const loginUser = (loginData: loginProps) => api.post('/login', loginData);
 export const logoutUser = () => api.get('/logout');
 
+export const updateProfileImage = (image: FormData) => api.put('/profile', image)
 export const checkAuth = () => api.get(`/check`);
 export const updateFavLocation = (locationId: updateProps) => api.post(`/favorites`, locationId);

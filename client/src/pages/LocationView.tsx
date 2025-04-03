@@ -7,7 +7,6 @@ import useAuth from "../hooks/useAuth";
 import LocationMap from "../components/LocationMap";
 import LocationEditModal from "../modals/LocationEditModal";
 import { useForm, Controller } from "react-hook-form";
-import '../styles/starts.css';
 import { toast } from 'react-toastify';
 import { CardLoader, Loader } from "../components/Loaders";
 import StarIcon from '@mui/icons-material/Star';

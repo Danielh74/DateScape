@@ -31,7 +31,8 @@ const LoginPage = () => {
                     _id: userData._id,
                     username: userData.username,
                     email: userData.email,
-                    favLocations: userData.favLocations
+                    favLocations: userData.favLocations,
+                    image: userData.image
                 };
                 toast.success(res.data.message);
                 handleLogin(user);

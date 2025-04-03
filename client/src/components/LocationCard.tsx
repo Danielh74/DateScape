@@ -38,13 +38,12 @@ const LocationCard = ({ location }: Props) => {
     return (
         <article className="position-relative col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
             {isLoading && <Loader />}
-            <div className="border rounded shadow">
-                <img src={location.images[0].url} className="card-img-top rounded-top" alt="location image" />
-                <div className="card-body p-2">
+            <div className="border rounded shadow h-100">
+                <img src={location.images[0].url} className="card-img-top rounded-top h-50 object-fit-fill" alt="location image" />
+                <div className="d-flex flex-column card-body p-2 h-50">
                     <div className="card-title d-flex justify-content-between">
                         <h5 className="">
                             {location.title}
-
                         </h5>
                         <span>
                             <b className='align-bottom'>{location.averageRating}</b> <span className=' text-warning'><StarIcon /></span>
@@ -55,12 +54,12 @@ const LocationCard = ({ location }: Props) => {
                             {location.address}
                         </span>
                         <span className="d-inline-block my-2 fw-semibold ">
-                            Avg. ${location.price}
+                            {location.price > 0 ? `Avg. $${location.price}` : 'Free'}
                         </span>
                         <span className="d-block">Categories: {<span>{location.categories.join(', ')}</span>}</span>
 
                     </p>
-                    <div className="row justify-content-between align-items-end">
+                    <div className="row justify-content-between align-items-end mt-auto">
                         <Link className="col-6 mx-2 btn btn-outline-danger" to={`/location/${location.id}`}>
                             View Location
                         </Link>

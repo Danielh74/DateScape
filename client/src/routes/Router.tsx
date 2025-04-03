@@ -9,6 +9,7 @@ import NotFound from "../pages/NotFound";
 import FavoriteLocations from "../pages/FavoriteLocations";
 import UserLocations from "../pages/UserLocations";
 import { AuthRoute, NotAuthRoute } from "./ProtectedRoutes";
+import Profile from "../pages/Profile";
 
 export const router = createBrowserRouter([
     { path: "/", element: <Home /> },
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
         children: [
             { path: "/locations", element: <DateLocations /> },
             { path: "/location/:id", element: <LocationView /> },
+            { path: "/profile", element: <AuthRoute><Profile /></AuthRoute> },
             { path: "/mylocations", element: <AuthRoute><UserLocations /></AuthRoute> },
             { path: "/favorites", element: <AuthRoute><FavoriteLocations /></AuthRoute> },
             { path: "/login", element: <NotAuthRoute><LoginPage /></NotAuthRoute> },

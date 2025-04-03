@@ -50,3 +50,11 @@ module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
     const updatedUser = await User.findById(req.user._id);
     res.json({ user: updatedUser, message: 'Favorites updated successfully' });
 });
+
+module.exports.updateProfileImage = handleAsyncError(async (req, res) => {
+    const image = req.files[0];
+    const profileImage = { url: image.path, filename: image.filename }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, { image: profileImage }, { new: true });
+    res.json({ user: updatedUser, message: 'Profile image updated successfully' });
+});
