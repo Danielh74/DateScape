@@ -10,7 +10,7 @@ import RenderedLocations from "../components/RenderedLocations";
 const FavoriteLocations = () => {
     const { currentUser } = useAuth();
     const [favorites, setFavorites] = useState<DateLocation[]>([]);
-    const [viewAmount, setViewAmount] = useState(0);
+    const viewAmount = 12;
     const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
     const [isLoading, setIsLoading] = useState(false);
@@ -19,16 +19,17 @@ const FavoriteLocations = () => {
         setIsLoading(true);
         getFavoriteLocations()
             .then(res => {
-                setFavorites(res.data.favorites);
-                setViewAmount(res.data.limit);
-                setPages(res.data.pages);
+                const list: DateLocation[] = res.data.favorites;
+                setFavorites(list);
+                const pagesNum = Math.ceil(list.length / viewAmount)
+                setPages(pagesNum);
 
                 const currentPage = sessionStorage.getItem('activePage');
                 if (currentPage) {
                     const currentPageNum = parseInt(currentPage);
                     setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
                 } else {
-                    setListBounds({ start: 0, end: res.data.limit });
+                    setListBounds({ start: 0, end: viewAmount });
                 }
             })
             .catch(err => {
@@ -36,13 +37,13 @@ const FavoriteLocations = () => {
             }).finally(() => {
                 setIsLoading(false);
             });
-    }, [viewAmount, currentUser])
+    }, [currentUser])
 
     return (
         <main className="position-relative min-vh-100">
             {isLoading ? <CardsLoader amount={viewAmount} />
                 :
-                favorites.length > 0 ?
+                favorites?.length > 0 ?
                     <>
                         <RenderedLocations
                             locations={favorites}

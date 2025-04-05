@@ -6,11 +6,13 @@ import { toast } from "react-toastify"
 import { CardsLoader } from "../components/Loaders"
 import RenderedLocations from "../components/RenderedLocations"
 import LocationCreateModal from "../modals/LocationCreateModal"
+import useAuth from "../hooks/useAuth"
 
 const UserLocations = () => {
+    const { currentUser } = useAuth();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [viewAmount, setViewAmount] = useState(0);
+    const viewAmount = 12;
     const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
     const [show, setShow] = useState(false);
@@ -19,21 +21,22 @@ const UserLocations = () => {
         setIsLoading(true);
         getUserLocations()
             .then(res => {
-                setLocations(res.data.locations);
-                setViewAmount(res.data.limit);
-                setPages(res.data.pages);
+                const list: DateLocation[] = res.data.locations;
+                setLocations(list);
+                const pagesNum = Math.ceil(list.length / viewAmount)
+                setPages(pagesNum);
 
                 const currentPage = sessionStorage.getItem('activePage');
                 if (currentPage) {
                     const currentPageNum = parseInt(currentPage);
                     setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
                 } else {
-                    setListBounds({ start: 0, end: res.data.limit });
+                    setListBounds({ start: 0, end: viewAmount });
                 }
             })
             .catch((err) => toast.error(err.response.data))
             .finally(() => setIsLoading(false));
-    }, [viewAmount])
+    }, [currentUser])
 
     return (
         <main className="position-relative min-vh-100">

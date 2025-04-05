@@ -28,8 +28,7 @@ const Navbar = () => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
-                        <NavLink className="nav-link text-center fw-medium" id="link" to="/locations">Home</NavLink>
-                        <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Locations</NavLink>
+                        <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Home</NavLink>
                     </div>
                     <form className="d-flex ms-auto w-25" onSubmit={handleSubmit} role="search">
                         <div className="input-group">

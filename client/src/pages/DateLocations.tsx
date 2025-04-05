@@ -11,31 +11,33 @@ import Skeleton from "@mui/material/Skeleton";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
+    const viewAmount = 12;
     const locationName = useLocation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [viewLocations, setViewLocations] = useState<DateLocation[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([...categoryList]);
     const [isLoading, setIsLoading] = useState(false);
-    const [viewAmount, setViewAmount] = useState(0);
     const [pages, setPages] = useState(0);
     const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
 
     useEffect(() => {
         const fetchLocations = () => {
             setIsLoading(true);
-            getLocations(locationName.state, selectedCategories.join(','))
+            getLocations(locationName.state)
                 .then(res => {
                     const list: DateLocation[] = res.data.locations;
                     const orderedList = list.sort((a, b) => a.averageRating - b.averageRating).reverse();
                     setLocations(orderedList);
-                    setViewAmount(res.data.limit);
-                    setPages(res.data.pages);
+                    setViewLocations(orderedList);
+                    const pagesNum = Math.ceil(list.length / viewAmount)
+                    setPages(pagesNum);
 
                     const currentPage = sessionStorage.getItem('activePage');
                     if (currentPage) {
                         const currentPageNum = parseInt(currentPage);
                         setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
                     } else {
-                        setListBounds({ start: 0, end: res.data.limit });
+                        setListBounds({ start: 0, end: viewAmount });
                     }
                 })
                 .catch(err => {
@@ -47,20 +49,32 @@ const DateLocations = () => {
         }
         fetchLocations();
 
-    }, [locationName, selectedCategories, viewAmount])
+    }, [locationName])
+
+    useEffect(() => {
+        const updatedLocations = locations.filter(
+            location => location.categories.some(
+                category => selectedCategories.includes(category)
+            )
+        )
+        setViewLocations(updatedLocations);
+        const pagesNum = Math.ceil(updatedLocations.length / viewAmount)
+        setPages(pagesNum);
+    }, [selectedCategories, locations])
 
     const handlePickCategory = (category: string) => {
-        let tempCategories = [];
-        if (selectedCategories.some(val => val === category)) {
-            setSelectedCategories(prev => prev.filter(val => val !== category));
-        } else {
-            tempCategories = [...selectedCategories, category];
-            if (tempCategories.length === categoryList.length) {
-                setSelectedCategories([]);
-            } else {
-                setSelectedCategories(tempCategories);
-            }
-        }
+        const isSelected = selectedCategories.includes(category);
+        let updatedCategories = isSelected ?
+            selectedCategories.length === categoryList.length ?
+                [category]
+                :
+                selectedCategories.filter(val => val !== category)
+            :
+            [...selectedCategories, category];
+
+        if (updatedCategories.length === 0) updatedCategories = categoryList;
+
+        setSelectedCategories(updatedCategories);
     };
 
     return (
@@ -73,7 +87,7 @@ const DateLocations = () => {
                 :
                 locations.length > 0 ?
                     <>
-                        <ClusterMap locations={locations} />
+                        <ClusterMap locations={viewLocations} />
                         <div className="mt-3 d-flex">
                             {categoryList.map(category =>
                                 <button
@@ -86,7 +100,7 @@ const DateLocations = () => {
                         </div>
 
                         <RenderedLocations
-                            locations={locations}
+                            locations={viewLocations}
                             startIndex={listBounds.start}
                             endIndex={listBounds.end} />
 

@@ -7,37 +7,26 @@ const User = require('../models/user');
 const ExpressError = require('../utils/ExpressError');
 
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
-const limit = 12;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
-    const { locationName = '', categories = '' } = req.query;
-    let categoriesArray = [];
-    if (!categories) {
-        categoriesArray = seedCategories;
-    } else {
-        categoriesArray = categories.split(',');
-    }
+    const { locationName = '' } = req.query;
+
     const locations = await DateLocation.find(
         {
-            title: { $regex: locationName, $options: 'i' },
-            categories: { $in: categoriesArray },
+            title: { $regex: locationName, $options: 'i' }
         }
     );
-
-    const total = locations.length;
-    res.json({ locations, pages: Math.ceil(total / limit), limit });
+    res.json({ locations });
 });
 
 module.exports.getUserLocations = handleAsyncError(async (req, res) => {
     const userLocations = await DateLocation.find({ author: req.user._id });
-    const total = userLocations.length;
-    res.json({ locations: userLocations, pages: Math.ceil(total / limit), limit });
+    res.json({ locations: userLocations });
 });
 
 module.exports.getFavorites = handleAsyncError(async (req, res) => {
     const user = await User.findById(req.user._id).populate('favLocations');
-    const total = user.favLocations.length;
-    res.json({ favorites: user.favLocations, pages: Math.ceil(total / limit), limit });
+    res.json({ favorites: user.favLocations });
 });
 
 module.exports.getLocationById = handleAsyncError(async (req, res) => {
