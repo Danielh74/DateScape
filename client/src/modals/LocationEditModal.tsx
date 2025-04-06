@@ -130,7 +130,7 @@ const LocationEditModal = ({ location, show, onClose, onUpdate }: Props) => {
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>
-                            <input className='form-control' type="file" name="images" onChange={handleFileChange} multiple id="image" />
+                            <input className='form-control' type="file" accept="image/*" name="images" onChange={handleFileChange} multiple id="image" />
                         </div>
                         <div>
                             {location.images.map((img, i) =>

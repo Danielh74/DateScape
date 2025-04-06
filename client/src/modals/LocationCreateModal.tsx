@@ -144,7 +144,7 @@ const LocationCreateModal = ({ show, onClose }: Props) => {
                         </div>
                         <div className="mb-2">
                             <label className="form-label" htmlFor="image">Add images</label>
-                            <input className={`form-control ${files.error && 'border-danger'}`} type="file" name="images" onChange={handleFileChange} multiple id="image" />
+                            <input className={`form-control ${files.error && 'border-danger'}`} type="file" accept="image/*" name="images" onChange={handleFileChange} multiple id="image" />
                             {files.error && <small className='text-danger'>{files.error}</small>}
                         </div>
                         <div className="row mt-3">

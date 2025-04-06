@@ -57,7 +57,7 @@ const DateLocationSchema = new Schema({
         ref: 'Review'
     }],
     averageRating: Number
-}, { ...options, timestamps: true });
+}, options);
 
 DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
     return {
@@ -81,10 +81,7 @@ DateLocationSchema.post('find', async function (locations) {
                 location.reviews.map((reviewId) => Review.findById(reviewId))
             );
 
-            const avg =
-                reviewsList.reduce((acc, review) => acc + review.rating, 0) /
-                reviewsList.length;
-
+            const avg = reviewsList.reduce((acc, review) => acc + review.rating, 0) / reviewsList.length;
             location.averageRating = avg; // Temporary storage
         }
     }
@@ -102,10 +99,7 @@ DateLocationSchema.post('findOne', async function (location) {
             location.reviews.map((reviewId) => Review.findById(reviewId))
         );
 
-        const avg =
-            reviewsList.reduce((acc, review) => acc + review.rating, 0) /
-            reviewsList.length;
-
+        const avg = reviewsList.reduce((acc, review) => acc + review.rating, 0) / reviewsList.length;
         location.averageRating = avg; // Temporary storage
     }
 });
