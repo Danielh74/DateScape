@@ -30,7 +30,7 @@ const Navbar = () => {
                     <div className="navbar-nav">
                         <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Home</NavLink>
                     </div>
-                    <form className="d-flex ms-auto w-25" onSubmit={handleSubmit} role="search">
+                    <form className="col-12 offset-lg-2 col-lg-6" onSubmit={handleSubmit} role="search">
                         <div className="input-group">
                             <input className="form-control" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
                             <button className="btn btn-dark" type="submit"><IoSearch className="fs-5" /></button>
