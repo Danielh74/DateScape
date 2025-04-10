@@ -13,8 +13,12 @@ const localStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
-mongoose.connect('mongodb://127.0.0.1:27017/DateScape');
+const dbUrl = process.env.DB_URL;
+//'mongodb://127.0.0.1:27017/DateScape'
+
+mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
@@ -26,7 +30,17 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto: {
+        secret: 'thisshouldbeabettersecret!'
+    }
+});
+
 app.use(session({
+    store,
     secret: 'secret',
     resave: false,
     saveUninitialized: false,
