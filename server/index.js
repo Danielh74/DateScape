@@ -16,7 +16,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
 const dbUrl = process.env.DB_URL;
-const secret = process.env.SECRET;
 //'mongodb://127.0.0.1:27017/DateScape'
 
 mongoose.connect(dbUrl);
@@ -36,13 +35,13 @@ const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret
+        secret: process.env.SECRET
     }
 });
 
 app.use(session({
     store,
-    secret,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
