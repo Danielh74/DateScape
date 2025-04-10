@@ -8,7 +8,7 @@ import { IoSearch } from "react-icons/io5";
 
 const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [locationName, setLocationName] = useState('');
 
