@@ -2,7 +2,6 @@ const DateLocation = require('../models/dateLocation');
 const handleAsyncError = require('../utils/handleAsyncError');
 const { cloudinary } = require('../cloudinary');
 const maptilerClient = require('@maptiler/client');
-const { categories: seedCategories } = require('../seeds/seedHelpers');
 const User = require('../models/user');
 const ExpressError = require('../utils/ExpressError');
 

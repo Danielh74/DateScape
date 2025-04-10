@@ -15,8 +15,8 @@ const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
-const dbUrl = process.env.DB_URL;
-//'mongodb://127.0.0.1:27017/DateScape'
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/DateScape';
+const secret = process.env.SECRET;
 
 mongoose.connect(dbUrl);
 const db = mongoose.connection;
@@ -29,19 +29,25 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: 'https://datescape-frontend.onrender.com', credentials: true }));
+app.use(cors({
+    origin: [
+        'https://datescape-frontend.onrender.com',
+        'http://localhost:5173'
+    ],
+    credentials: true
+}));
 
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto: {
-        secret: process.env.SECRET
+        secret
     }
 });
 
 app.use(session({
     store,
-    secret: process.env.SECRET,
+    secret,
     resave: false,
     saveUninitialized: false,
     cookie: {
