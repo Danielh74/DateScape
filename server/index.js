@@ -29,6 +29,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.set('trust proxy', 1);
+
 app.use(cors({
     origin: [
         'https://datescape-frontend.onrender.com',
@@ -51,6 +54,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
@@ -59,7 +63,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new localStrategy(User.authenticate()))
+passport.use(User.createStrategy())
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
