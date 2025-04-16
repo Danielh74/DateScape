@@ -9,7 +9,6 @@ const locationsRouter = require('./routes/locations');
 const reviewsRouter = require('./routes/reviews');
 const authRouter = require('./routes/auth');
 const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
@@ -56,6 +55,7 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
