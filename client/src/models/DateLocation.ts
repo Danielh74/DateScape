@@ -16,7 +16,7 @@ export interface DateLocation {
     author: User,
     reviews: Review[],
     averageRating: number,
-    updatedAt: string
+    updatedAt: Date
 };
 
 interface LocationImage {

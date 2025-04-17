@@ -1,18 +1,12 @@
 const mongoose = require('mongoose');
 const Review = require('./review');
 const { cloudinary } = require('../cloudinary');
-const dayjs = require('dayjs');
 const { categories: seedCategories } = require('../seeds/seedHelpers');
 const Schema = mongoose.Schema;
 
 const options = {
     toJSON: {
         virtuals: true,
-        transform(doc, ret) {
-            ret.createdAt = dayjs(ret.createdAt).format('DD/MM/YYYY');
-            ret.updatedAt = dayjs(ret.updatedAt).format('DD/MM/YYYY');
-            return ret
-        }
     },
     timestamps: true
 };

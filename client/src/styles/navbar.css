@@ -1,6 +1,9 @@
+#link {
+    color: #dc3545;
+}
+
 #link:hover {
-    color: white;
-    font-weight: 600;
+    color: #495057;
 }
 
 .dropdown-menu>li>a:hover,
@@ -12,4 +15,9 @@
 .logo {
     width: 50px;
     height: 50px;
+}
+
+.navbar-toggler {
+    padding: 1rem;
+    color: #0080ff;
 }

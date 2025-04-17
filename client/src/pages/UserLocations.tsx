@@ -7,6 +7,7 @@ import { CardsLoader } from "../components/Loaders"
 import RenderedLocations from "../components/RenderedLocations"
 import LocationCreateModal from "../modals/LocationCreateModal"
 import useAuth from "../hooks/useAuth"
+import { listBoundsCalc } from "../utils/listBoundsCalc"
 
 const UserLocations = () => {
     const { currentUser } = useAuth();
@@ -25,14 +26,7 @@ const UserLocations = () => {
                 setLocations(list);
                 const pagesNum = Math.ceil(list.length / viewAmount)
                 setPages(pagesNum);
-
-                const currentPage = sessionStorage.getItem('activePage');
-                if (currentPage) {
-                    const currentPageNum = parseInt(currentPage);
-                    setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
-                } else {
-                    setListBounds({ start: 0, end: viewAmount });
-                }
+                setListBounds(listBoundsCalc(viewAmount));
             })
             .catch((err) => toast.error(err.response.data))
             .finally(() => setIsLoading(false));

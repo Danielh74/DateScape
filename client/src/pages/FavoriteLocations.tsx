@@ -6,6 +6,7 @@ import useAuth from "../hooks/useAuth";
 import PageSelector from "../components/PageSelector";
 import { CardsLoader } from "../components/Loaders";
 import RenderedLocations from "../components/RenderedLocations";
+import { listBoundsCalc } from "../utils/listBoundsCalc";
 
 const FavoriteLocations = () => {
     const { currentUser } = useAuth();
@@ -23,14 +24,7 @@ const FavoriteLocations = () => {
                 setFavorites(list);
                 const pagesNum = Math.ceil(list.length / viewAmount)
                 setPages(pagesNum);
-
-                const currentPage = sessionStorage.getItem('activePage');
-                if (currentPage) {
-                    const currentPageNum = parseInt(currentPage);
-                    setListBounds({ start: (currentPageNum - 1) * viewAmount, end: currentPageNum * viewAmount });
-                } else {
-                    setListBounds({ start: 0, end: viewAmount });
-                }
+                setListBounds(listBoundsCalc(viewAmount));
             })
             .catch(err => {
                 toast.error(err.response.data)

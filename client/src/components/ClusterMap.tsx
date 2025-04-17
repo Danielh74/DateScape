@@ -238,7 +238,7 @@ export default function ClusterMap({ locations }: Props) {
 
     return (
         <div className="cluster-map-wrap">
-            <div ref={mapContainer} className="map rounded-bottom" />
+            <div ref={mapContainer} className="map rounded" />
         </div>
     );
 }

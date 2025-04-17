@@ -19,21 +19,29 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg sticky-top bg-danger bg-gradient rounded-bottom-4">
-            <div className="container-fluid">
-                <NavLink className="navbar-brand fs-4 fw-medium" to="/"><img src="/map.png" alt="logo" className="logo" /> DateScape</NavLink>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <nav className="navbar navbar-expand-lg sticky-top rounded-5 m-2 bg-light border border-dark-subtle shadow">
+            <div className="container-fluid text-danger">
+                <NavLink className="navbar-brand fs-4 fw-medium text-danger" to="/"><img src="/map.png" alt="logo" className="logo" /> DateScape</NavLink>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
                     <span className="navbar-toggler-icon"></span>
                 </button>
+
                 <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div className="navbar-nav">
-                        <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Home</NavLink>
+                        <NavLink className="nav-link text-center fw-medium align-self-center" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/locations">Home</NavLink>
                     </div>
-                    <form className="col-12 offset-lg-2 col-lg-6" onSubmit={handleSubmit} role="search">
+                    <form className="col-12 offset-lg-2 col-lg-5 col-xl-6" onSubmit={handleSubmit} role="search">
                         <div className="input-group">
-                            <input className="form-control" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
-                            <button className="btn btn-dark" type="submit"><IoSearch className="fs-5" /></button>
+                            <input className="form-control rounded-start-4 focus-ring focus-ring-danger" value={locationName} onChange={(e) => setLocationName(e.target.value)} name="locationName" type="search" placeholder="Search" aria-label="Search" />
+                            <button className="btn btn-danger rounded-end-4" type="submit"><IoSearch className="fs-5" /></button>
                         </div>
                     </form>
                     <div className="navbar-nav ms-auto">
@@ -42,7 +50,7 @@ const Navbar = () => {
                                 <div className="btn-group d-none d-lg-inline">
                                     <span className="align-self-center fw-medium">Welcome, {currentUser.username}</span>
                                     <button className="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <Avatar src={currentUser.image?.url || undefined}>
+                                        <Avatar style={{ height: 50, width: 50 }} src={currentUser.image?.url || undefined}>
                                             {!currentUser.image?.url && currentUser.username[0]}
                                         </Avatar>
                                     </button>
@@ -53,7 +61,7 @@ const Navbar = () => {
                                         <li><button className="dropdown-item text-center fw-medium" onClick={handleLogout}>Logout</button></li>
                                     </ul>
                                 </div>
-                                <div className="d-lg-none navbar-nav">
+                                <div className="d-lg-none navbar-nav align-items-center">
                                     <NavLink className="nav-link text-center fw-medium" id="link" to="/profile">Profile</NavLink>
                                     <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/mylocations">My Locations</NavLink>
                                     <NavLink className="nav-link text-center fw-medium" id="link" onClick={() => sessionStorage.setItem('activePage', '1')} to="/favorites">Favorites</NavLink>
