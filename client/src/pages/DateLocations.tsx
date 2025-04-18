@@ -28,7 +28,8 @@ const DateLocations = () => {
             setIsLoading(true);
             getLocations(locationName.state)
                 .then(res => {
-                    const list: DateLocation[] = res.data.locations;
+                    let list: DateLocation[] = res.data.locations;
+                    list = list.map(location => ({ ...location, updatedAt: new Date(location.updatedAt) }));
                     setLocations(list);
                     const orderedList = locationsOrder(list, orderedBy);
                     setViewLocations(orderedList);

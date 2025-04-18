@@ -7,7 +7,6 @@ const locationsOrder = (list: DateLocation[], order: string) => {
             orderedList = list.sort((a, b) => b.averageRating - a.averageRating);
             break;
         case "Newest":
-            list.forEach(location => location.updatedAt = new Date(location.updatedAt));
             orderedList = list.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
             break;
         default:

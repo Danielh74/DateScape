@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { CardLoader, Loader } from "../components/Loaders";
 import StarIcon from '@mui/icons-material/Star';
 import Rating from "@mui/material/Rating";
+import { convertToLocalDate } from "../utils/convertToLocalDate";
 
 interface ReviewProp {
     rating: number;
@@ -164,7 +165,7 @@ const LocationView = () => {
                                             </li>
                                             <li className="list-group-item">
                                                 Submitted by {location.author.username} <br />
-                                                <small className="text-secondary">{location.updatedAt}</small>
+                                                <small className="text-secondary">{convertToLocalDate(location.updatedAt.toString().split('T')[0])}</small>
                                             </li>
                                             <li className="list-group-item">
 
