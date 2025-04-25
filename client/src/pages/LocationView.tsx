@@ -12,6 +12,7 @@ import { CardLoader, Loader } from "../components/Loaders";
 import StarIcon from '@mui/icons-material/Star';
 import Rating from "@mui/material/Rating";
 import { convertToLocalDate } from "../utils/convertToLocalDate";
+import { useTranslation } from "react-i18next";
 
 interface ReviewProp {
     rating: number;
@@ -25,6 +26,7 @@ const LocationView = () => {
     const [isLoading, setIsLoading] = useState({ review: false, location: false });
     const navigate = useNavigate();
     const { currentUser } = useAuth();
+    const { t } = useTranslation();
     const { register, handleSubmit, reset, control, formState: { errors } } = useForm<ReviewProp>({
         defaultValues: {
             rating: 2,
@@ -132,12 +134,12 @@ const LocationView = () => {
                                                 <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
                                                     data-bs-slide="prev">
                                                     <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span className="visually-hidden">Previous</span>
+                                                    <span className="visually-hidden">{t('previous')}</span>
                                                 </button>
                                                 <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
                                                     data-bs-slide="next">
                                                     <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span className="visually-hidden">Next</span>
+                                                    <span className="visually-hidden">{t('next')}</span>
                                                 </button>
                                             </>
                                         }
@@ -164,7 +166,7 @@ const LocationView = () => {
                                                 Avg. ${location.price}
                                             </li>
                                             <li className="list-group-item">
-                                                Submitted by {location.author.username} <br />
+                                                {t('submitted_by')} {location.author.username} <br />
                                                 <small className="text-secondary">{convertToLocalDate(location.updatedAt.toString().split('T')[0])}</small>
                                             </li>
                                             <li className="list-group-item">
@@ -174,9 +176,9 @@ const LocationView = () => {
                                         {currentUser && currentUser._id === location.author._id &&
                                             <div className="ps-2">
                                                 <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
-                                                    Edit
+                                                    {t('edit')}
                                                 </button>
-                                                <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? 'Loading...' : 'Delete'}</button>
+                                                <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? t('loading') + '...' : t('delete')}</button>
                                             </div>
                                         }
                                     </div>
@@ -189,7 +191,7 @@ const LocationView = () => {
                         {isLoading.review && <Loader />}
                         {currentUser &&
                             <>
-                                <h2>Leave a Review</h2>
+                                <h2>{t('leave_review')}</h2>
                                 <form className="needs-validation mb-2" onSubmit={handleSubmit(onReviewSubmit)}>
                                     <Controller
                                         name="rating"
@@ -206,13 +208,13 @@ const LocationView = () => {
                                     />
 
                                     <div className="mb-2">
-                                        <label className="form-label" htmlFor="body">Review</label>
+                                        <label className="form-label" htmlFor="body">{t('review')}</label>
                                         <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
                                         {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                     </div>
                                     <div className="d-flex justify-content-between px-3 align-items-center">
-                                        <button className="btn btn-success">Submit</button>
-                                        {location.reviews.length} reviews
+                                        <button className="btn btn-success">{t('submit')}</button>
+                                        {location.reviews.length} {t('reviews')}
                                     </div>
 
                                 </form>
@@ -231,14 +233,14 @@ const LocationView = () => {
                                                 {review.author.username}
                                             </p>
                                             {(currentUser && (currentUser._id === review.author._id)) &&
-                                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>{t('delete')}</button>
                                             }
                                         </div>
                                     </article>
                                 ))}
                             </div>
                         ) : (
-                            <p>No reviews yet. {currentUser ? 'Be the first to leave one!' : 'Log in to leave a review'}</p>
+                            <p>{t('noReviews.head')} {currentUser ? t('noReviews.authMessage') : t('noReviews.notAuthMessage')}</p>
                         )}
                     </aside>
                     <LocationEditModal
@@ -249,7 +251,7 @@ const LocationView = () => {
                 </main >
                 :
                 <h1>
-                    No Location found
+                    {t('no_location')}
                 </h1>}
         </>
 

@@ -7,9 +7,11 @@ import PageSelector from "../components/PageSelector";
 import { CardsLoader } from "../components/Loaders";
 import RenderedLocations from "../components/RenderedLocations";
 import { listBoundsCalc } from "../utils/listBoundsCalc";
+import { useTranslation } from "react-i18next";
 
 const FavoriteLocations = () => {
     const { currentUser } = useAuth();
+    const { t } = useTranslation();
     const [favorites, setFavorites] = useState<DateLocation[]>([]);
     const viewAmount = 12;
     const [pages, setPages] = useState(0);
@@ -50,7 +52,7 @@ const FavoriteLocations = () => {
                         />
                     </>
                     :
-                    <h1 className="text-center mt-3">You have no locations saved as favorites</h1>
+                    <h1 className="text-center mt-3">{t('no_favorites')}</h1>
             }
 
         </main>

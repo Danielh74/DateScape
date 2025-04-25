@@ -5,6 +5,7 @@ import { User } from "../models/User";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
+import { useTranslation } from "react-i18next";
 
 type LoginForm = {
     username: string,
@@ -14,6 +15,7 @@ type LoginForm = {
 const LoginPage = () => {
     const { handleLogin } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, formState: { errors }, setError } = useForm({
         defaultValues: {
@@ -56,22 +58,22 @@ const LoginPage = () => {
                 <main className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
                     <div className="card shadow ">
                         <div className="card-body ">
-                            <h5 className="card-title">Login</h5>
+                            <h5 className="card-title">{t('login')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
-                                    <label className="form-label" htmlFor="username">Username</label>
+                                    <label className="form-label" htmlFor="username">{t('username')}</label>
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="text" {...register('username', { required: 'Username is required' })} id="username" autoFocus
                                     />
                                     {errors.username && <small className="text-danger"> {errors.username.message}</small>}
 
                                 </div>
                                 <div className="mb-2">
-                                    <label className="form-label" htmlFor="password">Password</label>
+                                    <label className="form-label" htmlFor="password">{t('password')}</label>
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? 'Logging in...' : 'Log in'}</button>
+                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('login')}</button>
                                 </div>
                                 {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
                             </form>

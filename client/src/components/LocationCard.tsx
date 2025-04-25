@@ -5,8 +5,10 @@ import useAuth from '../hooks/useAuth';
 import { toast } from 'react-toastify';
 import { Loader } from './Loaders';
 import { Link, useNavigate } from 'react-router-dom';
-import { IoHeartOutline, IoHeartSharp } from 'react-icons/io5';
+import { FaHeart } from "react-icons/fa";
+import { CiHeart } from "react-icons/ci";
 import StarIcon from '@mui/icons-material/Star';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
     location: DateLocation
@@ -16,6 +18,7 @@ const LocationCard = ({ location }: Props) => {
     const { currentUser, updateUser } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useTranslation();
 
     const handleUpdateFavLocation = () => {
         if (currentUser) {
@@ -54,17 +57,17 @@ const LocationCard = ({ location }: Props) => {
                             {location.address}
                         </span>
                         <span className="d-inline-block my-2 fw-semibold ">
-                            {location.price > 0 ? `Avg. $${location.price}` : 'Free'}
+                            {location.price > 0 ? `Avg. $${location.price}` : t('free')}
                         </span>
-                        <span className="d-block">Categories: {<span>{location.categories.join(', ')}</span>}</span>
+                        <span className="d-block">{t('categories')}: {<span>{location.categories.map(c => t(c)).join(', ')}</span>}</span>
 
                     </p>
                     <div className="row justify-content-between align-items-end mt-auto">
                         <Link className="col-6 mx-2 btn btn-outline-danger" to={`/location/${location.id}`}>
-                            View Location
+                            {t('view_location')}
                         </Link>
                         <button className="btn col-2 fs-1 p-0 border-0" onClick={handleUpdateFavLocation}>
-                            {currentUser?.favLocations?.some(fav => fav === location.id) ? <IoHeartSharp className="text-danger" /> : <IoHeartOutline />}
+                            {currentUser?.favLocations?.some(fav => fav === location.id) ? <FaHeart className="text-danger fs-2" /> : <CiHeart />}
                         </button>
 
                     </div>

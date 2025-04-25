@@ -8,9 +8,11 @@ import RenderedLocations from "../components/RenderedLocations"
 import LocationCreateModal from "../modals/LocationCreateModal"
 import useAuth from "../hooks/useAuth"
 import { listBoundsCalc } from "../utils/listBoundsCalc"
+import { useTranslation } from "react-i18next"
 
 const UserLocations = () => {
     const { currentUser } = useAuth();
+    const { t } = useTranslation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const viewAmount = 12;
@@ -38,7 +40,7 @@ const UserLocations = () => {
                 :
                 <>
                     <button className="btn btn-danger rounded-5 fw-medium mt-3" onClick={() => setShow(true)}>
-                        Create New Location
+                        {t('create_location')}
                     </button>
                     {locations.length > 0 ?
                         <>
@@ -53,7 +55,7 @@ const UserLocations = () => {
                             />
                         </>
                         :
-                        <p className="text-center mt-3 fw-semibold fs-3">You have not posted any locations yet</p>}
+                        <p className="text-center mt-3 fw-semibold fs-3">{t('no_location_posted')}</p>}
                 </>
             }
 

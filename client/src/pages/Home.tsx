@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import '../styles/home.css'
+import '../styles/home.css';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
     const { currentUser, handleLogout } = useAuth();
+    const { t } = useTranslation();
     return (
         <div className='d-flex vh-100 text-white bg-dark body'>
             <div className="container">
@@ -12,15 +14,15 @@ const Home = () => {
                         <div className="row justify-content-between">
                             <h3 className="col">DateScape</h3>
                             <nav className="nav nav-masthead col-12 col-md-6 justify-content-md-end">
-                                <a className="nav-link active" id='nav-link' href="">Home</a>
-                                <Link className="nav-link" id='nav-link' to="/locations">Locations</Link>
+                                <a className="nav-link active" id='nav-link' href="">{t('home')}</a>
+                                <Link className="nav-link" id='nav-link' to="/locations">{t('locations')}</Link>
                                 {!currentUser ? (
                                     <>
-                                        <Link className="nav-link" id='nav-link' to="/login">Login</Link>
-                                        <Link className="nav-link" id='nav-link' to="/register">Register</Link>
+                                        <Link className="nav-link" id='nav-link' to="/login">{t('login')}</Link>
+                                        <Link className="nav-link" id='nav-link' to="/register">{t('signup')}</Link>
                                     </>
                                 ) : (
-                                    <Link id='nav-link' className="nav-link" to={'#'} onClick={handleLogout}>Logout</Link>
+                                    <Link id='nav-link' className="nav-link" to={'#'} onClick={handleLogout}>{t('logout')}</Link>
                                 )}
                             </nav>
                         </div>

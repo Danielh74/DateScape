@@ -10,11 +10,13 @@ import { CardsLoader } from "../components/Loaders";
 import Skeleton from "@mui/material/Skeleton";
 import { listBoundsCalc } from "../utils/listBoundsCalc";
 import locationsOrder from "../utils/locationsOrder";
+import { useTranslation } from "react-i18next";
 
 const DateLocations = () => {
     const categoryList = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
     const viewAmount = 12;
     const locationName = useLocation();
+    const { t } = useTranslation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [viewLocations, setViewLocations] = useState<DateLocation[]>([]);
     const [orderedBy, setOrderedBy] = useState("");
@@ -96,14 +98,14 @@ const DateLocations = () => {
                                         key={category}
                                         onClick={() => handlePickCategory(category)}
                                         className={`btn ${selectedCategories.some(val => val === category) || selectedCategories.length === 0 ? "btn-danger" : "btn-outline-danger"} me-2 fw-medium rounded-5`}>
-                                        {category}
+                                        {t(category)}
                                     </button>
                                 )}
                             </div>
 
                             <div className="dropdown d-md-none">
                                 <button className="btn btn-danger rounded-5 fw-medium dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Categories
+                                    {t('categories')}
                                 </button>
                                 <ul className="dropdown-menu">
                                     {categoryList.map(category =>
@@ -115,7 +117,7 @@ const DateLocations = () => {
                                                 id={category}
                                                 onClick={() => handlePickCategory(category)}
                                                 defaultChecked={selectedCategories.some(val => val === category) || selectedCategories.length === 0} />
-                                            <label className="ms-1 fw-medium" htmlFor={category}>{category}</label>
+                                            <label className="ms-1 fw-medium" htmlFor={category}>{t(category)}</label>
                                         </div>
                                     )}
                                 </ul>
@@ -123,9 +125,9 @@ const DateLocations = () => {
 
                             <div>
                                 <select className="form-select rounded-5 border-2 border-danger focus-ring focus-ring-danger" onChange={handleSelectOrder}>
-                                    <option value="" disabled>Select an order</option>
-                                    <option value="Rating">Rating</option>
-                                    <option value="Newest">Newest</option>
+                                    <option value="" disabled>{t('select_order')}</option>
+                                    <option value="Rating">{t('rating')}</option>
+                                    <option value="Newest">{t('newest')}</option>
                                 </select>
                             </div>
 
@@ -142,7 +144,7 @@ const DateLocations = () => {
                         />
                     </>
                     :
-                    <h1 className="fw-bold align-items-center text-center mt-3">No Locations To Show...&#x1F494;</h1>
+                    <h1 className="fw-bold align-items-center text-center mt-3">{t('no_locations')}...&#x1F494;</h1>
             }
         </main>
     )

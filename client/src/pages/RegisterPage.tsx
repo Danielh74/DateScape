@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 type RegisterForm = {
     username: string,
@@ -14,6 +15,7 @@ type RegisterForm = {
 const RegisterPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const { handleLogin } = useAuth()
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
@@ -47,27 +49,26 @@ const RegisterPage = () => {
                 <main className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
                     <div className="card shadow ">
                         <div className="card-body ">
-                            <h5 className="card-title">Register</h5>
+                            <h5 className="card-title">{t('signup')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
-                                    <label className="form-label" htmlFor="username">Username</label>
+                                    <label className="form-label" htmlFor="username">{t('username')}</label>
                                     <input className={`form-control ${errors.username && 'border-danger'}`} type="text" {...register('username', { required: 'Username is required' })} id="username" autoFocus />
                                     {errors.username && <small className="text-danger"> {errors.username.message}</small>}
                                 </div>
                                 <div className="mb-2">
-                                    <label className="form-label" htmlFor="email">Email</label>
+                                    <label className="form-label" htmlFor="email">{t('email')}</label>
                                     <input className={`form-control ${errors.email && 'border-danger'}`} type="email" {...register('email', { required: 'Email is required' })} id="email" />
                                     {errors.email && <small className="text-danger"> {errors.email.message}</small>}
                                 </div>
                                 <div className="mb-2">
-                                    <label className="form-label" htmlFor="password">Password</label>
+                                    <label className="form-label" htmlFor="password">{t('password')}</label>
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? 'Loading...' : 'Register'}</button>
+                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('signup')}</button>
                                 </div>
-
                             </form>
                         </div>
                     </div>

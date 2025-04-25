@@ -5,11 +5,13 @@ import { toast } from "react-toastify";
 import { updateProfileImage } from "../services/authService";
 import { Loader } from "../components/Loaders";
 import { FaCamera } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function Profile() {
     const { currentUser, updateUser } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const { t } = useTranslation();
 
     const submitImage = (file: File) => {
         setIsLoading(true);
@@ -67,8 +69,8 @@ function Profile() {
                 </div>
             </div>
             <div className="row bg-dark-subtle rounded-2 p-2">
-                <span><b>Username:</b> {currentUser?.username}</span>
-                <span><b>Email:</b> {currentUser?.email}</span>
+                <span><b>{t('username')}:</b> {currentUser?.username}</span>
+                <span><b>{t('email')}:</b> {currentUser?.email}</span>
             </div>
 
 

@@ -1,11 +1,13 @@
 import { Box } from "@mui/material"
 import Skeleton from "@mui/material/Skeleton"
+import { useTranslation } from 'react-i18next';
 
 const Loader = () => {
+    const { t } = useTranslation();
     return (
         <div
             className="position-absolute bg-light bg-opacity-75 w-100 h-100 z-1 align-content-center text-center fs-3 fw-bold rounded">
-            Loading...
+            {t('loading')}...
         </div>
     )
 }
