@@ -49,7 +49,7 @@ const LocationCard = ({ location }: Props) => {
                             {location.title}
                         </h5>
                         <span>
-                            <b className='align-bottom'>{location.averageRating}</b> <span className=' text-warning'><StarIcon /></span>
+                            <b className='align-bottom'>{location.averageRating}</b> <span className='text-warning'><StarIcon /></span>
                         </span>
                     </div>
                     <p className="card-text m-0">
@@ -63,7 +63,7 @@ const LocationCard = ({ location }: Props) => {
 
                     </p>
                     <div className="row justify-content-between align-items-end mt-auto">
-                        <Link className="col-6 mx-2 btn btn-outline-danger" to={`/location/${location.id}`}>
+                        <Link className="col-6 mx-2 btn btn-outline-danger rounded-5" to={`/location/${location.id}`}>
                             {t('view_location')}
                         </Link>
                         <button className="btn col-2 fs-1 p-0 border-0" onClick={handleUpdateFavLocation}>

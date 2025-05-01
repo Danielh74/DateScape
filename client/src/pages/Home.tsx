@@ -18,11 +18,11 @@ const Home = () => {
                                 <Link className="nav-link" id='nav-link' to="/locations">{t('locations')}</Link>
                                 {!currentUser ? (
                                     <>
-                                        <Link className="nav-link" id='nav-link' to="/login">{t('login')}</Link>
-                                        <Link className="nav-link" id='nav-link' to="/register">{t('signup')}</Link>
+                                        <Link className="nav-link" id='nav-link' to="/login">{t('button.login')}</Link>
+                                        <Link className="nav-link" id='nav-link' to="/register">{t('button.signup')}</Link>
                                     </>
                                 ) : (
-                                    <Link id='nav-link' className="nav-link" to={'#'} onClick={handleLogout}>{t('logout')}</Link>
+                                    <Link id='nav-link' className="nav-link" to={'#'} onClick={handleLogout}>{t('button.logout')}</Link>
                                 )}
                             </nav>
                         </div>

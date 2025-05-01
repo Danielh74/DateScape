@@ -54,11 +54,11 @@ const LoginPage = () => {
 
     return (
         <div className="container justify-content-center align-items-center mt-5">
-            <div className="row">
-                <main className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+            <div className="row justify-content-center">
+                <main className="col-md-6 col-xl-4">
                     <div className="card shadow ">
-                        <div className="card-body ">
-                            <h5 className="card-title">{t('login')}</h5>
+                        <div className="card-body">
+                            <h5 className="card-title">{t('button.login')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">{t('username')}</label>
@@ -67,14 +67,14 @@ const LoginPage = () => {
                                     {errors.username && <small className="text-danger"> {errors.username.message}</small>}
 
                                 </div>
-                                <div className="mb-2">
+                                <div className="mb-3">
                                     <label className="form-label" htmlFor="password">{t('password')}</label>
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
-                                <div className="d-grid">
-                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('login')}</button>
-                                </div>
+
+                                <button className="btn btn-success rounded-5 w-100" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('button.login')}</button>
+
                                 {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
                             </form>
                         </div>

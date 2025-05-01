@@ -44,12 +44,12 @@ const RegisterPage = () => {
     }
 
     return (
-        <div className="container justify-content-center align-items-center mt-5">
-            <div className="row">
-                <main className="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
-                    <div className="card shadow ">
-                        <div className="card-body ">
-                            <h5 className="card-title">{t('signup')}</h5>
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <main className="col-md-6 col-xl-4">
+                    <div className="card shadow">
+                        <div className="card-body">
+                            <h5 className="card-title">{t('button.signup')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">{t('username')}</label>
@@ -67,7 +67,7 @@ const RegisterPage = () => {
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('signup')}</button>
+                                    <button className="btn btn-success rounded-5" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
                                 </div>
                             </form>
                         </div>

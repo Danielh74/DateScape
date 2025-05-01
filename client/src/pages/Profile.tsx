@@ -11,7 +11,7 @@ function Profile() {
     const { currentUser, updateUser } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const submitImage = (file: File) => {
         setIsLoading(true);
@@ -33,6 +33,11 @@ function Profile() {
         if (image) {
             submitImage(image);
         }
+    };
+
+    const changeLanguage = (lang: string) => {
+        i18n.changeLanguage(lang);
+        document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
     };
 
     if (isLoading)
@@ -68,11 +73,20 @@ function Profile() {
                         onChange={handleFileChange} />
                 </div>
             </div>
-            <div className="row bg-dark-subtle rounded-2 p-2">
-                <span><b>{t('username')}:</b> {currentUser?.username}</span>
-                <span><b>{t('email')}:</b> {currentUser?.email}</span>
+            <div className="card">
+                <ul className="list-group list-group-flush p-0">
+                    <li className="list-group-item bg-dark-subtle"><b>{t('username')}:</b> {currentUser?.username}</li>
+                    <li className="list-group-item bg-dark-subtle"><b>{t('email')}:</b> {currentUser?.email}</li>
+                    <li className="list-group-item bg-dark-subtle"><b>{t('language')}:</b>
+                        <button className={`btn ${i18n.language === 'en' && 'fw-semibold'}`} onClick={() => changeLanguage('en')}>
+                            <img src="https://flagcdn.com/us.svg" alt="English" width="24" height="16" /> {t('english')}
+                        </button>
+                        <button className={`btn ${i18n.language === 'he' && 'fw-semibold'}`} onClick={() => changeLanguage('he')}>
+                            <img src="https://flagcdn.com/il.svg" alt="Hebrew" width="24" height="16" /> {t('hebrew')}
+                        </button>
+                    </li>
+                </ul>
             </div>
-
 
         </main>
     )

@@ -134,31 +134,30 @@ const LocationView = () => {
                                                 <button className="carousel-control-prev" type="button" data-bs-target="#locationCarousel"
                                                     data-bs-slide="prev">
                                                     <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span className="visually-hidden">{t('previous')}</span>
+                                                    <span className="visually-hidden">{t('button.previous')}</span>
                                                 </button>
                                                 <button className="carousel-control-next" type="button" data-bs-target="#locationCarousel"
                                                     data-bs-slide="next">
                                                     <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span className="visually-hidden">{t('next')}</span>
+                                                    <span className="visually-hidden">{t('button.next')}</span>
                                                 </button>
                                             </>
                                         }
                                     </div>
-                                    <div className="card-body">
+                                    <div className="card-body px-4">
                                         <div className="card-title d-flex justify-content-between">
-                                            <h5 className="">
+                                            <h5>
                                                 {location.title}
-
                                             </h5>
                                             <span>
-                                                <b className=" align-bottom">{location.averageRating}</b> <span className="text-warning"><StarIcon /></span>
+                                                <b className="align-bottom">{location.averageRating}</b> <StarIcon className="text-warning" />
                                             </span>
                                         </div>
-                                        <p className="card-text ps-2">
+                                        <p className="card-text">
                                             {location.description}
                                         </p>
 
-                                        <ul className="list-group list-group-flush">
+                                        <ul className="list-group list-group-flush p-0">
                                             <li className="list-group-item fw-medium text-secondary">
                                                 {location.address}
                                             </li>
@@ -174,11 +173,13 @@ const LocationView = () => {
                                             </li>
                                         </ul>
                                         {currentUser && currentUser._id === location.author._id &&
-                                            <div className="ps-2">
-                                                <button type="button" className="btn btn-info" onClick={() => setShow(true)}>
-                                                    {t('edit')}
+                                            <div className="row px-2 gap-2">
+                                                <button type="button" className="col-2 btn btn-info rounded-5" onClick={() => setShow(true)}>
+                                                    {t('button.edit')}
                                                 </button>
-                                                <button className="btn btn-danger ms-2" disabled={isLoading.location} onClick={handleDeleteLocation}>{isLoading.location ? t('loading') + '...' : t('delete')}</button>
+                                                <button className="col-2 btn btn-danger rounded-5" disabled={isLoading.location} onClick={handleDeleteLocation}>
+                                                    {isLoading.location ? t('loading') + '...' : t('button.delete')}
+                                                </button>
                                             </div>
                                         }
                                     </div>
@@ -212,8 +213,8 @@ const LocationView = () => {
                                         <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
                                         {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                     </div>
-                                    <div className="d-flex justify-content-between px-3 align-items-center">
-                                        <button className="btn btn-success">{t('submit')}</button>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <button className="btn btn-success rounded-5">{t('button.submit')}</button>
                                         {location.reviews.length} {t('reviews')}
                                     </div>
 
@@ -233,14 +234,14 @@ const LocationView = () => {
                                                 {review.author.username}
                                             </p>
                                             {(currentUser && (currentUser._id === review.author._id)) &&
-                                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>{t('delete')}</button>
+                                                <button className="btn btn-sm btn-danger" onClick={() => handleDeleteReview(review._id)}>{t('button.delete')}</button>
                                             }
                                         </div>
                                     </article>
                                 ))}
                             </div>
                         ) : (
-                            <p>{t('noReviews.head')} {currentUser ? t('noReviews.authMessage') : t('noReviews.notAuthMessage')}</p>
+                            <p>{t('noReviews.title')} {currentUser ? t('noReviews.authMessage') : t('noReviews.notAuthMessage')}</p>
                         )}
                     </aside>
                     <LocationEditModal

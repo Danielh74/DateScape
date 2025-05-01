@@ -24,7 +24,7 @@ const PageSelector = ({ pagesAmount, onChange }: Props) => {
     };
 
     return (
-        <footer className="d-flex justify-content-center mb-2">
+        <footer className="d-flex justify-content-center mb-2" style={{ direction: "ltr" }}>
             <Pagination
                 count={pagesAmount}
                 page={activePage}
