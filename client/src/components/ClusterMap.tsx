@@ -4,15 +4,18 @@ import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import '../styles/map.css';
 import { DateLocation } from '../models/DateLocation';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     locations: DateLocation[]
 }
 
+maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+
 export default function ClusterMap({ locations }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<maptilersdk.Map>();
-    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+    const { i18n } = useTranslation();
 
     useEffect(() => {
         if (!map.current) {
@@ -204,7 +207,12 @@ export default function ClusterMap({ locations }: Props) {
                 });
             });
         }
-    }, [locations]);
+
+        return () => {
+            map.current?.remove();
+            map.current = undefined;
+        };
+    }, []);
 
     useEffect(() => {
         // Ensure map is initialized and source exists
@@ -232,9 +240,10 @@ export default function ClusterMap({ locations }: Props) {
     }, [locations]); // This will trigger only when `locations` changes
 
     useEffect(() => {
-        if (map.current) return; // Skip if map is already initialized
-    }, []);
-
+        if (!map.current) return;
+        map.current.once('load', () => map.current?.setLanguage(i18n.language));
+        map.current.setLanguage(i18n.language);
+    }, [i18n.language]);
 
     return (
         <div className="cluster-map-wrap">

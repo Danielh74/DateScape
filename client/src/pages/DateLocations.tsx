@@ -19,7 +19,6 @@ const DateLocations = () => {
     const { t } = useTranslation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [viewLocations, setViewLocations] = useState<DateLocation[]>([]);
-    const [orderedBy, setOrderedBy] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([...categoryList]);
     const [isLoading, setIsLoading] = useState(false);
     const [pages, setPages] = useState(0);
@@ -33,7 +32,7 @@ const DateLocations = () => {
                     let list: DateLocation[] = res.data.locations;
                     list = list.map(location => ({ ...location, updatedAt: new Date(location.updatedAt) }));
                     setLocations(list);
-                    const orderedList = locationsOrder(list, orderedBy);
+                    const orderedList = locationsOrder(list);
                     setViewLocations(orderedList);
                     const pagesNum = Math.ceil(list.length / viewAmount)
                     setPages(pagesNum);
@@ -76,7 +75,6 @@ const DateLocations = () => {
 
     const handleSelectOrder = (e: ChangeEvent<HTMLSelectElement>) => {
         const order = e.target.value;
-        setOrderedBy(order);
         const orderedList = locationsOrder(viewLocations, order);
         setViewLocations(orderedList);
     };

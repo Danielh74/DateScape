@@ -1,6 +1,6 @@
 import { DateLocation } from "../models/DateLocation";
 
-const locationsOrder = (list: DateLocation[], order: string) => {
+const locationsOrder = (list: DateLocation[], order?: string) => {
     let orderedList;
     switch (order) {
         case "Rating":
