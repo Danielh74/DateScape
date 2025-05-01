@@ -10,7 +10,7 @@ const locationsOrder = (list: DateLocation[], order?: string) => {
             orderedList = list.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
             break;
         default:
-            orderedList = list.sort((a, b) => b.averageRating - a.averageRating);
+            orderedList = list.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
             break;
     }
     return orderedList;

@@ -19,6 +19,7 @@ const DateLocations = () => {
     const { t } = useTranslation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [viewLocations, setViewLocations] = useState<DateLocation[]>([]);
+    const [orderedBy, setOrderedBy] = useState("Newest");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([...categoryList]);
     const [isLoading, setIsLoading] = useState(false);
     const [pages, setPages] = useState(0);
@@ -75,6 +76,7 @@ const DateLocations = () => {
 
     const handleSelectOrder = (e: ChangeEvent<HTMLSelectElement>) => {
         const order = e.target.value;
+        setOrderedBy(order);
         const orderedList = locationsOrder(viewLocations, order);
         setViewLocations(orderedList);
     };
@@ -122,7 +124,7 @@ const DateLocations = () => {
                             </div>
 
                             <div>
-                                <select className="form-select rounded-5 border-2 border-danger focus-ring focus-ring-danger" onChange={handleSelectOrder}>
+                                <select className="form-select rounded-5 border-2 border-danger focus-ring focus-ring-danger" value={orderedBy} onChange={handleSelectOrder}>
                                     <option value="" disabled>{t('select_order')}</option>
                                     <option value="Rating">{t('rating')}</option>
                                     <option value="Newest">{t('newest')}</option>
