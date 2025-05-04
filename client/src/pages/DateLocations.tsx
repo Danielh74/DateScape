@@ -47,7 +47,6 @@ const DateLocations = () => {
                 });
         }
         fetchLocations();
-
     }, [locationName])
 
     const handlePickCategory = (category: string) => {

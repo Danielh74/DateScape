@@ -9,10 +9,10 @@ const locationsRouter = require('./routes/locations');
 const reviewsRouter = require('./routes/reviews');
 const authRouter = require('./routes/auth');
 const passport = require('passport');
-const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+require('./passport-config');
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/DateScape';
 const secret = process.env.SECRET;
@@ -33,7 +33,7 @@ app.set('trust proxy', 1);
 
 app.use(cors({
     origin: [
-        'https://datescape-frontend.onrender.com',
+        process.env.FRONTEND_URI,
         'http://localhost:5173'
     ],
     credentials: true
@@ -62,10 +62,6 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(User.createStrategy())
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 app.use('/api', authRouter)
 app.use('/api/locations', locationsRouter);

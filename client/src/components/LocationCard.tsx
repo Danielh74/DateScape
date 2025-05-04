@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DateLocation } from '../models/DateLocation'
-import { updateFavLocation } from '../services/authService';
+import { updateFavLocation } from '../services/locationService';
 import useAuth from '../hooks/useAuth';
 import { toast } from 'react-toastify';
 import { Loader } from './Loaders';

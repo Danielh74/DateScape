@@ -6,6 +6,7 @@ import { updateProfileImage } from "../services/authService";
 import { Loader } from "../components/Loaders";
 import { FaCamera } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { changeLanguage } from "../utils/changeLanguage";
 
 function Profile() {
     const { currentUser, updateUser } = useAuth();
@@ -35,11 +36,6 @@ function Profile() {
         }
     };
 
-    const changeLanguage = (lang: string) => {
-        i18n.changeLanguage(lang);
-        document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
-    };
-
     if (isLoading)
         return (<Loader />);
 
@@ -61,8 +57,8 @@ function Profile() {
                             </button>
                         }
                     >
-                        <Avatar style={{ height: 200, width: 200 }} alt="Profile image" src={currentUser!.image?.url || undefined}>
-                            {!currentUser!.image?.url && currentUser!.username?.[0]}
+                        <Avatar style={{ height: 200, width: 200 }} alt="Profile image" src={currentUser!.avatar?.url || undefined}>
+                            {!currentUser!.avatar?.url && currentUser!.username?.[0]}
                         </Avatar>
                     </Badge>
                     <input

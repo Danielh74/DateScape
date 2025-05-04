@@ -13,11 +13,16 @@ const UserSchema = new Schema({
         required: true,
         unique: true
     },
+    googleId: {
+        type: String,
+        unique: true
+    },
+    displayName: String,
     favLocations: [{
         type: Schema.Types.ObjectId,
         ref: 'DateLocation'
     }],
-    image: ImageSchema
+    avatar: ImageSchema
 });
 UserSchema.plugin(passportLocalMongoose);
 

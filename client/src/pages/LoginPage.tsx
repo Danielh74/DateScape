@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import { useTranslation } from "react-i18next";
+import ThirdPartyAuth from "../components/ThirdPartyAuth";
 
 type LoginForm = {
     username: string,
@@ -32,9 +33,10 @@ const LoginPage = () => {
                 const user: User = {
                     _id: userData._id,
                     username: userData.username,
+                    displayName: userData.displayName,
                     email: userData.email,
                     favLocations: userData.favLocations,
-                    image: userData.image
+                    avatar: userData.image
                 };
                 toast.success(res.data.message);
                 handleLogin(user);
@@ -58,7 +60,7 @@ const LoginPage = () => {
                 <main className="col-md-6 col-xl-4">
                     <div className="card shadow ">
                         <div className="card-body">
-                            <h5 className="card-title">{t('button.login')}</h5>
+                            <h5 className="card-title fs-3 text-center">{t('log_in')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">{t('username')}</label>
@@ -76,10 +78,13 @@ const LoginPage = () => {
                                 <button className="btn btn-success rounded-5 w-100" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('button.login')}</button>
 
                                 {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
+
+                                <ThirdPartyAuth />
                             </form>
                         </div>
                     </div>
                 </main>
+
             </div>
         </div>
     )

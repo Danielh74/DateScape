@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useTranslation } from "react-i18next";
+import ThirdPartyAuth from "../components/ThirdPartyAuth";
+
 
 type RegisterForm = {
     username: string,
@@ -41,7 +43,7 @@ const RegisterPage = () => {
             }).finally(() => {
                 setIsLoading(false);
             });
-    }
+    };
 
     return (
         <div className="container mt-5">
@@ -49,7 +51,7 @@ const RegisterPage = () => {
                 <main className="col-md-6 col-xl-4">
                     <div className="card shadow">
                         <div className="card-body">
-                            <h5 className="card-title">{t('button.signup')}</h5>
+                            <h5 className="card-title fs-3 text-center">{t('create_account')}</h5>
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">{t('username')}</label>
@@ -61,7 +63,7 @@ const RegisterPage = () => {
                                     <input className={`form-control ${errors.email && 'border-danger'}`} type="email" {...register('email', { required: 'Email is required' })} id="email" />
                                     {errors.email && <small className="text-danger"> {errors.email.message}</small>}
                                 </div>
-                                <div className="mb-2">
+                                <div className="mb-3">
                                     <label className="form-label" htmlFor="password">{t('password')}</label>
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
@@ -69,6 +71,8 @@ const RegisterPage = () => {
                                 <div className="d-grid">
                                     <button className="btn btn-success rounded-5" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
                                 </div>
+
+                                <ThirdPartyAuth />
                             </form>
                         </div>
                     </div>

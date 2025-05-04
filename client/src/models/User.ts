@@ -2,9 +2,10 @@
 export interface User {
     _id: string,
     username: string,
+    displayName?: string,
     email: string,
     favLocations: string[],
-    image: ProfileImage
+    avatar: ProfileImage
 };
 
 interface ProfileImage {

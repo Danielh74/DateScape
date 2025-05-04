@@ -28,6 +28,23 @@ module.exports.getFavorites = handleAsyncError(async (req, res) => {
     res.json({ favorites: user.favLocations });
 });
 
+module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
+    const { locationId } = req.body;
+    if (!locationId) {
+        throw new ExpressError(400, "Location ID is required");
+    }
+    const user = await User.findById(req.user._id);
+
+    if (user.favLocations.includes(locationId)) {
+        await user.updateOne({ $pull: { favLocations: locationId } }, { new: true });
+    } else {
+        await user.updateOne({ $addToSet: { favLocations: locationId } }, { new: true });
+    }
+
+    const updatedUser = await User.findById(req.user._id);
+    res.json({ user: updatedUser, message: 'Favorites updated successfully' });
+});
+
 module.exports.getLocationById = handleAsyncError(async (req, res) => {
     const { id } = req.params;
 

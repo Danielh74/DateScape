@@ -11,11 +11,6 @@ type loginProps = {
     password: string
 }
 
-type updateProps = {
-    locationId: string
-}
-
-
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true, // Send cookies
@@ -27,4 +22,3 @@ export const logoutUser = () => api.get('/logout');
 
 export const updateProfileImage = (image: FormData) => api.put('/profile', image)
 export const checkAuth = () => api.get(`/check`);
-export const updateFavLocation = (locationId: updateProps) => api.post(`/favorites`, locationId);

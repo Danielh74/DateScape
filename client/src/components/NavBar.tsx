@@ -3,8 +3,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import '../styles/navbar.css';
 import { Avatar } from '@mui/material'
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoGlobeOutline } from "react-icons/io5";
 import { useTranslation } from 'react-i18next';
+import { changeLanguage } from "../utils/changeLanguage";
 
 const Navbar = () => {
     const { currentUser, handleLogout } = useAuth();
@@ -48,10 +49,10 @@ const Navbar = () => {
                         {currentUser ?
                             <>
                                 <div className="btn-group d-none d-lg-inline">
-                                    <span className="align-self-center fw-medium">{t('welcome')}, {currentUser.username}</span>
+                                    <span className="align-self-center fw-medium">{t('welcome')}, {currentUser.displayName || currentUser.username}</span>
                                     <button className="btn border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <Avatar style={{ height: 50, width: 50 }} src={currentUser.image?.url || undefined}>
-                                            {!currentUser.image?.url && currentUser.username[0]}
+                                        <Avatar style={{ height: 50, width: 50 }} src={currentUser.avatar?.url || undefined}>
+                                            {!currentUser.avatar?.url && currentUser.displayName || currentUser.username[0]}
                                         </Avatar>
                                     </button>
                                     <ul className="dropdown-menu dropdown-menu-end">
@@ -70,8 +71,25 @@ const Navbar = () => {
                             </>
                             :
                             <>
-                                <NavLink className="nav-link text-center fw-medium" id="link" to="/login">{t('button.login')}</NavLink>
-                                <NavLink className="nav-link text-center fw-medium" id="link" to="/register">{t('button.signup')}</NavLink>
+                                <NavLink className="nav-link text-center fw-medium" id="link" to="/login">{t('log_in')}</NavLink>
+                                <NavLink className="nav-link text-center fw-medium" id="link" to="/register">{t('sign_up')}</NavLink>
+                                <div className="dropdown text-end">
+                                    <button className="btn border-0 fs-5" id="link" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <IoGlobeOutline />
+                                    </button>
+                                    <ul className="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <button className="dropdown-item" onClick={() => changeLanguage('en')}>
+                                                <img src="https://flagcdn.com/us.svg" alt="English" width="24" height="16" /> {t('english')}
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-item" onClick={() => changeLanguage('he')}>
+                                                <img src="https://flagcdn.com/il.svg" alt="Hebrew" width="24" height="16" /> {t('hebrew')}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </>
                         }
                     </div>
