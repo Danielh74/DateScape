@@ -69,11 +69,11 @@ const RegisterPage = () => {
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
                                 <div className="d-grid">
-                                    <button className="btn btn-success rounded-5" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
+                                    <button className="btn btn-dark rounded-3" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
                                 </div>
-
-                                <ThirdPartyAuth />
                             </form>
+
+                            <ThirdPartyAuth />
                         </div>
                     </div>
                 </main>

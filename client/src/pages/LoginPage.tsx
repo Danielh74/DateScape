@@ -75,12 +75,12 @@ const LoginPage = () => {
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
 
-                                <button className="btn btn-success rounded-5 w-100" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('button.login')}</button>
+                                <button className="btn btn-dark rounded-3 w-100" disabled={isLoading}>{isLoading ? t('logging_in') + '...' : t('button.login')}</button>
 
                                 {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
-
-                                <ThirdPartyAuth />
                             </form>
+
+                            <ThirdPartyAuth />
                         </div>
                     </div>
                 </main>

@@ -12,7 +12,7 @@ module.exports.checkAuthenticated = (req, res) => {
 module.exports.logoutUser = (req, res, next) => {
     req.logout(err => {
         if (err) {
-            return res.status(500).json(err.message);
+            return next(err);
         }
         res.status(200).json('Logged out');
     });
