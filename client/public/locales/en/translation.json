@@ -53,7 +53,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "previous": "Previous",
-        "next": "Next"
+        "next": "Next",
+        "homePage": "Find Your Next Date Spot"
     },
     "review": "Review",
     "reviews": "Reviews",
@@ -62,5 +63,11 @@
         "title": "No reviews yet.",
         "authMessage": "Be the first to leave one!",
         "notAuthMessage": "Log in to leave a review"
+    },
+    "homePage": {
+        "title": "Welcome to DateScape!",
+        "paragraph1": "Discover Perfect Date Spots Near You.",
+        "paragraph2": "Looking for a unique spot to impress your date? Whether it’s your first time out or a special anniversary, DateScape helps you find the perfect setting for unforgettable moments.",
+        "paragraph3": "From dreamy hideaways to exciting outings — make every date a story worth sharing."
     }
 }

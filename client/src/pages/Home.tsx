@@ -28,14 +28,17 @@ const Home = () => {
                         </div>
                     </header>
                     <main className="col align-self-center text-center">
-                        <h2 className="mb-3">Welcome to DateScape! <span>&#10084;</span></h2>
+                        <h2 className="mb-3">{t('homePage.title')} <span>&#10084;</span></h2>
                         <p className="lead">
-                            Discover Perfect Date Spots Near You. <br />
-                            Looking for a unique spot to impress your date? Whether it’s your first time out or a special
-                            anniversary, DateScape helps you find the perfect setting for unforgettable moments. <br />
-                            From dreamy hideaways to exciting outings — make every date a story worth sharing.
+                            {t('homePage.paragraph1')}
                         </p>
-                        <Link className="btn btn-secondary fw-medium" to="/locations">Find Your Next Date Spot</Link>
+                        <p className="lead">
+                            {t('homePage.paragraph2')}
+                        </p>
+                        <p className="lead">
+                            {t('homePage.paragraph3')}
+                        </p>
+                        <Link className="btn btn-secondary fw-medium" to="/locations">{t('button.homePage')}</Link>
                     </main>
                     <footer className="mt-auto pb-2">&copy; 2025 DateScape</footer>
                 </div>
