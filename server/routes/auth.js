@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const { isAuthenticated } = require('../middleware')
-const { loginUser, logoutUser, registerUser, checkAuthenticated, updateProfileImage } = require('../controllers/auth');
+const { loginUser, logoutUser, registerUser, checkAuthenticated, updateProfileImage, verifyEmail } = require('../controllers/auth');
 const multer = require('multer');
 const { storage } = require('../cloudinary');
 const upload = multer({ storage });
@@ -25,9 +25,11 @@ router.get('/auth/google/callback',
     }
 );
 
+router.get('/verify-email', verifyEmail)
+
 router.get('/logout', logoutUser);
 
-router.route('/profile').put(isAuthenticated, upload.array('image'), updateProfileImage);
-router.route('/check').get(isAuthenticated, checkAuthenticated);
+router.put('/profile', isAuthenticated, upload.array('image'), updateProfileImage);
+router.get('/check', isAuthenticated, checkAuthenticated);
 
 module.exports = router;

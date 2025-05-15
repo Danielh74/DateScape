@@ -13,6 +13,12 @@ const UserSchema = new Schema({
         required: true,
         unique: true
     },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: String,
+    verificationTokenExpires: Date,
     googleId: {
         type: String,
         unique: true

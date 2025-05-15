@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('./models/user');
+const { generateVerificationToken, sendVerificationEmail } = require('./utils/emailService');
 
 const backendURI = process.env.BACKEND_URI || 'http://localhost:8080/api';
 
@@ -20,16 +21,24 @@ passport.use(new GoogleStrategy({
                     user.googleId = profile.id;
                     user.save();
                 }
+                if (!user.isVerified) {
+                    return done(null, false, { message: 'Please verify your email.' });
+                }
             } else {
+                const token = generateVerificationToken();
                 user = await User.create({
                     googleId: profile.id,
                     username: userEmail,
                     displayName: profile.displayName,
                     email: userEmail,
-                    avatar: profile.photos?.[0]?.value
-                })
+                    avatar: profile.photos?.[0]?.value,
+                    verificationToken: token,
+                    verificationTokenExpires: Date.now() + 15 * 60 * 1000,
+                    isVerified: false
+                });
+                await sendVerificationEmail(userEmail, token);
             }
-            done(null, user);
+            done(null, user,);
         } catch (err) {
             done(err);
         }

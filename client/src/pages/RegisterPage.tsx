@@ -33,7 +33,7 @@ const RegisterPage = () => {
             .then(res => {
                 toast.success(res.data.message);
                 handleLogin(res.data.user);
-                navigate('/locations');
+                navigate('/login');
             }).catch(err => {
                 if (err.status === 400) {
                     toast.error(err.response.data);
