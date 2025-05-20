@@ -19,7 +19,7 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { handleLogin } = useAuth()
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors }, setError } = useForm({
         defaultValues: {
             username: "",
             email: "",
@@ -35,11 +35,7 @@ const RegisterPage = () => {
                 handleLogin(res.data.user);
                 navigate('/login');
             }).catch(err => {
-                if (err.status === 400) {
-                    toast.error(err.response.data);
-                } else {
-                    toast.error(err.message);
-                }
+                setError('root', { message: err.response.data })
             }).finally(() => {
                 setIsLoading(false);
             });
@@ -68,9 +64,10 @@ const RegisterPage = () => {
                                     <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
-                                <div className="d-grid">
-                                    <button className="btn btn-dark rounded-3" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
-                                </div>
+
+                                <button className="btn btn-dark rounded-3 w-100" disabled={isLoading}>{isLoading ? t('loading') + '...' : t('button.signup')}</button>
+
+                                {errors.root && <p className="text-center text-danger mb-0 mt-2"> {errors.root.message}</p>}
                             </form>
 
                             <ThirdPartyAuth />

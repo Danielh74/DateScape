@@ -45,7 +45,7 @@ const LoginPage = () => {
                 if (err.status === 400) {
                     toast.error(err.response.data);
                 } else if (err.status === 401) {
-                    setError('root', { message: "User does not exist" })
+                    setError('root', { message: err.response.data.message || "User does not exist" })
                 } else {
                     toast.error(err.message);
                 }

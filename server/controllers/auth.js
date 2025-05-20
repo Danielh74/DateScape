@@ -35,7 +35,11 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
         verificationTokenExpires: Date.now() + 15 * 60 * 1000,
         isVerified: false
     });
-    console.log(user)
+
+    const existEmail = await User.findOne({ email });
+    if (existEmail) {
+        return res.status(400).json('Email already in use');
+    }
     await User.register(user, password);
 
     await sendVerificationEmail(email, verificationToken);
