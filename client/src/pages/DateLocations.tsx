@@ -68,9 +68,11 @@ const DateLocations = () => {
         );
 
         const pagesNum = Math.ceil(updatedLocations.length / viewAmount);
+        sessionStorage.setItem('activePage', "1");
         setViewLocations(updatedLocations);
         setPages(pagesNum);
         setSelectedCategories(updatedCategories);
+        setListBounds(listBoundsCalc(viewAmount));
     };
 
     const handleSelectOrder = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -139,7 +141,7 @@ const DateLocations = () => {
 
                         <PageSelector
                             pagesAmount={pages}
-                            onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
+                            onChange={() => setListBounds(listBoundsCalc(viewAmount))}
                         />
                     </>
                     :

@@ -3,24 +3,24 @@ import Pagination from '@mui/material/Pagination';
 
 type Props = {
     pagesAmount: number,
-    onChange: (activePage: number) => void
+    onChange: () => void
 }
 
 const PageSelector = ({ pagesAmount, onChange }: Props) => {
     const [activePage, setActivePage] = useState(1);
+    const currentPage = sessionStorage.getItem('activePage');
 
     useEffect(() => {
-        const currentPage = sessionStorage.getItem('activePage');
         if (currentPage) {
             const currentPageNum = parseInt(currentPage);
             setActivePage(currentPageNum);
         }
-    }, [])
+    }, [currentPage])
 
     const handleChangePage = (_event: React.ChangeEvent<unknown>, value: number) => {
         setActivePage(value);
         sessionStorage.setItem('activePage', value.toString());
-        onChange(value);
+        onChange();
     };
 
     return (
