@@ -51,7 +51,7 @@ const UserLocations = () => {
 
                             <PageSelector
                                 pagesAmount={pages}
-                                onChange={(activePage) => setListBounds({ start: viewAmount * (activePage - 1), end: viewAmount * activePage })}
+                                onChange={() => setListBounds(listBoundsCalc(viewAmount))}
                             />
                         </>
                         :
