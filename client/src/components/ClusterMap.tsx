@@ -5,12 +5,18 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 import '../styles/map.css';
 import { DateLocation } from '../models/DateLocation';
 import { useTranslation } from 'react-i18next';
+import maplibregl from "maplibre-gl";
 
 interface Props {
     locations: DateLocation[]
 }
 
 maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+
+maplibregl.setRTLTextPlugin(
+    'https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js',
+    false
+);
 
 export default function ClusterMap({ locations }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
@@ -241,8 +247,13 @@ export default function ClusterMap({ locations }: Props) {
 
     useEffect(() => {
         if (!map.current) return;
-        map.current.once('load', () => map.current?.setLanguage(i18n.language));
+
+        map.current.once('load', () =>
+            map.current?.setLanguage(i18n.language)
+        );
+
         map.current.setLanguage(i18n.language);
+
     }, [i18n.language]);
 
     return (
