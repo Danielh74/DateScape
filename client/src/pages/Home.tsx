@@ -40,7 +40,7 @@ const Home = () => {
                         </p>
                         <Link className="btn btn-secondary fw-medium" to="/locations">{t('button.homePage')}</Link>
                     </main>
-                    <footer className="mt-auto pb-2">&copy; 2025 DateScape</footer>
+                    <footer className="mt-auto pb-2">&copy; {new Date().getFullYear()} DateScape</footer>
                 </div>
             </div>
         </div>
