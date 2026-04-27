@@ -91,7 +91,7 @@ Location Creation Modal
 - Integrating geospatial data with backend resources
 
 ## Demo Video:
-Add Loom link
+https://www.loom.com/share/73fbb82852884c7c94a883419fe2b226
 
 ## Author
 Daniel Hazan
