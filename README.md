@@ -1,40 +1,97 @@
 # DateScape
-DateScape is a full-stack web application designed to help users discover and share date locations. Whether you're looking for the perfect spot for a romantic outing or want to share your own hidden gems, DateScape makes it easy to browse, review, and save locations. The app features an interactive map for precise location details and a user-friendly experience for both desktop and mobile users.
 
-### Features
+A full-stack web application for discovering, sharing and reviewing dating locations.
 
-**Browse Date Locations:** Explore a wide range of user-submitted date spots with detailed descriptions and reviews.
+## Overview
+DateScape allows users to:
+- Create an account and authenticate securely
+- Add favorite locations
+- Browse and review places shared by other users
+- Save locations to favorites
+- View locations on an interactive map
 
-**Interactive Map:** View the exact location of each spot on a map for easy navigation.
+## Features
+- User authentication (session-based)
+- Protected routes and authorization
+- CRUD operations for locations
+- Review system
+- Favorites functionality
+- Image upload support
+- Interactive map integration
 
-**User Registration & Login:** Create an account to unlock additional features like submitting locations and leaving reviews.
+## Tech Stack
+Frontend:
+- React
+- TypeScript
+- Tailwind CSS
 
-**Submit Locations:** Share your favorite date spots with the community, including detailed information and location coordinates.
+Backend:
+- Node.js
+- Express
 
-**Write Reviews:** Share your thoughts on locations to help others decide where to go.
+Database:
+- MongoDB
 
-**Save Favorites:** Mark locations as favorites for quick access later.
+Services:
+- Passport.js
+- Cloudinary
+- MapTiler
 
-### Technologies Used
+## Architecture
+Client (React)
+↓
+REST API (Express)
+↓
+MongoDB
+↓
+External Services:
+Cloudinary + MapTiler
 
-**Frontend**
+## Installation
 
-**React:** Used for building the user interface and managing state efficiently.
+Clone the repositories:
 
-**Bootstrap:** Provides a responsive and visually appealing design.
+git clone <frontend-repo-url>
+git clone <backend-repo-url>
 
-**Backend**
+Install dependencies:
 
-**Node.js:** Handles the server-side logic and API endpoints.
+npm install
 
-**Express.js:** A web framework for managing routes and middleware.
+Create .env file:
 
-**Database**
+PORT=
+MONGO_URI=
+SESSION_SECRET=
+CLOUDINARY_KEY=
+MAPTILER_KEY=
 
-**MongoDB:** Stores user information, locations, reviews, and favorites.
+Run application:
 
-**Other Tools**
+npm run dev
 
-**MapTiler:** Displays locations on an interactive map for enhanced user experience.
+## Screenshots
+Home Page
+<img width="320" height="180" alt="DateScape_Home" src="https://github.com/user-attachments/assets/59cf2a37-f9a6-44cd-9dc4-ebb18170daf6" />
+Signup Page
+<img width="320" height="180" alt="DateScape_Signup" src="https://github.com/user-attachments/assets/a24ba2df-25ab-45c1-8c83-4880711aabb3" />
+Interactive Map
+<img width="320" height="180" alt="DateScape_Map" src="https://github.com/user-attachments/assets/7d7457c2-92ee-490d-aa75-012f302a51ac" />
+Locations Page
+<img width="320" height="180" alt="DateScape_Locations2" src="https://github.com/user-attachments/assets/6565bf02-3db2-4b39-979e-10371db08752" />
+Location View Page
+<img width="320" height="180" alt="DateScape_LocationView" src="https://github.com/user-attachments/assets/172e76f0-ac4f-493d-a4be-623a8154afaf" />
+Location Creation Modal
+<img width="320" height="180" alt="DateScape_CreationModal" src="https://github.com/user-attachments/assets/0190b337-4207-42c6-93a2-e2183c88a2f3" />
 
-**Passport.js:** User accounts with secure registration and login functionality.
+## Challenges Solved
+- Session authentication in production
+- Secure CORS configuration
+- Route protection
+- Integrating geospatial data with backend resources
+
+## Demo Video:
+Add Loom link
+
+## Author
+Daniel Hazan
