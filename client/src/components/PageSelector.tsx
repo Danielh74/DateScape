@@ -3,7 +3,7 @@ import Pagination from '@mui/material/Pagination';
 
 type Props = {
     pagesAmount: number,
-    onChange: (page: number) => void
+    onChange: () => void
 }
 
 const PageSelector = ({ pagesAmount, onChange }: Props) => {
