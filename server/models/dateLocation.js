@@ -21,36 +21,89 @@ ImageSchema.virtual('thumbnail').get(function () {
 })
 
 const DateLocationSchema = new Schema({
-    title: String,
-    price: Number,
-    description: String,
-    address: String,
+    title: {
+        type: String,
+        required: [true, 'Title is required'],
+        minlength: [2, 'Title must be at least 2 characters'],
+        maxlength: [100, 'Title cannot exceed 100 characters'],
+        trim: true
+    },
+
+    price: {
+        type: Number,
+        required: [true, 'Price is required'],
+        min: [0, 'Price cannot be negative']
+    },
+
+    description: {
+        type: String,
+        required: [true, 'Description is required'],
+        minlength: [2, 'Description must be at least 2 characters'],
+        maxlength: [2000, 'Description cannot exceed 2000 characters'],
+        trim: true
+    },
+
+    address: {
+        type: String,
+        required: [true, 'Address is required'],
+        minlength: [2, 'Address must be at least 2 characters'],
+        maxlength: [200, 'Address cannot exceed 200 characters'],
+        trim: true
+    },
+
     categories: {
         type: [String],
-        enum: seedCategories,
-        required: true
+        required: [true, 'Categories are required'],
+        enum: {
+            values: seedCategories,
+            message: 'Invalid category'
+        },
+        validate: {
+            validator: categories => categories.length > 0,
+            message: 'At least one category is required'
+        }
     },
+
     geometry: {
         type: {
             type: String,
-            enum: ['Point'],
-            required: true
+            enum: {
+                values: ['Point'],
+                message: 'Geometry type must be Point'
+            },
+            required: [true, 'Geometry type is required']
         },
+
         coordinates: {
             type: [Number],
-            required: true
+            required: [true, 'Coordinates are required'],
+            validate: {
+                validator: coordinates => coordinates.length === 2,
+                message: 'Coordinates must contain longitude and latitude'
+            }
         }
     },
+
     images: [ImageSchema],
+
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: [true, 'Author is required']
     },
+
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: 'Review'
     }],
-    averageRating: Number
+
+    averageRating: {
+        type: Number,
+        default: 0,
+        min: [0, 'Average rating cannot be negative'],
+        max: [5, 'Average rating cannot exceed 5']
+    }
+
 }, options);
 
 DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
@@ -62,41 +115,23 @@ DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
     };
 });
 
-DateLocationSchema.post('find', async function (locations) {
-    if (locations && locations.length > 0) {
-        for (const location of locations) {
-            if (location.reviews.length === 0) {
-                location.averageRating = 0; // Temporary field for average rating
-                continue;
-            }
-
-            // Fetch the reviews (assuming reviews are references to another model)
-            const reviewsList = await Promise.all(
-                location.reviews.map((reviewId) => Review.findById(reviewId))
-            );
-
-            const avg = reviewsList.reduce((acc, review) => acc + review.rating, 0) / reviewsList.length;
-            location.averageRating = avg; // Temporary storage
-        }
+const updateAverageRating = async (location) => {
+    if (location.reviews.length === 0) {
+        location.averageRating = 0;
+        return;
     }
-});
 
-DateLocationSchema.post('findOne', async function (location) {
-    if (location) {
-        if (location.reviews.length === 0) {
-            location.averageRating = 0; // Temporary field for average rating
-            return;
-        }
+    const reviews = await Review.find({ _id: { $in: location.reviews } });
 
-        // Fetch the reviews (assuming reviews are references to another model)
-        const reviewsList = await Promise.all(
-            location.reviews.map((reviewId) => Review.findById(reviewId))
-        );
-
-        const avg = reviewsList.reduce((acc, review) => acc + review.rating, 0) / reviewsList.length;
-        location.averageRating = avg; // Temporary storage
+    if (reviews.length === 0) {
+        location.averageRating = 0;
+        return;
     }
-});
+
+    location.averageRating = reviews.reduce((sum, review) =>
+        sum + review.rating
+        , 0) / reviews.length;
+};
 
 DateLocationSchema.post('findOneAndDelete', async function (location) {
     if (location) {
@@ -109,4 +144,4 @@ DateLocationSchema.post('findOneAndDelete', async function (location) {
 });
 
 const DateLocation = mongoose.model('DateLocation', DateLocationSchema);
-module.exports = DateLocation;
+module.exports = { DateLocation, updateAverageRating };

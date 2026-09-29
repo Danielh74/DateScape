@@ -27,18 +27,38 @@ const Joi = baseJoi.extend(extension);
 
 module.exports.dateLocationSchema = Joi.object({
     location: Joi.object({
-        title: Joi.string().required("Title is required").min(2).escapeHTML(),
-        price: Joi.number().required("Price is required").min(0),
-        description: Joi.string().required("Description is required").min(2).escapeHTML(),
-        address: Joi.string().required("Address is required").escapeHTML(),
-        categories: Joi.array().required("Categories are required")
-    }).required("Location is required"),
+        title: Joi.string()
+            .min(2)
+            .max(100)
+            .required()
+            .escapeHTML(),
+
+        price: Joi.number()
+            .min(0)
+            .required(),
+
+        description: Joi.string()
+            .min(2)
+            .escapeHTML()
+            .required(),
+
+        address: Joi.string()
+            .required()
+            .escapeHTML(),
+
+        categories: Joi.array()
+            .items('Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic')
+            .min(1)
+            .required()
+
+    }).required(),
+
     deleteImages: Joi.array()
 });
 
 module.exports.reviewSchema = Joi.object({
     review: Joi.object({
-        rating: Joi.number().min(1).max(5).required(),
-        body: Joi.string().required().escapeHTML()
+        rating: Joi.number().integer().min(1).max(5).required(),
+        body: Joi.string().min(2).max(1000).required().escapeHTML()
     }).required()
 })

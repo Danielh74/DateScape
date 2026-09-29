@@ -5,13 +5,23 @@ const api = axios.create({
     withCredentials: true, // Send cookies
 });
 
-export const getLocations = (locationName: string) => {
+export const getLocations = (page: string, locationName: string, sort: string, categories: string[]) => {
     const query = new URLSearchParams();
+    query.set("page", page);
+    query.set("limit", '12');
+    query.set("sort", sort);
+
     if (locationName) {
-        query.append("locationName", locationName);
+        query.set("locationName", locationName);
     }
-    const url = `/locations${query.toString() ? `?${query}` : ''}`;
-    return api.get(url);
+
+    categories?.forEach(category => {
+        query.append("category", category);
+    });
+
+    return api.get('/locations', {
+        params: query
+    });
 };
 type prop = {
     locationId: string

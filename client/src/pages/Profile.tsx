@@ -6,7 +6,7 @@ import { updateProfileImage } from "../services/authService";
 import { Loader } from "../components/Loaders";
 import { FaCamera } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { changeLanguage } from "../utils/changeLanguage";
+import { changeLanguage } from "../utils/language";
 
 function Profile() {
     const { currentUser, updateUser } = useAuth();

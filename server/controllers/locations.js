@@ -8,14 +8,54 @@ const ExpressError = require('../utils/ExpressError');
 maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.getLocations = handleAsyncError(async (req, res) => {
-    const { locationName = '' } = req.query;
+    const { page: pageUrl, limit: limitUrl, category, locationName = '', sort = 'newest' } = req.query;
+    const filter = {};
 
-    const locations = await DateLocation.find(
-        {
-            title: { $regex: locationName, $options: 'i' }
+    const page = Math.max(Number(pageUrl) || 1, 1);
+    const limit = Math.min(Math.max(Number(limitUrl) || 12, 1), 50);
+    const skip = (page - 1) * limit;
+    const sortBy = sort === 'rating'
+        ? { averageRating: -1 }
+        : { updatedAt: -1 };
+
+    if (locationName) {
+        const escapedSearch = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        filter.title = {
+            $regex: escapedSearch,
+            $options: 'i'
         }
-    );
-    res.json({ locations });
+    };
+
+    const categories = category
+        ? Array.isArray(category)
+            ? category
+            : [category]
+        : [];
+
+    if (categories.length > 0) {
+        filter.categories = {
+            $in: categories
+        };
+    };
+
+    const [locations, totalCount] = await Promise.all([
+        DateLocation.find(filter)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit),
+
+        DateLocation.countDocuments(filter)
+    ]);
+    res.json({
+        locations,
+        pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit)
+        }
+    });
 });
 
 module.exports.getUserLocations = handleAsyncError(async (req, res) => {
