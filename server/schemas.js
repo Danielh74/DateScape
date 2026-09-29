@@ -39,6 +39,7 @@ module.exports.dateLocationSchema = Joi.object({
 
         description: Joi.string()
             .min(2)
+            .max(2000)
             .escapeHTML()
             .required(),
 

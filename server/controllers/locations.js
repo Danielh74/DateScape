@@ -1,4 +1,4 @@
-const DateLocation = require('../models/dateLocation');
+const { DateLocation } = require('../models/dateLocation');
 const handleAsyncError = require('../utils/handleAsyncError');
 const { cloudinary } = require('../cloudinary');
 const maptilerClient = require('@maptiler/client');

@@ -197,7 +197,11 @@ const LocationView = () => {
                                     <Controller
                                         name="rating"
                                         control={control}
-                                        rules={{ required: 'Rating is required' }}
+                                        rules={{
+                                            required: 'Rating is required',
+                                            min: { value: 0, message: 'Rating cannot be below 0' },
+                                            max: { value: 5, message: 'Rating cannot be above 5' },
+                                        }}
                                         render={({ field }) => (
                                             <Rating
                                                 {...field}
@@ -210,7 +214,11 @@ const LocationView = () => {
 
                                     <div className="mb-2">
                                         <label className="form-label" htmlFor="body">{t('review')}</label>
-                                        <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', { required: "Review body can't be empty" })} id="body"></textarea>
+                                        <textarea className={`form-control ${errors.body && 'border-danger'}`} {...register('body', {
+                                            required: "Review body can't be empty",
+                                            minLength: { value: 2, message: "Review body must be at least 2 characters" },
+                                            maxLength: { value: 1000, message: "Title cannot exceed 1000 characters" }
+                                        })} id="body"></textarea>
                                         {errors.body && <small className="text-danger">{errors.body.message}</small>}
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center">
