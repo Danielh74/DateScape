@@ -1,26 +1,26 @@
-const { DateLocation } = require('../models/dateLocation');
-const handleAsyncError = require('../utils/handleAsyncError');
-const maptilerClient = require('@maptiler/client');
-const User = require('../models/user');
-const ExpressError = require('../utils/ExpressError');
-const CloudinaryCleanup = require('../models/cloudinaryCleanup');
-const cleanupImages = require('../utils/cleanupImages');
-const mongoose = require('mongoose');
+import mongoose, { FilterQuery, SortOrder } from 'mongoose';
+import * as maptilerClient from '@maptiler/client';
+import { DateLocation, IDateLocation } from '../models/dateLocation';
+import handleAsyncError from '../utils/handleAsyncError';
+import User from '../models/user';
+import ExpressError from '../utils/ExpressError';
+import CloudinaryCleanup from '../models/cloudinaryCleanup';
+import cleanupImages from '../utils/cleanupImages';
 
-maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY ?? '';
 
-module.exports.getLocations = handleAsyncError(async (req, res) => {
+export const getLocations = handleAsyncError(async (req, res) => {
     const { page: pageUrl, limit: limitUrl, category, locationName = '', sort = 'newest' } = req.query;
-    const filter = {};
+    const filter: FilterQuery<IDateLocation> = {};
 
     const page = Math.max(Number(pageUrl) || 1, 1);
     const limit = Math.min(Math.max(Number(limitUrl) || 12, 1), 50);
     const skip = (page - 1) * limit;
-    const sortBy = sort === 'rating'
+    const sortBy: Record<string, SortOrder> = sort === 'rating'
         ? { averageRating: -1 }
         : { updatedAt: -1 };
 
-    if (locationName) {
+    if (typeof locationName === 'string' && locationName) {
         const escapedSearch = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         filter.title = {
@@ -60,14 +60,14 @@ module.exports.getLocations = handleAsyncError(async (req, res) => {
     });
 });
 
-module.exports.getUserLocations = handleAsyncError(async (req, res) => {
+export const getUserLocations = handleAsyncError(async (req, res) => {
     const { page: pageUrl, limit: limitUrl } = req.query;
 
     const page = Math.max(Number(pageUrl) || 1, 1);
     const limit = Math.min(Math.max(Number(limitUrl) || 12, 1), 50);
     const skip = (page - 1) * limit;
 
-    const filter = { author: req.user._id };
+    const filter = { author: req.user!._id };
 
     const [userLocations, totalCount] = await Promise.all([
 
@@ -89,9 +89,9 @@ module.exports.getUserLocations = handleAsyncError(async (req, res) => {
     });
 });
 
-module.exports.getFavorites = handleAsyncError(async (req, res) => {
+export const getFavorites = handleAsyncError(async (req, res) => {
     const { page: pageUrl, limit: limitUrl, category, locationName = '', sort = 'newest' } = req.query;
-    const filter = {};
+    const filter: FilterQuery<IDateLocation> = {};
 
     const page = Math.max(Number(pageUrl) || 1, 1);
     const limit = Math.min(Math.max(Number(limitUrl) || 12, 1), 50);
@@ -121,7 +121,11 @@ module.exports.getFavorites = handleAsyncError(async (req, res) => {
     //     };
     // };
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user!._id);
+
+    if (!user) {
+        throw new ExpressError(404, "User was not found");
+    }
 
     filter._id = { $in: user.favLocations }
 
@@ -145,7 +149,7 @@ module.exports.getFavorites = handleAsyncError(async (req, res) => {
     });
 });
 
-module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
+export const updateFavLocations = handleAsyncError(async (req, res) => {
     const { locationId } = req.body;
 
     if (!locationId) {
@@ -158,7 +162,11 @@ module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
         throw new ExpressError(400, "Location doesn't exist");
     }
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user!._id);
+
+    if (!user) {
+        throw new ExpressError(404, "User was not found");
+    }
 
     const isFavorite = user.favLocations.some(id => id.equals(locationId))
 
@@ -173,7 +181,7 @@ module.exports.updateFavLocations = handleAsyncError(async (req, res) => {
     res.json({ user, message: 'Favorites updated successfully' });
 });
 
-module.exports.getLocationById = handleAsyncError(async (req, res) => {
+export const getLocationById = handleAsyncError(async (req, res) => {
     const { id } = req.params;
 
     const location = await DateLocation.findById(id)
@@ -188,7 +196,7 @@ module.exports.getLocationById = handleAsyncError(async (req, res) => {
     res.json({ location });
 });
 
-module.exports.createLocation = handleAsyncError(async (req, res) => {
+export const createLocation = handleAsyncError(async (req, res) => {
     const { title, address } = req.body.location;
 
     const existingLocation = await DateLocation.findOne({ title: title, address: address });
@@ -201,17 +209,17 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
 
     const geoData = await maptilerClient.geocoding.forward(address, { limit: 1 });
 
-    if (geoData.features && geoData.features.length > 0) {
-        geometry = geoData.features[0].geometry;
-    } else {
+    if (!(geoData.features && geoData.features.length > 0)) {
         throw new ExpressError(400, "Invalid address provided");
     }
+
+    const files = req.files as Express.Multer.File[];
 
     Object.assign(newLocation, {
         ...newLocation,
         geometry: geoData.features[0].geometry,
-        images: req.files.map(img => ({ url: img.path, filename: img.filename })),
-        author: req.user._id
+        images: files.map(img => ({ url: img.path, filename: img.filename })),
+        author: req.user!._id
     });
 
     await newLocation.save();
@@ -219,7 +227,7 @@ module.exports.createLocation = handleAsyncError(async (req, res) => {
     res.json({ newLocation, message: 'Location was created' });
 });
 
-module.exports.editLocation = handleAsyncError(async (req, res) => {
+export const editLocation = handleAsyncError(async (req, res) => {
     const { id } = req.params;
 
     const currentLocation = await DateLocation.findById(id);
@@ -228,16 +236,18 @@ module.exports.editLocation = handleAsyncError(async (req, res) => {
         throw new ExpressError(404, "Location was not found");
     }
 
-    if (!currentLocation.author.equals(req.user._id)) {
+    if (!currentLocation.author.equals(req.user!._id)) {
         throw new ExpressError(403, "Unauthorized to edit location");
     }
 
-    const newImages = req.files?.map(img => ({
+    const files = req.files as Express.Multer.File[] | undefined;
+
+    const newImages = files?.map(img => ({
         url: img.path,
         filename: img.filename
     })) ?? [];
 
-    const deleteImages = req.body.deleteImages ?? [];
+    const deleteImages: string[] = req.body.deleteImages ?? [];
 
     const locationFilenames = currentLocation.images.map(img => img.filename);
 
@@ -311,7 +321,7 @@ module.exports.editLocation = handleAsyncError(async (req, res) => {
     res.json({ location: updatedLocation });
 });
 
-module.exports.deleteLocation = handleAsyncError(async (req, res) => {
+export const deleteLocation = handleAsyncError(async (req, res) => {
     const { id } = req.params;
 
     const locationToDelete = await DateLocation.findById(id);
@@ -320,7 +330,7 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
         throw new ExpressError(404, "Location was not found");
     }
 
-    if (!locationToDelete.author.equals(req.user._id)) {
+    if (!locationToDelete.author.equals(req.user!._id)) {
         throw new ExpressError(403, "Unauthorized to delete location");
     }
 
@@ -357,4 +367,3 @@ module.exports.deleteLocation = handleAsyncError(async (req, res) => {
         })
     };
 });
-

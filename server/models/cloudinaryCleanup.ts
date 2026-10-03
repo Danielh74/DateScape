@@ -1,7 +1,13 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose, { Schema } from 'mongoose';
 
-const cloudinaryCleanupSchema = new Schema({
+export interface ICloudinaryCleanup {
+    filename: string;
+    status: 'pending' | 'processing';
+    attempts: number;
+    lastAttempt: Date | null;
+}
+
+const cloudinaryCleanupSchema = new Schema<ICloudinaryCleanup>({
     filename: {
         type: String,
         required: true,
@@ -25,7 +31,5 @@ const cloudinaryCleanupSchema = new Schema({
     timestamps: true
 });
 
-cloudinaryCleanupSchema.in
-
-const CloudinaryCleanup = mongoose.model('CloudinaryCleanup', cloudinaryCleanupSchema);
-module.exports = CloudinaryCleanup;
+const CloudinaryCleanup = mongoose.model<ICloudinaryCleanup>('CloudinaryCleanup', cloudinaryCleanupSchema);
+export default CloudinaryCleanup;

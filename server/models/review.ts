@@ -1,7 +1,12 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose, { Schema, Types } from 'mongoose';
 
-const reviewSchema = new Schema({
+export interface IReview {
+    body: string;
+    rating: number;
+    author: Types.ObjectId;
+}
+
+const reviewSchema = new Schema<IReview>({
     body: {
         type: String,
         min: [2, 'Must be at least 2 characters'],
@@ -25,5 +30,5 @@ const reviewSchema = new Schema({
     }
 });
 
-const Review = mongoose.model('Review', reviewSchema);
-module.exports = Review;
+const Review = mongoose.model<IReview>('Review', reviewSchema);
+export default Review;

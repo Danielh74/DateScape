@@ -1,14 +1,15 @@
-const User = require('../models/user');
-const handleAsyncError = require('../utils/handleAsyncError');
-const { generateVerificationToken, sendVerificationEmail } = require('../utils/emailService');
-const fs = require('fs');
-const path = require('path');
+import { Request, Response, NextFunction } from 'express';
+import User from '../models/user';
+import handleAsyncError from '../utils/handleAsyncError';
+import { generateVerificationToken, sendVerificationEmail } from '../utils/emailService';
+import fs from 'fs';
+import path from 'path';
 
-module.exports.loginUser = handleAsyncError(async (req, res) => {
-    const user = req.user;
+export const loginUser = handleAsyncError(async (req, res) => {
+    const user = req.user!;
     if (!user.isVerified) {
         req.logout(async () => {
-            await sendVerificationEmail(user.email, user.verificationToken);
+            await sendVerificationEmail(user.email, user.verificationToken!);
             return res.status(403).json({ message: 'Please verify your email before logging in.' });
         });
     } else {
@@ -16,11 +17,11 @@ module.exports.loginUser = handleAsyncError(async (req, res) => {
     }
 });
 
-module.exports.checkAuthenticated = (req, res) => {
+export const checkAuthenticated = (req: Request, res: Response) => {
     res.status(200).json({ message: 'User is authenticated', user: req.user });
 };
 
-module.exports.logoutUser = (req, res, next) => {
+export const logoutUser = (req: Request, res: Response, next: NextFunction) => {
     req.logout(err => {
         if (err) {
             return next(err);
@@ -29,7 +30,7 @@ module.exports.logoutUser = (req, res, next) => {
     });
 };
 
-module.exports.registerUser = handleAsyncError(async (req, res, next) => {
+export const registerUser = handleAsyncError(async (req, res, next) => {
     const { username, email, password } = req.body;
 
     const emailExists = await User.findOne({ email });
@@ -54,16 +55,20 @@ module.exports.registerUser = handleAsyncError(async (req, res, next) => {
     res.status(201).json({ message: 'User registered. Please check your email to verify your account.' });
 });
 
-module.exports.updateProfileImage = handleAsyncError(async (req, res) => {
-    const image = req.files[0];
+export const updateProfileImage = handleAsyncError(async (req, res) => {
+    const image = (req.files as Express.Multer.File[])[0];
     const profileImage = { url: image.path, filename: image.filename }
 
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, { image: profileImage }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(req.user!._id, { avatar: profileImage }, { new: true });
     res.json({ user: updatedUser, message: 'Profile image updated successfully' });
 });
 
-module.exports.verifyEmail = async (req, res, next) => {
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
     const { token } = req.query;
+
+    if (typeof token !== 'string') {
+        return res.status(400).json({ message: 'Token is invalid or expired.' })
+    }
 
     const user = await User.findOne({
         verificationToken: token,

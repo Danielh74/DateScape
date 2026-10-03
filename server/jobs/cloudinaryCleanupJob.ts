@@ -1,7 +1,7 @@
-const cron = require('node-cron');
-const cleanupImages = require('../utils/cleanupImages');
+import cron from 'node-cron';
+import cleanupImages from '../utils/cleanupImages';
 
-const startCloudinaryCleanupJob = () => {
+const startCloudinaryCleanupJob = (): void => {
     cron.schedule('*/5 * * * *', async () => {
         console.log('Running Cloudinary cleanup job...');
 
@@ -13,4 +13,4 @@ const startCloudinaryCleanupJob = () => {
     });
 };
 
-module.exports = startCloudinaryCleanupJob;
+export default startCloudinaryCleanupJob;

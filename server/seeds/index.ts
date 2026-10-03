@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const cities = require('./cities')
-const { descriptors, places, categories } = require('./seedHelpers');
-const DateLocation = require('../models/dateLocation');
+import mongoose from 'mongoose';
+import cities from './cities';
+import { descriptors, places, categories } from './seedHelpers';
+import { DateLocation } from '../models/dateLocation';
 
 mongoose.connect('mongodb://127.0.0.1:27017/DateScape');
 const db = mongoose.connection;
@@ -10,7 +10,7 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
-const randomize = arr => arr[Math.floor(Math.random() * arr.length)];
+const randomize = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 const seedDB = async () => {
     await DateLocation.deleteMany({});

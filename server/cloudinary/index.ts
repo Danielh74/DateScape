@@ -1,5 +1,5 @@
-const { v2: cloudinary } = require('cloudinary');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -7,12 +7,14 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 
+// Declared separately because multer-storage-cloudinary's Params type rejects known upload options as inline literals
+const params = {
+    folder: 'YelpCamp'
+};
+
 const storage = new CloudinaryStorage({
     cloudinary,
-    params: {
-        folder: 'YelpCamp',
-        allowedFormat: ['jpg,jpeg,png']
-    }
+    params
 });
 
-module.exports = { cloudinary, storage };
+export { cloudinary, storage };

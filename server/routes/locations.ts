@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { isAuthenticated, isLocationAuthor, validateLocation, } from '../middleware';
+import { getLocationById, getLocations, editLocation, deleteLocation, createLocation, getFavorites, updateFavLocations, getUserLocations } from '../controllers/locations';
+import multer from 'multer';
+import { storage } from '../cloudinary';
+
 const router = express.Router();
-const { isAuthenticated, isLocationAuthor, validateLocation, } = require('../middleware');
-const { getLocationById, getLocations, editLocation, deleteLocation, createLocation, getFavorites, updateFavLocations, getUserLocations } = require('../controllers/locations');
-const multer = require('multer');
-const { storage } = require('../cloudinary');
 const upload = multer({ storage });
 
 router.route('/')
@@ -23,4 +24,4 @@ router.route('/:id')
     .put(isAuthenticated, isLocationAuthor, upload.array('images'), validateLocation, editLocation)
     .delete(isAuthenticated, isLocationAuthor, deleteLocation);
 
-module.exports = router;
+export default router;

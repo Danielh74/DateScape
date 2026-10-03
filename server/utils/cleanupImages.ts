@@ -1,7 +1,7 @@
-const { cloudinary } = require("../cloudinary");
-const CloudinaryCleanup = require("../models/cloudinaryCleanup");
+import { cloudinary } from '../cloudinary';
+import CloudinaryCleanup from '../models/cloudinaryCleanup';
 
-const cleanupImages = async () => {
+const cleanupImages = async (): Promise<void> => {
     const staleProcessingTime = new Date(Date.now() - 10 * 60 * 1000);
 
     while (true) {
@@ -36,7 +36,7 @@ const cleanupImages = async () => {
         } catch (err) {
             console.error(
                 `Failed to delete ${image.filename}:`,
-                err.message
+                err instanceof Error ? err.message : err
             );
 
             await CloudinaryCleanup.findByIdAndUpdate(
@@ -51,4 +51,4 @@ const cleanupImages = async () => {
     }
 };
 
-module.exports = cleanupImages;
+export default cleanupImages;

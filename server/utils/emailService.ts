@@ -1,8 +1,8 @@
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
-const fs = require('fs');
-const path = require('path');
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
+import fs from 'fs';
+import path from 'path';
 
 const backendURI = process.env.BACKEND_URI || 'http://localhost:8080/api';
 
@@ -12,7 +12,7 @@ const templatePath = path.join(
     'verification.html'
 );
 
-function generateVerificationToken() {
+function generateVerificationToken(): string {
     return crypto.randomBytes(32).toString('hex');
 };
 
@@ -24,7 +24,7 @@ const oAuth2Client = new google.auth.OAuth2(
 
 oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN })
 
-async function sendVerificationEmail(email, token) {
+async function sendVerificationEmail(email: string, token: string) {
     try {
         const accessToken = await oAuth2Client.getAccessToken();
 
@@ -41,7 +41,7 @@ async function sendVerificationEmail(email, token) {
                 clientId: process.env.GOOGLE_CLIENT_ID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-                accessToken: accessToken.token
+                accessToken: accessToken.token ?? undefined
             }
         });
 
@@ -60,4 +60,4 @@ async function sendVerificationEmail(email, token) {
 };
 
 
-module.exports = { generateVerificationToken, sendVerificationEmail }
+export { generateVerificationToken, sendVerificationEmail };

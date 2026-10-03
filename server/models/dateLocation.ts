@@ -1,8 +1,30 @@
-const mongoose = require('mongoose');
-const Review = require('./review');
-const { cloudinary } = require('../cloudinary');
-const { categories: seedCategories } = require('../seeds/seedHelpers');
-const Schema = mongoose.Schema;
+import mongoose, { Schema, Types, HydratedDocument } from 'mongoose';
+import Review from './review';
+import { cloudinary } from '../cloudinary';
+import { categories as seedCategories } from '../seeds/seedHelpers';
+
+export interface IImage {
+    url: string;
+    filename: string;
+}
+
+export interface IDateLocation {
+    title: string;
+    price: number;
+    description: string;
+    address: string;
+    categories: string[];
+    geometry: {
+        type: 'Point';
+        coordinates: number[];
+    };
+    images: IImage[];
+    author: Types.ObjectId;
+    reviews: Types.Array<Types.ObjectId>;
+    averageRating: number;
+}
+
+export type DateLocationDocument = HydratedDocument<IDateLocation>;
 
 const options = {
     toJSON: {
@@ -11,16 +33,16 @@ const options = {
     timestamps: true
 };
 
-const ImageSchema = new Schema({
+const ImageSchema = new Schema<IImage>({
     url: String,
     filename: String
 }, { toJSON: { virtuals: true } });
 
-ImageSchema.virtual('thumbnail').get(function () {
+ImageSchema.virtual('thumbnail').get(function (this: IImage) {
     return this.url.replace('/upload', '/upload/w_100');
 })
 
-const DateLocationSchema = new Schema({
+const DateLocationSchema = new Schema<IDateLocation>({
     title: {
         type: String,
         required: [true, 'Title is required'],
@@ -59,7 +81,7 @@ const DateLocationSchema = new Schema({
             message: 'Invalid category'
         },
         validate: {
-            validator: categories => categories.length > 0,
+            validator: (categories: string[]) => categories.length > 0,
             message: 'At least one category is required'
         }
     },
@@ -78,7 +100,7 @@ const DateLocationSchema = new Schema({
             type: [Number],
             required: [true, 'Coordinates are required'],
             validate: {
-                validator: coordinates => coordinates.length === 2,
+                validator: (coordinates: number[]) => coordinates.length === 2,
                 message: 'Coordinates must contain longitude and latitude'
             }
         }
@@ -106,7 +128,7 @@ const DateLocationSchema = new Schema({
 
 }, options);
 
-DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
+DateLocationSchema.virtual('properties.popUpMarkup').get(function (this: DateLocationDocument) {
     return {
         id: this._id,
         title: this.title,
@@ -115,7 +137,7 @@ DateLocationSchema.virtual('properties.popUpMarkup').get(function () {
     };
 });
 
-const updateAverageRating = async (location) => {
+const updateAverageRating = async (location: DateLocationDocument): Promise<void> => {
     if (location.reviews.length === 0) {
         location.averageRating = 0;
         return;
@@ -133,7 +155,7 @@ const updateAverageRating = async (location) => {
         , 0) / reviews.length;
 };
 
-DateLocationSchema.post('findOneAndDelete', async function (location) {
+DateLocationSchema.post('findOneAndDelete', async function (location: DateLocationDocument | null) {
     if (location) {
         await Review.deleteMany({ _id: { $in: location.reviews } });
 
@@ -143,5 +165,5 @@ DateLocationSchema.post('findOneAndDelete', async function (location) {
     }
 });
 
-const DateLocation = mongoose.model('DateLocation', DateLocationSchema);
-module.exports = { DateLocation, updateAverageRating };
+const DateLocation = mongoose.model<IDateLocation>('DateLocation', DateLocationSchema);
+export { DateLocation, updateAverageRating };

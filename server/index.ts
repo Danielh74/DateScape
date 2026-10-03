@@ -1,22 +1,23 @@
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
-
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const locationsRouter = require('./routes/locations');
-const reviewsRouter = require('./routes/reviews');
-const authRouter = require('./routes/auth');
-const passport = require('passport');
-const ExpressError = require('./utils/ExpressError');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const startCloudinaryCleanupJob = require('./jobs/cloudinaryCleanupJob');
-require('./passport-config');
+import './loadEnv';
+import express, { ErrorRequestHandler } from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import locationsRouter from './routes/locations';
+import reviewsRouter from './routes/reviews';
+import authRouter from './routes/auth';
+import passport from 'passport';
+import ExpressError from './utils/ExpressError';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import startCloudinaryCleanupJob from './jobs/cloudinaryCleanupJob';
+import './passport-config';
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/DateScape';
 const secret = process.env.SECRET;
+
+if (!secret) {
+    throw new Error('SECRET environment variable is required');
+}
 
 mongoose.connect(dbUrl);
 const db = mongoose.connection;
@@ -38,7 +39,7 @@ app.use(cors({
     origin: [
         process.env.FRONTEND_URI,
         'http://localhost:5173'
-    ],
+    ].filter((origin): origin is string => Boolean(origin)),
     credentials: true
 }));
 
@@ -59,7 +60,7 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
@@ -74,12 +75,14 @@ app.all('*', (req, res, next) => {
     next(new ExpressError(404, 'Page Not Found'))
 });
 
-app.use((err, req, res, next) => {
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     const { status = 500 } = err;
     if (!err.message)
         err.message = 'Something Went Wrong';
     res.status(status).send(err.message);
-});
+};
+
+app.use(errorHandler);
 
 app.listen(8080, () => {
     console.log("Listening on port 8080");

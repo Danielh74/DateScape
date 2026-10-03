@@ -1,7 +1,15 @@
-const baseJoi = require('joi');
-const sanitizeHtml = require('sanitize-html');
+import baseJoi from 'joi';
+import sanitizeHtml from 'sanitize-html';
 
-const extension = joi => ({
+interface ExtendedStringSchema extends baseJoi.StringSchema {
+    escapeHTML(): this;
+}
+
+type ExtendedJoi = Omit<baseJoi.Root, 'string'> & {
+    string(): ExtendedStringSchema;
+};
+
+const extension = (joi: baseJoi.Root): baseJoi.Extension => ({
     type: 'string',
     base: joi.string(),
     messages: {
@@ -9,7 +17,7 @@ const extension = joi => ({
     },
     rules: {
         escapeHTML: {
-            validate(value, helpers) {
+            validate(value: string, helpers: baseJoi.CustomHelpers) {
                 const clean = sanitizeHtml(value, {
                     allowedTags: [],
                     allowedAttributes: {},
@@ -23,9 +31,9 @@ const extension = joi => ({
     }
 });
 
-const Joi = baseJoi.extend(extension);
+const Joi: ExtendedJoi = baseJoi.extend(extension);
 
-module.exports.dateLocationSchema = Joi.object({
+export const dateLocationSchema = Joi.object({
     location: Joi.object({
         title: Joi.string()
             .min(2)
@@ -57,7 +65,7 @@ module.exports.dateLocationSchema = Joi.object({
     deleteImages: Joi.array()
 });
 
-module.exports.reviewSchema = Joi.object({
+export const reviewSchema = Joi.object({
     review: Joi.object({
         rating: Joi.number().integer().min(1).max(5).required(),
         body: Joi.string().min(2).max(1000).required().escapeHTML()

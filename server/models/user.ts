@@ -1,13 +1,32 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const passportLocalMongoose = require('passport-local-mongoose');
+import mongoose, { Schema, Types, HydratedDocument, PassportLocalModel } from 'mongoose';
+import passportLocalMongoose from 'passport-local-mongoose';
 
-const ImageSchema = new Schema({
+export interface IUserImage {
+    url?: string;
+    filename?: string;
+}
+
+export interface IUser {
+    // username is added by the passport-local-mongoose plugin
+    username: string;
+    email: string;
+    isVerified: boolean;
+    verificationToken?: string;
+    verificationTokenExpires?: Date;
+    googleId?: string;
+    displayName?: string;
+    favLocations: Types.Array<Types.ObjectId>;
+    avatar?: IUserImage;
+}
+
+export type UserDocument = HydratedDocument<IUser>;
+
+const ImageSchema = new Schema<IUserImage>({
     url: String,
     filename: String
 });
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<IUser>({
     email: {
         type: String,
         required: true,
@@ -33,5 +52,5 @@ const UserSchema = new Schema({
 
 UserSchema.plugin(passportLocalMongoose);
 
-const User = mongoose.model('User', UserSchema);
-module.exports = User;
+const User = mongoose.model<IUser, PassportLocalModel<IUser>>('User', UserSchema);
+export default User;

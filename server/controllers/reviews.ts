@@ -1,9 +1,9 @@
-const { DateLocation, updateAverageRating } = require('../models/dateLocation');
-const Review = require('../models/review');
-const ExpressError = require('../utils/ExpressError');
-const handleAsyncError = require('../utils/handleAsyncError');
+import { DateLocation, updateAverageRating } from '../models/dateLocation';
+import Review from '../models/review';
+import ExpressError from '../utils/ExpressError';
+import handleAsyncError from '../utils/handleAsyncError';
 
-module.exports.createReview = handleAsyncError(async (req, res) => {
+export const createReview = handleAsyncError(async (req, res) => {
     const location = await DateLocation.findById(req.params.id);
 
     if (!location) {
@@ -11,23 +11,25 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
     }
 
     const review = new Review(req.body.review);
-    review.author = req.user._id;
-    location.reviews.push(review);
+    review.author = req.user!._id;
+    location.reviews.push(review._id);
 
     await review.save();
     await updateAverageRating(location);
     await location.save();
 
-    await location.populate({
-        path: 'reviews',
-        populate: { path: 'author' }
-    })
-        .populate('author');
+    await location.populate([
+        {
+            path: 'reviews',
+            populate: { path: 'author' }
+        },
+        { path: 'author' }
+    ]);
 
     res.status(201).json({ location: location, message: 'Review created successfully' });
 });
 
-module.exports.deleteReview = handleAsyncError(async (req, res) => {
+export const deleteReview = handleAsyncError(async (req, res) => {
     const { id, reviewId } = req.params;
 
     const location = await DateLocation.findById(id);
@@ -50,12 +52,13 @@ module.exports.deleteReview = handleAsyncError(async (req, res) => {
 
     await location.save();
 
-    await location
-        .populate({
+    await location.populate([
+        {
             path: 'reviews',
             populate: { path: 'author' }
-        })
-        .populate('author');
+        },
+        { path: 'author' }
+    ]);
 
     res.status(200).json({ message: 'Review deleted successfully', location });
 });
