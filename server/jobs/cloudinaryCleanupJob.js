@@ -5,7 +5,11 @@ const startCloudinaryCleanupJob = () => {
     cron.schedule('*/5 * * * *', async () => {
         console.log('Running Cloudinary cleanup job...');
 
-        await cleanupImages();
+        cleanupImages().then(() => {
+            console.log('Cleanup finished successfully!');
+        }).catch(err => {
+            console.error('Cleanup failed...', err)
+        });
     });
 };
 

@@ -51,17 +51,33 @@ const RegisterPage = () => {
                             <form onSubmit={handleSubmit(onSubmit)} className="needs-validation" noValidate>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="username">{t('username')}</label>
-                                    <input className={`form-control ${errors.username && 'border-danger'}`} type="text" {...register('username', { required: 'Username is required' })} id="username" autoFocus />
+                                    <input
+                                        className={`form-control ${errors.username && 'border-danger'}`}
+                                        type="text"
+                                        {...register('username', { required: 'Username is required' })}
+                                        id="username"
+                                        autoFocus
+                                    />
                                     {errors.username && <small className="text-danger"> {errors.username.message}</small>}
                                 </div>
                                 <div className="mb-2">
                                     <label className="form-label" htmlFor="email">{t('email')}</label>
-                                    <input className={`form-control ${errors.email && 'border-danger'}`} type="email" {...register('email', { required: 'Email is required' })} id="email" />
+                                    <input
+                                        className={`form-control ${errors.email && 'border-danger'}`}
+                                        type="email"
+                                        {...register('email', { required: 'Email is required' })}
+                                        id="email"
+                                    />
                                     {errors.email && <small className="text-danger"> {errors.email.message}</small>}
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label" htmlFor="password">{t('password')}</label>
-                                    <input className={`form-control ${errors.password && 'border-danger'}`} type="password" {...register('password', { required: 'Password is required' })} id="password" />
+                                    <input
+                                        className={`form-control ${errors.password && 'border-danger'}`}
+                                        type="password"
+                                        {...register('password', { required: 'Password is required' })}
+                                        id="password"
+                                    />
                                     {errors.password && <small className="text-danger"> {errors.password.message}</small>}
                                 </div>
 

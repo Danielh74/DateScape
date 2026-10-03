@@ -1,8 +1,16 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const fs = require('fs');
+const path = require('path');
 
 const backendURI = process.env.BACKEND_URI || 'http://localhost:8080/api';
+
+const templatePath = path.join(
+    __dirname,
+    'emailTemplates',
+    'verification.html'
+);
 
 function generateVerificationToken() {
     return crypto.randomBytes(32).toString('hex');
@@ -20,6 +28,11 @@ async function sendVerificationEmail(email, token) {
     try {
         const accessToken = await oAuth2Client.getAccessToken();
 
+        const verificationUrl =
+            `${backendURI}/verify-email?token=${encodeURIComponent(token)}`;
+
+        const html = fs.readFileSync(templatePath, 'utf8').replace('{{VERIFICATION_URL}}', verificationUrl);
+
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
@@ -33,14 +46,14 @@ async function sendVerificationEmail(email, token) {
         });
 
         const mailOptions = {
-            from: 'DateScape',
+            from: `"DateScape" <${process.env.EMAIL_FROM}>`,
             to: email,
             subject: 'Verify Your Email',
-            html: `<p>Click <a href="${backendURI}/verify-email?token=${token}">here</a> to verify your email.</p>`
+            html
         };
 
-        const sentMail = await transporter.sendMail(mailOptions);
-        return sentMail;
+        return await transporter.sendMail(mailOptions);
+
     } catch (error) {
         console.log('Error sending email', error)
     }

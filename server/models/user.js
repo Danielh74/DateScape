@@ -30,6 +30,7 @@ const UserSchema = new Schema({
     }],
     avatar: ImageSchema
 });
+
 UserSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model('User', UserSchema);
