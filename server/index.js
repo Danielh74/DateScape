@@ -12,6 +12,7 @@ const passport = require('passport');
 const ExpressError = require('./utils/ExpressError');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const startCloudinaryCleanupJob = require('./jobs/cloudinaryCleanupJob');
 require('./passport-config');
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/DateScape';
@@ -22,6 +23,8 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
+
+    startCloudinaryCleanupJob();
 })
 
 const app = express();

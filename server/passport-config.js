@@ -38,7 +38,7 @@ passport.use(new GoogleStrategy({
                 });
                 await sendVerificationEmail(userEmail, token);
             }
-            done(null, user,);
+            done(null, user);
         } catch (err) {
             done(err);
         }

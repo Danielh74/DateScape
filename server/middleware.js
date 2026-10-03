@@ -1,6 +1,6 @@
 const ExpressError = require('./utils/ExpressError');
 const { dateLocationSchema, reviewSchema } = require('./schemas');
-const DateLocation = require('./models/dateLocation');
+const { DateLocation } = require('./models/dateLocation');
 const Review = require('./models/review');
 
 module.exports.isAuthenticated = (req, res, next) => {

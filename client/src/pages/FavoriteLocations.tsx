@@ -3,30 +3,34 @@ import { DateLocation } from "../models/DateLocation";
 import { getFavoriteLocations } from "../services/locationService";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
-import PageSelector from "../components/PageSelector";
 import { CardsLoader } from "../components/Loaders";
-import RenderedLocations from "../components/RenderedLocations";
-import { listBoundsCalc } from "../utils/listBoundsCalc";
 import { useTranslation } from "react-i18next";
+import LocationCard from "../components/LocationCard";
+import Pagination from "@mui/material/Pagination";
+import { VIEW_AMOUNT } from "../utils/constantVars";
 
 const FavoriteLocations = () => {
     const { currentUser } = useAuth();
     const { t } = useTranslation();
     const [favorites, setFavorites] = useState<DateLocation[]>([]);
-    const viewAmount = 12;
     const [pages, setPages] = useState(0);
-    const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
+    const [currentPage, setCurrentPage] = useState(
+        Number(sessionStorage.getItem('activeFavPage')) || 1
+    );
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
         getFavoriteLocations()
             .then(res => {
-                const list: DateLocation[] = res.data.favorites;
+                const list: DateLocation[] = res.data.favorites.map(
+                    (location: DateLocation) => ({
+                        ...location,
+                        updatedAt: new Date(location.updatedAt)
+                    })
+                );
                 setFavorites(list);
-                const pagesNum = Math.ceil(list.length / viewAmount)
-                setPages(pagesNum);
-                setListBounds(listBoundsCalc(viewAmount));
+                setPages(res.data.pagination.totalPages);
             })
             .catch(err => {
                 toast.error(err.response.data)
@@ -35,21 +39,34 @@ const FavoriteLocations = () => {
             });
     }, [currentUser])
 
+    const handlePageChange = (
+        _event: React.ChangeEvent<unknown>,
+        value: number
+    ) => {
+        setCurrentPage(value);
+        sessionStorage.setItem('activeFavPage', String(value));
+    };
+
     return (
         <main className="position-relative min-vh-100">
-            {isLoading ? <CardsLoader amount={viewAmount} />
+            {isLoading ? <CardsLoader amount={VIEW_AMOUNT} />
                 :
                 favorites?.length > 0 ?
                     <>
-                        <RenderedLocations
-                            locations={favorites}
-                            startIndex={listBounds.start}
-                            endIndex={listBounds.end} />
+                        <div className="row">
+                            {favorites.map(location =>
+                                <LocationCard key={location.id} location={location} />
+                            )}
+                        </div>
 
-                        <PageSelector
-                            pagesAmount={pages}
-                            onChange={() => setListBounds(listBoundsCalc(viewAmount))}
-                        />
+                        <footer className="d-flex justify-content-center mb-2" style={{ direction: "ltr" }}>
+                            <Pagination
+                                count={pages}
+                                page={currentPage}
+                                showFirstButton
+                                showLastButton
+                                onChange={handlePageChange} />
+                        </footer>
                     </>
                     :
                     <h1 className="text-center mt-3">{t('no_favorites')}</h1>

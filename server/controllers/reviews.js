@@ -18,14 +18,13 @@ module.exports.createReview = handleAsyncError(async (req, res) => {
     await updateAverageRating(location);
     await location.save();
 
-    const newLocation = await DateLocation.findById(req.params.id)
-        .populate({
-            path: 'reviews',
-            populate: { path: 'author' }
-        })
+    await location.populate({
+        path: 'reviews',
+        populate: { path: 'author' }
+    })
         .populate('author');
 
-    res.status(201).json({ location: newLocation, message: 'Review created successfully' });
+    res.status(201).json({ location: location, message: 'Review created successfully' });
 });
 
 module.exports.deleteReview = handleAsyncError(async (req, res) => {

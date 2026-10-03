@@ -9,8 +9,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { useTranslation } from "react-i18next";
 import LocationCard from "../components/LocationCard";
 import Pagination from "@mui/material/Pagination";
-
-const CATEGORY_LIST = ['Outdoor', 'Food', 'Culture', 'Fun', 'Active', 'Romantic'];
+import { CATEGORY_LIST, VIEW_AMOUNT } from "../utils/constantVars";
 
 const DateLocations = () => {
     const locationName = useLocation();
@@ -19,47 +18,40 @@ const DateLocations = () => {
     const [orderedBy, setOrderedBy] = useState("newest");
     const [selectedCategories, setSelectedCategories] = useState<string[]>([...CATEGORY_LIST]);
     const [isLoading, setIsLoading] = useState(false);
-    const viewAmount = 12;
     const [pages, setPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(
-        Number(sessionStorage.getItem('activePage')) || 1
+        Number(sessionStorage.getItem('activeMainPage')) || 1
     );
 
     useEffect(() => {
-        const fetchLocations = async () => {
-            setIsLoading(true);
+        setIsLoading(true);
 
-            const categoriesToSend =
-                selectedCategories.length === CATEGORY_LIST.length
-                    ? []
-                    : selectedCategories;
+        const categoriesToSend =
+            selectedCategories.length === CATEGORY_LIST.length
+                ? []
+                : selectedCategories;
 
-            try {
-                const res = await getLocations(
-                    String(currentPage),
-                    locationName.state,
-                    orderedBy,
-                    categoriesToSend
-                );
+        getLocations(
+            String(currentPage),
+            locationName.state,
+            orderedBy,
+            categoriesToSend
+        ).then(res => {
+            const list: DateLocation[] = res.data.locations.map(
+                (location: DateLocation) => ({
+                    ...location,
+                    updatedAt: new Date(location.updatedAt)
+                })
+            );
 
-                const list = res.data.locations.map(
-                    (location: DateLocation) => ({
-                        ...location,
-                        updatedAt: new Date(location.updatedAt)
-                    })
-                );
-
-                setLocations(list);
-                setPages(res.data.pagination.totalPages);
-            } catch (err: any) {
-                toast.error(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchLocations();
-    }, [currentPage, locationName, orderedBy, selectedCategories]);
+            setLocations(list);
+            setPages(res.data.pagination.totalPages);
+        }).catch(err => {
+            toast.error(err.message);
+        }).finally(() => {
+            setIsLoading(false);
+        });
+    }, [currentPage, locationName.state, orderedBy, selectedCategories]);
 
     const handlePickCategory = (category: string) => {
         const isSelected = selectedCategories.includes(category);
@@ -76,14 +68,14 @@ const DateLocations = () => {
         setSelectedCategories(updatedCategories);
 
         setCurrentPage(1);
-        sessionStorage.setItem('activePage', "1");
+        sessionStorage.setItem('activeMainPage', "1");
     };
 
     const handleSelectOrder = (e: ChangeEvent<HTMLSelectElement>) => {
         const order = e.target.value;
         setOrderedBy(order);
         setCurrentPage(1);
-        sessionStorage.setItem('activePage', "1");
+        sessionStorage.setItem('activeMainPage', "1");
     };
 
     const handlePageChange = (
@@ -91,7 +83,7 @@ const DateLocations = () => {
         value: number
     ) => {
         setCurrentPage(value);
-        sessionStorage.setItem('activePage', String(value));
+        sessionStorage.setItem('activeMainPage', String(value));
     };
 
     return (
@@ -99,7 +91,7 @@ const DateLocations = () => {
             {isLoading ?
                 <>
                     <Skeleton variant="rectangular" height={300} sx={{ my: 3 }} />
-                    <CardsLoader amount={viewAmount} />
+                    <CardsLoader amount={VIEW_AMOUNT} />
                 </>
                 :
                 locations.length > 0 ?

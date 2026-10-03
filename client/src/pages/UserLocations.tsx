@@ -1,42 +1,57 @@
-import { useEffect, useState } from "react"
-import { getUserLocations } from "../services/locationService"
-import { DateLocation } from "../models/DateLocation"
-import PageSelector from "../components/PageSelector"
-import { toast } from "react-toastify"
-import { CardsLoader } from "../components/Loaders"
-import RenderedLocations from "../components/RenderedLocations"
-import LocationCreateModal from "../modals/LocationCreateModal"
-import useAuth from "../hooks/useAuth"
-import { listBoundsCalc } from "../utils/listBoundsCalc"
-import { useTranslation } from "react-i18next"
+import { useEffect, useState } from "react";
+import { getUserLocations } from "../services/locationService";
+import { DateLocation } from "../models/DateLocation";
+import { toast } from "react-toastify";
+import { CardsLoader } from "../components/Loaders";
+import LocationCreateModal from "../modals/LocationCreateModal";
+import useAuth from "../hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import { VIEW_AMOUNT } from "../utils/constantVars";
+import Pagination from "@mui/material/Pagination";
+import LocationCard from "../components/LocationCard";
 
 const UserLocations = () => {
     const { currentUser } = useAuth();
     const { t } = useTranslation();
     const [locations, setLocations] = useState<DateLocation[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const viewAmount = 12;
     const [pages, setPages] = useState(0);
-    const [listBounds, setListBounds] = useState({ start: 0, end: 0 });
     const [show, setShow] = useState(false);
+    const [currentPage, setCurrentPage] = useState(
+        Number(sessionStorage.getItem('activeUserPage')) || 1
+    );
 
     useEffect(() => {
         setIsLoading(true);
         getUserLocations()
             .then(res => {
-                const list: DateLocation[] = res.data.locations;
+                const list: DateLocation[] = res.data.locations.map(
+                    (location: DateLocation) => ({
+                        ...location,
+                        updatedAt: new Date(location.updatedAt)
+                    })
+                );
                 setLocations(list);
-                const pagesNum = Math.ceil(list.length / viewAmount)
-                setPages(pagesNum);
-                setListBounds(listBoundsCalc(viewAmount));
-            })
-            .catch((err) => toast.error(err.response.data))
-            .finally(() => setIsLoading(false));
-    }, [currentUser])
+                setPages(res.data.pagination.totalPages);
+            }).catch((err) => {
+                toast.error(err.response.data)
+            }).finally(() => {
+                setIsLoading(false)
+            });
+    }, [currentUser]);
+
+    const handlePageChange = (
+        _event: React.ChangeEvent<unknown>,
+        value: number
+    ) => {
+        setCurrentPage(value);
+        sessionStorage.setItem('activeUserPage', String(value));
+    };
+
 
     return (
         <main className="position-relative min-vh-100">
-            {isLoading ? <CardsLoader amount={viewAmount} />
+            {isLoading ? <CardsLoader amount={VIEW_AMOUNT} />
                 :
                 <>
                     <button className="btn btn-danger rounded-5 fw-medium mt-3" onClick={() => setShow(true)}>
@@ -44,15 +59,20 @@ const UserLocations = () => {
                     </button>
                     {locations.length > 0 ?
                         <>
-                            <RenderedLocations
-                                locations={locations}
-                                startIndex={listBounds.start}
-                                endIndex={listBounds.end} />
+                            <div className="row">
+                                {locations.map(location =>
+                                    <LocationCard key={location.id} location={location} />
+                                )}
+                            </div>
 
-                            <PageSelector
-                                pagesAmount={pages}
-                                onChange={() => setListBounds(listBoundsCalc(viewAmount))}
-                            />
+                            <footer className="d-flex justify-content-center mb-2" style={{ direction: "ltr" }}>
+                                <Pagination
+                                    count={pages}
+                                    page={currentPage}
+                                    showFirstButton
+                                    showLastButton
+                                    onChange={handlePageChange} />
+                            </footer>
                         </>
                         :
                         <p className="text-center mt-3 fw-semibold fs-3">{t('no_location_posted')}</p>}
@@ -66,4 +86,4 @@ const UserLocations = () => {
     )
 };
 
-export default UserLocations
+export default UserLocations;
