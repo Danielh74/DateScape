@@ -20,7 +20,7 @@ maplibregl.setRTLTextPlugin(
 
 export default function ClusterMap({ locations }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
-    const map = useRef<maptilersdk.Map>();
+    const map = useRef<maptilersdk.Map | undefined>(undefined);
     const { i18n } = useTranslation();
 
     useEffect(() => {

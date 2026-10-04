@@ -41,36 +41,74 @@ const LocationCard = ({ location }: Props) => {
     return (
         <article className="position-relative col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
             {isLoading && <Loader />}
-            <div className="border rounded shadow h-100">
-                <img src={location.images[0].url} className="card-img-top rounded-top h-50 object-fit-fill" alt="location image" />
-                <div className="d-flex flex-column card-body p-2 h-50">
-                    <div className="card-title d-flex justify-content-between">
-                        <h5 className="">
+
+            <div className="location-card position-relative overflow-hidden rounded-4 shadow">
+
+                {/* Background image */}
+                <img
+                    src={location.images[0].url}
+                    className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+                    alt={location.title}
+                />
+
+                {/* Gradient overlay */}
+                <div className="location-card-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+
+                {/* Content */}
+                <div className="location-card-content position-relative d-flex flex-column justify-content-end h-100 p-3 text-white">
+
+                    <div className="d-flex justify-content-between align-items-start">
+                        <h5 className="mb-1">
                             {location.title}
                         </h5>
-                        <span>
-                            <b className='align-bottom'>{location.averageRating}</b> <span className='text-warning'><StarIcon /></span>
+
+                        <span className="text-nowrap">
+                            <b>{location.averageRating}</b>
+                            <span className="text-warning">
+                                <StarIcon />
+                            </span>
                         </span>
                     </div>
-                    <p className="card-text m-0">
-                        <span className="text-muted d-block">
-                            {location.address}
-                        </span>
-                        <span className="d-inline-block my-2 fw-semibold ">
-                            {location.price > 0 ? `Avg. $${location.price}` : t('free')}
-                        </span>
-                        <span className="d-block">{t('categories')}: {<span>{location.categories.map(c => t(c)).join(', ')}</span>}</span>
 
+                    <p className="mb-1 text-light">
+                        {location.address}
                     </p>
-                    <div className="row justify-content-between align-items-end mt-auto">
-                        <Link className="col-6 mx-2 btn btn-outline-danger rounded-5" to={`/location/${location.id}`}>
+
+                    <span className="fw-semibold mb-1">
+                        {location.price > 0
+                            ? `Avg. $${location.price}`
+                            : t('free')}
+                    </span>
+
+                    <span className="small text-light mb-3">
+                        {t('categories')}: {location.categories.map(c => t(c)).join(', ')}
+                    </span>
+
+                    <div className="d-flex justify-content-between align-items-center">
+
+                        <Link
+                            className="btn btn-outline-light rounded-5 px-3"
+                            to={`/location/${location.id}`}
+                        >
                             {t('view_location')}
                         </Link>
-                        <button className="btn col-2 fs-1 p-0 border-0" onClick={handleUpdateFavLocation}>
-                            {currentUser?.favLocations?.some(fav => fav === location.id) ? <FaHeart className="text-danger fs-2" /> : <CiHeart />}
+
+                        <button
+                            className="btn p-0 border-0 d-flex justify-content-center align-items-center"
+                            style={{ width: '40px', height: '40px' }}
+                            onClick={handleUpdateFavLocation}
+                        >
+                            {currentUser?.favLocations?.some(
+                                fav => fav === location.id
+                            ) ? (
+                                <FaHeart className="text-danger fs-2" />
+                            ) : (
+                                <CiHeart className="text-secondary fs-1 heart" />
+                            )}
                         </button>
 
                     </div>
+
                 </div>
             </div>
         </article>

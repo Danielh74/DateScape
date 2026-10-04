@@ -12,3 +12,28 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;
 }
+
+.location-card {
+    height: 400px;
+}
+
+.location-card-overlay {
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.9) 0%,
+            rgba(0, 0, 0, 0.75) 25%,
+            rgba(0, 0, 0, 0.35) 50%,
+            rgba(0, 0, 0, 0) 75%);
+}
+
+.location-card-content {
+    z-index: 1;
+}
+
+.fav-btn {
+    width: 40px;
+    height: 40px;
+}
+
+.heart:hover {
+    color: white !important;
+}

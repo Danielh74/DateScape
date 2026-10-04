@@ -9,7 +9,7 @@ interface Props {
 
 export default function LocationMap({ location }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
-    const map = useRef<maptilersdk.Map>();
+    const map = useRef<maptilersdk.Map | undefined>(undefined);
     maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
 
     useEffect(() => {

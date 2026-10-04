@@ -46,6 +46,9 @@ const DateLocations = () => {
 
             setLocations(list);
             setPages(res.data.pagination.totalPages);
+            if (locationName.state) {
+                setCurrentPage(1);
+            }
         }).catch(err => {
             toast.error(err.message);
         }).finally(() => {
