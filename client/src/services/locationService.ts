@@ -19,24 +19,25 @@ export const getLocations = (page: string, locationName: string, sort: string, c
         query.append("category", category);
     });
 
-    return api.get('/locations', {
-        params: query
-    });
+    return api.get('/locations', { params: query });
 };
-type prop = {
-    locationId: string
-}
-export const getLocation = (id: string) => api.get(`/locations/${id}`);
-export const postLocation = (locationData: FormData) => api.post('/locations', locationData);
-export const updateLocation = (id: string, locationData: FormData) => api.put(`/locations/${id}`, locationData);
-export const deleteLocation = (id: string) => api.delete(`/locations/${id}`);
-export const getFavoriteLocations = () => api.get('/locations/favorites');
-export const updateFavLocation = (locationId: prop) => api.post(`/locations/favorites`, locationId);
+
 export const getUserLocations = (page: string) => {
     const query = new URLSearchParams();
     query.set("page", page);
     query.set("limit", '12');
-    //query.set("sort", sort);
 
-    return api.get('/locations/userlocations', { params: query })
+    return api.get('/locations/userlocations', { params: query });
 };
+
+export const getLocation = (id: string) => api.get(`/locations/${id}`);
+
+export const postLocation = (locationData: FormData) => api.post('/locations', locationData);
+
+export const updateLocation = (id: string, locationData: FormData) => api.put(`/locations/${id}`, locationData);
+
+export const deleteLocation = (id: string) => api.delete(`/locations/${id}`);
+
+export const getFavoriteLocations = () => api.get('/locations/favorites');
+
+export const updateFavLocation = (locationId: string) => api.post(`/locations/favorites`, locationId);
