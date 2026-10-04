@@ -23,7 +23,7 @@ const UserLocations = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        getUserLocations()
+        getUserLocations(String(currentPage))
             .then(res => {
                 const list: DateLocation[] = res.data.locations.map(
                     (location: DateLocation) => ({
@@ -38,7 +38,7 @@ const UserLocations = () => {
             }).finally(() => {
                 setIsLoading(false)
             });
-    }, [currentUser]);
+    }, [currentUser, currentPage]);
 
     const handlePageChange = (
         _event: React.ChangeEvent<unknown>,

@@ -32,4 +32,11 @@ export const updateLocation = (id: string, locationData: FormData) => api.put(`/
 export const deleteLocation = (id: string) => api.delete(`/locations/${id}`);
 export const getFavoriteLocations = () => api.get('/locations/favorites');
 export const updateFavLocation = (locationId: prop) => api.post(`/locations/favorites`, locationId);
-export const getUserLocations = () => api.get('/locations/userlocations');
+export const getUserLocations = (page: string) => {
+    const query = new URLSearchParams();
+    query.set("page", page);
+    query.set("limit", '12');
+    //query.set("sort", sort);
+
+    return api.get('/locations/userlocations', { params: query })
+};
