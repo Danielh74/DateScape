@@ -27,8 +27,10 @@ export const getUserLocations = (page: string) => {
     query.set("page", page);
     query.set("limit", '12');
 
-    return api.get('/locations/userlocations', { params: query });
+    return api.get('/locations/userlocations', { params: query })
 };
+
+
 
 export const getLocation = (id: string) => api.get(`/locations/${id}`);
 
@@ -40,4 +42,5 @@ export const deleteLocation = (id: string) => api.delete(`/locations/${id}`);
 
 export const getFavoriteLocations = () => api.get('/locations/favorites');
 
-export const updateFavLocation = (locationId: string) => api.post(`/locations/favorites`, locationId);
+export const updateFavLocation = (locationId: string) => api.post(`/locations/favorites`, { locationId });
+

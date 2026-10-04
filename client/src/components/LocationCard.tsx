@@ -23,7 +23,7 @@ const LocationCard = ({ location }: Props) => {
     const handleUpdateFavLocation = () => {
         if (currentUser) {
             setIsLoading(true);
-            updateFavLocation({ locationId: location.id })
+            updateFavLocation(location.id)
                 .then(res => {
                     updateUser(res.data.user);
                 })
