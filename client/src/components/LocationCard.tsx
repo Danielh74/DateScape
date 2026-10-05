@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import { DateLocation } from '../models/DateLocation'
 import { updateFavLocation } from '../services/locationService';
 import useAuth from '../hooks/useAuth';
 import { toast } from 'react-toastify';
-import { Loader } from './Loaders';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHeart } from "react-icons/fa";
 import { CiHeart } from "react-icons/ci";
@@ -17,31 +16,38 @@ type Props = {
 const LocationCard = ({ location }: Props) => {
     const { currentUser, updateUser } = useAuth();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
     const { t } = useTranslation();
+    const [isPending, startTransition] = useTransition();
+    const [optimisticFavorites, setOptimisticFavorites] = useOptimistic(
+        currentUser?.favLocations ?? [],
+        (currentFavorites, locationId: string) =>
+            currentFavorites.includes(locationId)
+                ? currentFavorites.filter(id => id !== locationId)
+                : [...currentFavorites, locationId]
+    );
 
     const handleUpdateFavLocation = () => {
-        if (currentUser) {
-            setIsLoading(true);
+        if (!currentUser) {
+            toast.error('Sign in to add a location to your favorites');
+            navigate('/login');
+            return;
+        };
+
+        startTransition(() => {
+            setOptimisticFavorites(location.id);
+
             updateFavLocation(location.id)
                 .then(res => {
                     updateUser(res.data.user);
                 })
-                .catch(err => toast.error(err.response.data))
-                .finally(() => {
-                    setIsLoading(false);
-                });
-        } else {
-            toast.error('Sign in to add a location to your favorites');
-            navigate('/login');
-        }
-
+                .catch(err => toast.error(
+                    err.response?.data ?? 'Failed to update favorite'
+                ));
+        });
     };
 
     return (
         <article className="position-relative col-12 col-sm-6 col-md-4 col-lg-3 p-2 my-2">
-            {isLoading && <Loader />}
-
             <div className="location-card position-relative overflow-hidden rounded-4 shadow">
 
                 {/* Background image */}
@@ -97,14 +103,14 @@ const LocationCard = ({ location }: Props) => {
                             className="btn p-0 border-0 d-flex justify-content-center align-items-center"
                             style={{ width: '40px', height: '40px' }}
                             onClick={handleUpdateFavLocation}
+                            disabled={isPending}
                         >
-                            {currentUser?.favLocations?.some(
-                                fav => fav === location.id
-                            ) ? (
+                            {optimisticFavorites.includes(location.id)
+                                ?
                                 <FaHeart className="text-danger fs-2" />
-                            ) : (
+                                :
                                 <CiHeart className="text-secondary fs-1 heart" />
-                            )}
+                            }
                         </button>
 
                     </div>
