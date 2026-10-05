@@ -10,11 +10,12 @@ const Loader = () => {
             {t('loading')}...
         </div>
     )
-}
+};
 
 type Prop = {
     amount: number
-}
+};
+
 const CardsLoader = ({ amount }: Prop) => {
     return (
         <div className="row my-3">
@@ -29,7 +30,7 @@ const CardsLoader = ({ amount }: Prop) => {
             ))}
         </div>
     )
-}
+};
 
 const CardLoader = () => {
     return (
@@ -45,6 +46,18 @@ const CardLoader = () => {
             </Box>
         </div>
     )
-}
+};
 
-export { Loader, CardsLoader, CardLoader }
+const AppLoader = () => {
+    return (
+        <div className="app-loader">
+            <img
+                src="/map.png"
+                alt="DateScape"
+                className="app-loader-logo"
+            />
+        </div>
+    );
+};
+
+export { Loader, CardsLoader, CardLoader, AppLoader }
