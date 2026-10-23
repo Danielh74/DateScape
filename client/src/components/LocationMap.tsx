@@ -34,7 +34,7 @@ export default function LocationMap({ location }: Props) {
 
     return (
         <div className="map-wrap">
-            <div ref={mapContainer} className="map rounded" />
+            <div ref={mapContainer} className="map rounded-4" />
         </div>
     );
 }

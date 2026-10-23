@@ -34,6 +34,9 @@ export default function ClusterMap({ locations }: Props) {
             });
 
             map.current.on('load', function () {
+
+                map.current?.setLanguage(i18n.language);
+
                 map.current?.addSource('locations', {
                     type: 'geojson',
                     data: {
@@ -246,19 +249,14 @@ export default function ClusterMap({ locations }: Props) {
     }, [locations]); // This will trigger only when `locations` changes
 
     useEffect(() => {
-        if (!map.current) return;
-
-        map.current.once('load', () =>
-            map.current?.setLanguage(i18n.language)
-        );
+        if (!map.current || !map.current.isStyleLoaded()) return;
 
         map.current.setLanguage(i18n.language);
-
     }, [i18n.language]);
 
     return (
         <div className="cluster-map-wrap">
-            <div ref={mapContainer} className="map rounded" />
+            <div ref={mapContainer} className="map rounded-4" />
         </div>
     );
 }
